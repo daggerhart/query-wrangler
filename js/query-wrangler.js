@@ -240,7 +240,9 @@ function qw_bind_events(){
 function qw_title_click_action()
 {
   // trigger cancel button
-  jQuery('#qw-options-actions-cancel').trigger('click');
+  if(qw_current_form_id !== undefined && qw_current_form_id != ''){
+    jQuery('#qw-options-actions-cancel').trigger('click');
+  }
   // hide forms
   jQuery('#qw-options-forms .qw-query-content').hide();
   // show form
