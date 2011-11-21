@@ -4,7 +4,7 @@ Plugin Name: Query Wrangler
 Plugin URI: http://www.daggerhart.com
 Description: This plugin lets you create new WP queries as pages or widgets. It's basically Drupal Views for Wordpress.
 Author: Jonathan Daggerhart
-Version: 1.0beta
+Version: 1.1beta
 Author URI: http://www.daggerhart.com
 */
 /*  Copyright 2010  Jonathan Daggerhart  (email : jonathan@daggerhart.com)

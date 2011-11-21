@@ -34,10 +34,14 @@ The easiest way is to add it as a custom link in the Menus section of your site.
 
 == Changelog ==
 
+= 1.1beta =
+
+ * Bug with canceling forms.  Changed use of jQuery unserializeForm
+ 
 = 1.0beta =
 
  * Initial Release
 
 == Upgrade Notice ==
 
-
+1.1beta Fixed Form Cancellation bug
