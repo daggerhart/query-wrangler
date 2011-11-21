@@ -1,0 +1,202 @@
+a.toplevel_page_query-wrangler {
+  letter-spacing: -1px;
+}
+#qw-query-action-buttons {
+  padding: 4px 14px;
+}
+#qw-options-target,
+#query-preview {
+  border: 1px solid #bbb;
+  background: #fff;
+  margin: 10px;
+  padding: 4px 8px;
+}
+#qw-options-target-title,
+#preview-title {
+  margin: 0px 0px 12px;
+  padding: 6px 12px;
+  background-color: #efefef;
+}
+#query-preview .qw-options-group-content {
+  border: 1px solid #ddd;
+}
+#qw-options-actions {
+  display: none;
+}
+#qw-options-actions-cancel {
+  margin-left: 16px;
+}
+#qw-options-forms .qw-query-content {
+  display: none;
+}
+#qw-page-settings {
+  float: none;
+  clear: both;
+  margin-top: 6px;
+}
+#qw-query-admin-options-wrap {
+  margin: 6px;
+  padding: 4px 8px;
+}
+#qw-list-title {
+  width: 70%;
+}
+#qw-query-fields-list {
+  border-top: 1px solid #bbb;
+  padding: 4px 16px;
+  text-transform: capitalize;
+}
+#qw-show-arguments {
+  margin-top: 32px;
+  padding: 16px;
+  border: 1px solid #bbb;
+}
+#qw-form-backup {
+  display: none;
+}
+#qw-fields-sortable .qw-item,
+.qw-query-content select,
+.qw-query-content select option,
+.qw-field-checkbox,
+.qw-field-title {
+  text-transform: capitalize;
+}
+.qw-button {
+  display: block;
+  float: left;
+  border-color: #BBBBBB;
+  color: #464646;
+  -moz-box-sizing: content-box;
+  border-radius: 11px 11px 11px 11px;
+  border-style: solid;
+  border-width: 1px;
+  cursor: pointer;
+  font-size: 12px !important;
+  line-height: 13px;
+  padding: 5px 8px;
+  margin: 6px 0px;
+  text-decoration: none;
+  background: url("images/white-grad.png") repeat-x scroll left top #F2F2F2;
+  text-shadow: 0 1px 0 #FFFFFF;
+}
+span.qw-query-title {
+  display: block;
+  padding: 1px 5px;
+  font-size: 0.9em;
+}
+span.qw-query-title span,
+span.qw-query-fields-name {
+  color: blue;
+  text-decoration: underline;
+  cursor: pointer;
+}
+label.qw-query-checkbox,
+label.qw-field-checkbox {
+  display: block;
+  margin: 3px 0px;
+  padding: 3px;
+}
+label.qw-query-checkbox input,
+label.qw-field-checkbox input {
+  margin-right: 6px;
+}
+.qw-checkboxes {
+  border: 1px solid #bbb;
+  background: #fff;
+  margin: 4px;
+  padding: 6px;
+  height: 100px;
+  overflow-y: scroll;
+}
+.qw-query-admin-options{
+  width: 30%;
+  float: left;
+  background: #f6f6f6;
+  border: 1px solid #bbb;
+  margin-right: 3%;
+  padding-bottom: 4px;
+}
+.qw-query-admin-options h4 {
+  background: #efefef;
+  margin: 0px 0px 2px;
+  padding: 3px 4px;
+}
+.qw-clear-gone {
+  float: none;
+  clear: both;
+  line-height: 0px;
+  height: 0px;
+  font-size: 0px;
+}
+ul#qw-fields-sortable li.qw-field-item{
+  line-height: 30px;
+  border: 1px solid #bbb;
+  border-radius: 4px;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  margin: 0px 0px 2px;
+  padding: 0px 4px 0px 12px;
+  background: #fff;
+}
+ul.qw-field-tokens-list li {
+  font-weight: bold;
+}
+li.qw-field-item .sort-handle {
+  display: block;
+  background: transparent url('images/handle2.png') center center no-repeat;
+  float: left;
+  width: 28px;
+  height: 20px;
+  margin: 4px 6px 0px 0px;
+  cursor: move;
+}
+.qw-field-options {
+  margin: 4px 180px 4px 0px;
+  padding: 4px;
+  border: 1px solid #ddd;
+}
+.qw-field-weight {
+  display: block;
+  float: right;
+  margin-top: 4px;
+}
+.qw-field-remove {
+  display: block;
+  float: right;
+  cursor: pointer;
+  margin: 4px 6px 0px;
+  padding: 3px 8px;
+}
+.qw-query-fields-title {
+  display: block;
+  text-align: center;
+  width: 48%;
+  float: left;
+  color: blue;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+
+.qw-sort-field-name {
+  display: none;
+}
+.qw-options-group {
+}
+.qw-options-group-title {}
+.qw-options-group-content {
+  padding: 4px 20px;
+}
+.qw-field-options-hidden {
+  display: none;
+}
+.qw-field-textarea {
+  width: 600px;
+  height: 300px;
+}
+.qw-create {
+  margin-top: 12px;
+}
+.qw-create-select option {
+  padding: 6px;
+}
