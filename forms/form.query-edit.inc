@@ -192,17 +192,21 @@
               </span>
             </div>
             
-            <!-- override settings -->
-            <div id="qw-override-settings" class="qw-query-admin-options">
-              <h4>Override Settings</h4>
-              <span class="qw-query-title" title="qw-override-categories">
-                Categories: <span><?php print (is_array($qw_query_options['override']['cats'])) ? implode(",", $qw_query_options['override']['cats']): 'None'; ?></span>
-              </span>
-              <span class="qw-query-title" title="qw-override-tags">
-                Tags: <span><?php print (is_array($qw_query_options['override']['tags'])) ? implode(",", $qw_query_options['override']['tags']): 'None'; ?></span>
-              </span>
-            </div>
             <?php
+              if($query_type == 'override')
+              { ?>
+                <!-- override settings -->
+                <div id="qw-override-settings" class="qw-query-admin-options">
+                  <h4>Override Settings</h4>
+                  <span class="qw-query-title" title="qw-override-categories">
+                    Categories: <span><?php print (is_array($qw_query_options['override']['cats'])) ? implode(",", $qw_query_options['override']['cats']): 'None'; ?></span>
+                  </span>
+                  <span class="qw-query-title" title="qw-override-tags">
+                    Tags: <span><?php print (is_array($qw_query_options['override']['tags'])) ? implode(",", $qw_query_options['override']['tags']): 'None'; ?></span>
+                  </span>
+                </div>
+                <?php
+              }
           }
         ?>        
       </div>

@@ -393,7 +393,7 @@ function qw_list_queries_form(){
       ?>
       <div class="wrap">
           
-          <div id="icon-users" class="icon32"><br/></div>
+          <div id="icon-tools" class="icon32"><br/></div>
           <h2>Query Wrangler</h2>
           
           <!-- Forms are NOT created automatically, so you need to wrap the table in one to use features like bulk actions -->

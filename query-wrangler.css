@@ -1,6 +1,37 @@
 a.toplevel_page_query-wrangler {
   letter-spacing: -1px;
 }
+#qw-create {
+  width: 30%;
+  float: left;
+  border: 1px solid #888;
+  padding: 8px;
+  -webkit-border-radius: 8px;
+  -moz-border-radius: 8px;
+  border-radius: 8px;
+}
+#qw-create-description {
+  width: 50%;
+  float: left;
+  margin-left: 7%;
+}
+#qw-create-description div {
+  border-left: 1px solid #bbb;
+  border-right: 1px solid #bbb;
+  border-bottom: 1px solid #bbb;
+  background: #f6f6f6;
+  margin-bottom: 6px;
+}
+#qw-create-description div p {
+  padding: 8px;
+}
+#qw-create-description h3 {
+  margin: 0px;
+  padding: 8px;
+  border-bottom: 1px solid #bbb;
+  border-top: 1px solid #bbb;
+  background-color: #efefef;
+}
 #qw-query-action-buttons {
   padding: 4px 14px;
 }
