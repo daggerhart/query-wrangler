@@ -13,6 +13,11 @@
   $query_name = $rows[0]->name;
   $query_type = $rows[0]->type;
   
+  // overrides
+  if($query_type == 'override'){
+    $query_override_type = $rows[0]->override_type;
+  }
+  
   // Page Queries
   if($query_type == 'page'){
     $query_page_path = $rows[0]->path;
@@ -98,18 +103,34 @@
         
         <div id="qw-query-filters" class="qw-query-admin-options">
           <h4>Filters</h4>
-          <span class="qw-query-title" title="qw-categories">
-            Categories: <span><?php print (is_array($qw_query_options['args']['cat'])) ? implode(",", $qw_query_options['args']['cat']): 'None'; ?></span>
-          </span>
-          <span class="qw-query-title" title="qw-tags">
-            Tags: <span><?php print (is_array($qw_query_options['args']['tag'])) ? implode(",", $qw_query_options['args']['tag']): 'None'; ?></span>
-          </span>
+          <?php
+            // override queries can't choose categories or tags
+            if ($query_type != "override")
+            { ?>
+              <span class="qw-query-title" title="qw-categories">
+                Categories: <span><?php print (is_array($qw_query_options['args']['cat'])) ? implode(",", $qw_query_options['args']['cat']): 'None'; ?></span>
+              </span>
+              <span class="qw-query-title" title="qw-tags">
+                Tags: <span><?php print (is_array($qw_query_options['args']['tag'])) ? implode(",", $qw_query_options['args']['tag']): 'None'; ?></span>
+              </span>
+              <?php
+            }
+          ?>
           <span class="qw-query-title" title="qw-post-types">
             Post Types: <span><?php print (is_array($qw_query_options['args']['post_types'])) ? implode(",", $qw_query_options['args']['post_types']) : 'None'; ?></span>
           </span>
-          <span class="qw-query-title" title="qw-post-parent">
-            Page Parent: <span><?php print ($qw_query_options['args']['post_parent']) ? $qw_query_options['args']['post_parent'] : 'None'; ?></span>
-          </span>
+          
+          <?php
+            // overrides don't have post parents
+            if($query_type != 'override')
+            { ?>
+              <span class="qw-query-title" title="qw-post-parent">
+                Page Parent: <span><?php print ($qw_query_options['args']['post_parent']) ? $qw_query_options['args']['post_parent'] : 'None'; ?></span>
+              </span>
+              <?php
+            }
+          ?>
+          
           <span class="qw-query-title" title="qw-post-status">
             Post Status: <span><?php print $qw_query_options['args']['post_status']; ?></span>
           </span>
@@ -145,22 +166,41 @@
         </div><!-- /fields -->
         
         <?php
-          if($query_type == 'page')
+          // use pager on pages and overrides
+          if($query_type == 'page' || $query_type == 'override')
           { ?>
             <div class="qw-clear-gone"><!-- ie hack -->&nbsp;</div>
             <div id="qw-page-settings" class="qw-query-admin-options">
               <h4>Page Settings</h4>
               
-              <span class="qw-query-title" title="qw-page-path">
-                Page Path: <span><?php print ($query_page_path) ? $query_page_path : 'None'; ?></span>
-              </span>
+              <?php
+                // path for pages only
+                if($query_type == 'page')
+                { ?>
+                  <span class="qw-query-title" title="qw-page-path">
+                    Page Path: <span><?php print ($query_page_path) ? $query_page_path : 'None'; ?></span>
+                  </span>
+                  <?php
+                }
+              ?>
               <span class="qw-query-title" title="qw-page-template">
                 Page Template: <span><?php print ($qw_query_options['display']['page']['template-name']) ? $qw_query_options['display']['page']['template-name'] : 'Default'; ?></span>
               </span>
+              
               <span class="qw-query-title" title="qw-page-pager">
                 Pager: <span><?php print ($qw_query_options['display']['page']['pager']['type']) ? $qw_query_options['display']['page']['pager']['type'] : 'Default'; ?></span>
               </span>
-              
+            </div>
+            
+            <!-- override settings -->
+            <div id="qw-override-settings" class="qw-query-admin-options">
+              <h4>Override Settings</h4>
+              <span class="qw-query-title" title="qw-override-categories">
+                Categories: <span><?php print (is_array($qw_query_options['override']['cats'])) ? implode(",", $qw_query_options['override']['cats']): 'None'; ?></span>
+              </span>
+              <span class="qw-query-title" title="qw-override-tags">
+                Tags: <span><?php print (is_array($qw_query_options['override']['tags'])) ? implode(",", $qw_query_options['override']['tags']): 'None'; ?></span>
+              </span>
             </div>
             <?php
           }
@@ -221,7 +261,12 @@
                   </p>
                   <input class="qw-field-value" size="60" type="text" name="qw-query-options[display][page][path]" value="<?php print $query_page_path; ?>" />
                 </div>
-                
+                <?php
+              }
+              
+              // use template & pager on pages and overrides
+              if($query_type == "page" || $query_type == "override")
+              { ?>
                 <!-- page template -->
                 <div id="qw-page-template" class="qw-query-content qw-single-value">
                   <p>
@@ -290,11 +335,18 @@
               </select>
             </div>
             
-            <!-- page parents -->
-            <div id="qw-post-parent" class="qw-query-content qw-single-value">
-              <p>Use only with post type 'Page' to show results with the chosen parent ID.</p>
-              <input class="qw-field-value" type="text" name="qw-query-options[args][post_parent]" value="<?php print $qw_query_options['args']['post_parent']; ?>" />
-            </div>
+            <?php
+              // overrides don't have page parents
+              if($query_type != 'override')
+              { ?>
+                <!-- page parents -->
+                <div id="qw-post-parent" class="qw-query-content qw-single-value">
+                  <p>Use only with post type 'Page' to show results with the chosen parent ID.</p>
+                  <input class="qw-field-value" type="text" name="qw-query-options[args][post_parent]" value="<?php print $qw_query_options['args']['post_parent']; ?>" />
+                </div>
+                <?php
+              }
+            ?>
                     
             <!-- display type -->
             <div id="qw-display-type" class="qw-query-content qw-single-value">
@@ -353,53 +405,95 @@
             </div>
             
     <!-- Checkboxes -->
-    
-            <!-- categories -->
-            <div id="qw-categories" class="qw-query-content qw-checkbox-values">
-              <p>Select which categories to pull posts from, and how to treat those categories.</p>
-              <div class="qw-checkboxes">
-                <?php
-                  // List all categories as checkboxes
-                  foreach($category_ids as $cat_id)
-                  {
-                    $cat_name = get_cat_name($cat_id);
-                    $cat_checked = (isset($qw_query_options['args']['cat'][$cat_id])) ? 'checked="checked"' : '';
-                    ?>
-                    <label class="qw-query-checkbox"><input type="checkbox" name="qw-query-options[args][cat][<?php print $cat_id; ?>]" value="<?php print $cat_name; ?>" <?php print $cat_checked; ?> /><?php print $cat_name; ?></label> 
+            <?php
+              // override queries have different category and tag options
+              if($query_type == "override")
+              { ?>
+                <!-- override categories -->
+                <div id="qw-override-categories" class="qw-query-content qw-checkbox-values">
+                  <p>Select which categories apply this override to.</p>
+                  <div class="qw-checkboxes">
                     <?php
-                  }
-                ?>
-              </div>
-              <p><strong>Categories Options</strong> - show posts that are:</p>
-              <select name="qw-query-options[args][cat_operator]" class="qw-field-value">
-                <option value="cat" <?php if($qw_query_options['args']['cat_operator'] == "cat") {print 'selected="selected"';} ?>>Any category plus children categories</option>
-                <option value="category__in" <?php if($qw_query_options['args']['cat_operator'] == "category__in") {print 'selected="selected"';} ?>>Any category without children categories</option>
-                <option value="category__and" <?php if($qw_query_options['args']['cat_operator'] == "category__and") {print 'selected="selected"';} ?>>All categories selected</option>
-                <option value="category__not_in" <?php if($qw_query_options['args']['cat_operator'] == "category__not_in") {print 'selected="selected"';} ?>>Not in the categories selected</option>
-              </select>
-            </div>
-            
-            <!-- tags -->
-            <div id="qw-tags" class="qw-query-content qw-checkbox-values">
-              <p>Select which tags to use.</p>
-              <div class="qw-checkboxes">
-                <?php
-                  foreach($tags as $tag)
-                  {
-                    $tag_checked = (isset($qw_query_options['args']['tag'][$tag->term_id])) ? 'checked="checked"' : '';
+                      // List all categories as checkboxes
+                      foreach($category_ids as $cat_id)
+                      {
+                        $cat_name = get_cat_name($cat_id);
+                        $cat_checked = (isset($qw_query_options['override']['cats'][$cat_id])) ? 'checked="checked"' : '';
+                        ?>
+                        <label class="qw-query-checkbox"><input type="checkbox" name="qw-query-options[override][cats][<?php print $cat_id; ?>]" value="<?php print $cat_name; ?>" <?php print $cat_checked; ?> /><?php print $cat_name; ?></label> 
+                        <?php
+                      }
                     ?>
-                    <label class="qw-query-checkbox"><input type="checkbox" name="qw-query-options[args][tag][<?php print $tag->term_id; ?>]" value="<?php print $tag->name; ?>" <?php print $tag_checked; ?> /><?php print $tag->name; ?></label> 
+                  </div>
+                </div>
+                <!-- override tags -->
+                <div id="qw-override-tags" class="qw-query-content qw-checkbox-values">
+                  <p>Select which tags to apply this override to.</p>
+                  <div class="qw-checkboxes">
                     <?php
-                  }
-                ?>
-              </div>
-              <p><strong>Tag Options</strong> - show posts that have:</p>
-              <select name="qw-query-options[args][tag_operator]" class="qw-field-value">
-                <option value="tag__in">Any of the selected tags</option>
-                <option value="tag__and">All of the selected tags</option>
-                <option value="tag__not_in">None of the selected tags</option>
-              </select>
-            </div>
+                      foreach($tags as $tag)
+                      {
+                        $tag_checked = (isset($qw_query_options['override']['tags'][$tag->term_id])) ? 'checked="checked"' : '';
+                        ?>
+                        <label class="qw-query-checkbox"><input type="checkbox" name="qw-query-options[override][tags][<?php print $tag->term_id; ?>]" value="<?php print $tag->name; ?>" <?php print $tag_checked; ?> /><?php print $tag->name; ?></label> 
+                        <?php
+                      }
+                    ?>
+                  </div>
+                </div>
+                <?php
+              }
+              else 
+              { ?>
+                <!-- categories -->
+                <div id="qw-categories" class="qw-query-content qw-checkbox-values">
+                  <p>Select which categories to pull posts from, and how to treat those categories.</p>
+                  <div class="qw-checkboxes">
+                    <?php
+                      // List all categories as checkboxes
+                      foreach($category_ids as $cat_id)
+                      {
+                        $cat_name = get_cat_name($cat_id);
+                        $cat_checked = (isset($qw_query_options['args']['cat'][$cat_id])) ? 'checked="checked"' : '';
+                        ?>
+                        <label class="qw-query-checkbox"><input type="checkbox" name="qw-query-options[args][cat][<?php print $cat_id; ?>]" value="<?php print $cat_name; ?>" <?php print $cat_checked; ?> /><?php print $cat_name; ?></label> 
+                        <?php
+                      }
+                    ?>
+                  </div>
+                  <p><strong>Categories Options</strong> - show posts that are:</p>
+                  <select name="qw-query-options[args][cat_operator]" class="qw-field-value">
+                    <option value="cat" <?php if($qw_query_options['args']['cat_operator'] == "cat") {print 'selected="selected"';} ?>>Any category plus children categories</option>
+                    <option value="category__in" <?php if($qw_query_options['args']['cat_operator'] == "category__in") {print 'selected="selected"';} ?>>Any category without children categories</option>
+                    <option value="category__and" <?php if($qw_query_options['args']['cat_operator'] == "category__and") {print 'selected="selected"';} ?>>All categories selected</option>
+                    <option value="category__not_in" <?php if($qw_query_options['args']['cat_operator'] == "category__not_in") {print 'selected="selected"';} ?>>Not in the categories selected</option>
+                  </select>
+                </div>
+                
+                <!-- tags -->
+                <div id="qw-tags" class="qw-query-content qw-checkbox-values">
+                  <p>Select which tags to use.</p>
+                  <div class="qw-checkboxes">
+                    <?php
+                      foreach($tags as $tag)
+                      {
+                        $tag_checked = (isset($qw_query_options['args']['tag'][$tag->term_id])) ? 'checked="checked"' : '';
+                        ?>
+                        <label class="qw-query-checkbox"><input type="checkbox" name="qw-query-options[args][tag][<?php print $tag->term_id; ?>]" value="<?php print $tag->name; ?>" <?php print $tag_checked; ?> /><?php print $tag->name; ?></label> 
+                        <?php
+                      }
+                    ?>
+                  </div>
+                  <p><strong>Tag Options</strong> - show posts that have:</p>
+                  <select name="qw-query-options[args][tag_operator]" class="qw-field-value">
+                    <option value="tag__in">Any of the selected tags</option>
+                    <option value="tag__and">All of the selected tags</option>
+                    <option value="tag__not_in">None of the selected tags</option>
+                  </select>
+                </div>
+                <?php
+              }
+            ?>
             
             <!-- post types -->
             <div id="qw-post-types" class="qw-query-content qw-checkbox-values">

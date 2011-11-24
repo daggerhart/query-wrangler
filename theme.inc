@@ -208,13 +208,14 @@ function qw_template_query_rows($options, $rows = array())
   } else {
     $style = $options['display']['field_settings']['style'];      
   }
+  $slug = $options['meta']['slug'];
   
   ob_start();
   
   // look for slug specific template in theme folder
   // eg.  query-test_query-unformatted.php
-  if (file_exists(TEMPLATEPATH . "/query-".$options['meta']['slug']."-".$style.".php")){
-    include TEMPLATEPATH . "/query-".$options['meta']['slug']."-".$style.".php";
+  if (file_exists(TEMPLATEPATH . "/query-".$slug."-".$style.".php")){
+    include TEMPLATEPATH . "/query-".$slug."-".$style.".php";
   }
   // look for generic  template in theme folder
   // eg.  query-unformatted.php
@@ -274,7 +275,6 @@ function qw_theme_pager_default($pager, $wp_query)
   }
   // paging with get variable
   else if (isset($_GET['page'])) {
-    $page_array = explode('?', $_SERVER['REQUEST_URI']);
     $page = $_GET['page'];
   }
   

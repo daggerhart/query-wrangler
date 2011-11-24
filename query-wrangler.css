@@ -30,9 +30,6 @@ a.toplevel_page_query-wrangler {
   display: none;
 }
 #qw-page-settings {
-  float: none;
-  clear: both;
-  margin-top: 6px;
 }
 #qw-query-admin-options-wrap {
   margin: 6px;
@@ -114,6 +111,7 @@ label.qw-field-checkbox input {
   background: #f6f6f6;
   border: 1px solid #bbb;
   margin-right: 3%;
+  margin-top: 6px;
   padding-bottom: 4px;
 }
 .qw-query-admin-options h4 {

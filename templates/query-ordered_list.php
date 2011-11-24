@@ -5,7 +5,7 @@
  * $query_details - other query details
  */
 ?>
-<ol class="qw-query-unformatted query-<?php print $query_details['slug']; ?>">
+<ol class="qw-query-unformatted query-<?php print $slug; ?>">
   <?php foreach($rows as $row): ?>
     <li class="<?php print $row['row_classes']; ?>">
       

@@ -5,7 +5,7 @@
  * $query_details - other query details
  */
 ?>
-<div class="qw-query-unformatted query-<?php print $query_details['slug']; ?>">
+<div class="qw-query-unformatted query-<?php print $slug; ?>">
   <?php foreach($rows as $row): ?>
     <div class="<?php print $row['row_classes']; ?>">
       

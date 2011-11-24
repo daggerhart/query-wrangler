@@ -190,7 +190,7 @@ function qw_bind_events(){
   // adding new fields
   jQuery('#qw-add-selected-fields').click(function(){
     qw_add_new_fields();
-    jQuery('#qw-options-form-target #qw-display-add-fields').remove();
+    jQuery('#qw-options-forms .qw-query-content').hide();
     jQuery('#qw-options-target-title').html('&nbsp;');
   });
   

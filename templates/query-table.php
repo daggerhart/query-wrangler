@@ -5,7 +5,7 @@
  * $query_details - other query details
  */
 ?>
-<table class="qw-query-table query-<?php print $query_details['slug']; ?>" cellpadding="0" cellspacing="0" border="0">
+<table class="qw-query-table query-<?php print $slug; ?>" cellpadding="0" cellspacing="0" border="0">
   <thead class="qw-query-table-head">
     <?php foreach($rows[0]['fields'] as $field): ?>
       <th><?php print $field['label']; ?></th>

@@ -162,17 +162,6 @@ function qw_get_all_pages()
     $pages[$i]->post_title = $row->name;
     $pages[$i]->guid = $blog_url.$row->path;
     $pages[$i]->post_type = 'page';
-    // a lot of redudencies because of the nav_menu walker
-    //$pages[$i]->title = $row->name;
-    //$pages[$i]->url = $blog_url.$row->path;
-    //$pages[$i]->type = 'custom';
-    //$pages[$i]->attr_title = '';
-    //$pages[$i]->target = '';
-    //$pages[$i]->xfn = '';
-    //$pages[$i]->menu_parent_item = 0;
-    //$pages[$i]->classes = array('query-page');
-    //$pages[$i]->object_id = $row->id;
-    //$pages[$i]->object = 'query';
   }
   
   return $pages;  

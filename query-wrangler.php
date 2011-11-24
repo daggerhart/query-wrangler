@@ -85,9 +85,9 @@ function qw_admin_css(){
 add_action('admin_head', 'qw_admin_css');
 
 /*
- * Activation hook for database
+ * Activation hooks for database tables
  */
-function qw_install(){
+function qw_query_wrangler_table(){
   global $wpdb;
   $table_name = $wpdb->prefix."query_wrangler";
   $sql = "CREATE TABLE " . $table_name . " (
@@ -103,7 +103,21 @@ function qw_install(){
   require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
   dbDelta($sql);
 }
-register_activation_hook(__FILE__,'qw_install');
+register_activation_hook(__FILE__,'qw_query_wrangler_table');
+
+function qw_query_override_terms_table(){
+  global $wpdb;
+  $table_name = $wpdb->prefix."query_override_terms";
+  $sql = "CREATE TABLE " . $table_name . " (
+	  query_id mediumint(9) NOT NULL,
+   term_id bigint(20) NOT NULL
+	);";
+
+  require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+  dbDelta($sql);
+}
+register_activation_hook(__FILE__,'qw_query_override_terms_table');
+
 
 /*
  * All my hook_menu implementations
@@ -258,6 +272,32 @@ function qw_update_query($post){
     $sql = "UPDATE ".$table_name." SET data = '".$new_data."' WHERE id = ".$query_id;
   }
   $wpdb->query($sql);
+  
+  // addition override work
+  if(is_array($post['qw-query-options']['override']))
+  {
+    $terms = array();
+    // merge categories
+    if(is_array($post['qw-query-options']['override']['cats'])){
+      $terms = array_merge($terms, array_keys($post['qw-query-options']['override']['cats']));
+    }
+    // merge tags
+    if(is_array($post['qw-query-options']['override']['cats'])){
+      $terms = array_merge($terms, array_keys($post['qw-query-options']['override']['tags']));
+    }
+    
+    // delete all existing relationships
+    $table = $wpdb->prefix."query_override_terms";
+    $sql = "DELETE FROM ".$table." WHERE query_id = ".$query_id;
+    $wpdb->query($sql);
+    
+    $data = array('query_id' => $query_id);
+    // loop through all terms and insert them
+    foreach($terms as $term_id){
+      $data['term_id'] = $term_id;
+      $wpdb->insert($table, $data);
+    }
+  }
   
   // send back to edit page
   wp_redirect(get_bloginfo('wpurl').'/wp-admin/admin.php?page=query-wrangler&edit='.$query_id);

@@ -17,6 +17,7 @@
       <select name="qw-type" class="qw-create-select">
         <option value="widget">Widget</option>
         <option value="page">Page</option>
+        <option value="override">Override</option>
       </select>
     </div>
     
