@@ -34,6 +34,13 @@ The easiest way is to add it as a custom link in the Menus section of your site.
 
 == Changelog ==
 
+= 1.2beta2 =
+
+ * Added Wordpress hooks for fields and field styles.
+ * Fixed some bugs with replacement tokens and rewriting output
+ * Fixed some templates from displaying excluded fields
+ * Determined methodology for field callbacks and arguments
+
 = 1.2beta1 =
 
  * Added Wordpress page overrides for categories and tags.
@@ -49,4 +56,4 @@ The easiest way is to add it as a custom link in the Menus section of your site.
 
 == Upgrade Notice ==
 
-1.2beta1 Added Wordpress page overrides for categories and tags, fixed query edit page js bug.
+1.2beta2 Added wordpress hooks, improved fields 
