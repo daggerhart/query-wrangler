@@ -52,7 +52,9 @@
     </div>
     
     <?php
-      // images
+      /*
+       * Images settings
+       */ 
       if($field_settings['type'] == 'image_attachment')
       { ?>
           <!-- image display -->
@@ -78,7 +80,9 @@
         <?php
       }
       
-      // files
+      /*
+       * Files settings
+       */ 
       if($field_settings['type'] == 'file_attachment')
       { ?>
           <!-- file display -->
@@ -102,6 +106,7 @@
             </select>
           </div>
         <?php
-      }    ?>
+      }
+    ?>
   </div>
 </div>
