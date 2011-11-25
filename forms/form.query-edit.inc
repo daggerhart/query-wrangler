@@ -45,7 +45,7 @@
   // image sizes
   $image_sizes = get_intermediate_image_sizes();
   // file styles
-  $file_styles = qw_file_styles();
+  $file_styles = qw_all_file_styles();
   
   // fields and styles
   $fields = qw_all_fields();

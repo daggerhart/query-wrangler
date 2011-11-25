@@ -116,76 +116,90 @@ function qw_make_fields_rows($new_query, $display)
     // loop through each field
     foreach($display['field_settings']['fields'] as $field_name => $field_settings)
     {
-      if(!$field_settings['exclude_display']){
-        // field open
-        $field_classes = array('qw-field');
-        $field_classes[] = 'qw-field-'.$field_settings['name'];
+      // field open
+      $field_classes = array('qw-field');
+      $field_classes[] = 'qw-field-'.$field_settings['name'];
+      
+      $rows[$i]['fields'][$field_name]['classes'] = implode(" ",$field_classes);
         
-        $rows[$i]['fields'][$field_name]['classes'] = implode(" ",$field_classes);
-          
-        // get field details from all fields list
-        $field_defaults = $all_fields[$field_settings['type']];
+      // get field details from all fields list
+      $field_defaults = $all_fields[$field_settings['type']];
 
-        // look for callback
-        if(isset($field_defaults['callback'])){
-          // meta keys
-          if($field_defaults['callback'] == 'get_post_meta'){
-            $rows[$i]['fields'][$field_name]['output'] = $field_defaults['callback']($this_post->ID, $field_defaults['arguments']['key'], true);
-          }
-          // image fields
-          else if($field_defaults['callback'] == 'qw_theme_image'){
-            $rows[$i]['fields'][$field_name]['output'] = $field_defaults['callback']($this_post->ID, $field_settings['image_display_style'], $field_settings['image_display_count']);
-          }
-          // file fields
-          else if($field_defaults['callback'] == 'qw_theme_file'){
-            $rows[$i]['fields'][$field_name]['output'] = $field_defaults['callback']($this_post->ID, $field_settings['file_display_style'], $field_settings['file_display_count']);
-          }          
-          // TODO: a generic method for using an array to execute a funtion
-          // other callbacks
-          //else if (is_array($field['args'])){
-          //  $rows[$i]['fields'][$field_name]['output'] = call_user_func_array($field['callback'](), array_values($fields['args']));
-          //}        
-          // normal callback
-          else { 
-            $rows[$i]['fields'][$field_name]['output'].= $field_defaults['callback']();
-          }
-        }
-        // use field itself
-        else {
-          $rows[$i]['fields'][$field_name]['output'].= $this_post->{$field_settings['type']};
-        }
-        
-        // add token for replace
-        $tokens['{{'.$field_name.'}}'] = $rows[$i]['fields'][$field_name]['output'];
-        
-        // look for rewrite output
-        if(isset($field_settings['rewrite_output'])){
-          // replace tokens with results
-          $field_settings['custom_output'] = str_replace(array_keys($tokens), array_values($tokens), $field_settings['custom_output']);
-          // update output
-          /*
-          ob_start();
-            eval('?>'.$field_settings['custom_output']);
-          $rows[$i]['fields'][$field_name]['output'] = ob_get_clean();
-          */
-          $rows[$i]['fields'][$field_name]['output'] = $field_settings['custom_output'];
-        }
-        
-        // apply link to field
-        if(isset($field_settings['link'])){
-          $rows[$i]['fields'][$field_name]['output'] = '<a class="query-field-link" href="'.get_permalink().'">'.$rows[$i]['fields'][$field_name]['output'].'</a>';
-        }
-        
-        // get default field label for tables
-        $rows[$i]['fields'][$field_name]['label'] = ($field_settings['has_label']) ? $field_settings['label'] : '';
-        
-        // apply labels to full style fields
-        if(isset($field_settings['has_label']) &&
-           $display['type'] != 'full' &&
-           $display['field_settings']['style'] != 'table')
+      // look for callback
+      if(isset($field_defaults['callback']))
+      {       
+        // callbacks with arguments
+        if (is_array($field_defaults['arguments']))
         {
-          $rows[$i]['fields'][$field_name]['output'] = '<label class="query-label">'.$field_settings['label'].'</label>'.$rows[$i]['fields'][$field_name]['output'];
+          $args = array();
+          foreach($field_defaults['arguments'] as $key => $argument_token)
+          {
+            // split the argument into op & value
+            $op = explode(':', $argument_token);
+            
+            // see if we have a value
+            if(isset($op[1]))
+            {
+              // post object variable
+              if($op[0] == 'this'){
+                $args[$key] = $this_post->{$op[1]};
+              }
+              
+              // feild setting  variable
+              if($op[0] == 'setting'){
+                $args[$key] = $field_settings[$op[1]];
+              }
+            }
+            // if not, use the value given in the field definition
+            else
+            {
+              // acts as a default value
+              $args[$key] = $argument_token;
+            }
+          }
+          
+          // run the callback function with the arguments list
+          $rows[$i]['fields'][$field_name]['output'] = call_user_func_array($field_defaults['callback'], array_values($args));
         }
+        // normal callback w/o arguments
+        else { 
+          $rows[$i]['fields'][$field_name]['output'].= $field_defaults['callback']();
+        }
+      }
+      // use field itself
+      else {
+        $rows[$i]['fields'][$field_name]['output'].= $this_post->{$field_settings['type']};
+      }
+      
+      // apply link to field
+      if(isset($field_settings['link'])){
+        $rows[$i]['fields'][$field_name]['output'] = '<a class="query-field-link" href="'.get_permalink().'">'.$rows[$i]['fields'][$field_name]['output'].'</a>';
+      }
+      
+      // get default field label for tables
+      $rows[$i]['fields'][$field_name]['label'] = ($field_settings['has_label']) ? $field_settings['label'] : '';
+      
+      // apply labels to full style fields
+      if(isset($field_settings['has_label']) &&
+         $display['type'] != 'full' &&
+         $display['field_settings']['style'] != 'table')
+      {
+        $rows[$i]['fields'][$field_name]['output'] = '<label class="query-label">'.$field_settings['label'].'</label>'.$rows[$i]['fields'][$field_name]['output'];
+      }
+      
+      // add token for replace
+      $tokens['{{'.$field_name.'}}'] = $rows[$i]['fields'][$field_name]['output'];
+      
+      // look for rewrite output
+      if(isset($field_settings['rewrite_output'])){
+        // replace tokens with results
+        $field_settings['custom_output'] = str_replace(array_keys($tokens), array_values($tokens), $field_settings['custom_output']);
+        $rows[$i]['fields'][$field_name]['output'] = $field_settings['custom_output'];
+      }
+      
+      // after all operations, remove if excluded
+      if($field_settings['exclude_display']){
+        unset($rows[$i]['fields'][$field_name]['output']);
       }
     }
     // increment row
@@ -203,32 +217,39 @@ function qw_make_fields_rows($new_query, $display)
  */ 
 function qw_template_query_rows($options, $rows = array())
 {
+  $all_styles = qw_all_field_styles();
+  
+  // get style type from display style
   if($options['display']['type'] == 'full'){
-    $style = $options['display']['full_settings']['style'];    
+    $style_type = $options['display']['full_settings']['style'];    
   } else {
-    $style = $options['display']['field_settings']['style'];      
+    $style_type = $options['display']['field_settings']['style'];      
   }
+  
+  $style = $all_styles[$style_type];
   $slug = $options['meta']['slug'];
   
-  ob_start();
-  
-  // look for slug specific template in theme folder
-  // eg.  query-test_query-unformatted.php
-  if (file_exists(TEMPLATEPATH . "/query-".$slug."-".$style.".php")){
-    include TEMPLATEPATH . "/query-".$slug."-".$style.".php";
+  if(is_array($style)){
+    ob_start();
+    
+    // look for slug specific template in theme folder
+    // eg.  query-unformatted-test_query.php
+    if (file_exists(TEMPLATEPATH . '/'.$style['template'].'-'.$slug.'.php')){
+      include TEMPLATEPATH . '/'.$style['template'].'-'.$slug.'.php';
+    }
+    // look for generic  template in theme folder
+    // eg.  query-unformatted.php
+    else if (file_exists(TEMPLATEPATH . '/'.$style['template'].'.php')){
+      include TEMPLATEPATH . '/'.$style['template'].'.php';
+    }
+    // fallback on default template
+    else {
+      include rtrim($style['default_path'], '/').'/'.$style['template'].'.php';
+    }
+    $templated = ob_get_clean();
+    
+    return $templated;
   }
-  // look for generic  template in theme folder
-  // eg.  query-unformatted.php
-  else if (file_exists(TEMPLATEPATH . "/query-".$style.".php")){
-    include TEMPLATEPATH . "/query-".$style.".php";
-  }
-  // fallback on default template
-  else{
-    include QW_PLUGIN_DIR. '/templates/query-'.$style.'.php';
-  }
-  $templated = ob_get_clean();
-  
-  return $templated;
 }
 
 /*
@@ -370,7 +391,7 @@ function qw_get_post_files($post_id)
  * @param $image_type
  * @param $count;
  */
-function qw_theme_image($post_id, $image_size, $count = 0)
+function qw_theme_image($post_id, $style, $count = 0)
 {
   $images = qw_get_post_images($post_id);
   if(is_array($images)){
@@ -378,7 +399,7 @@ function qw_theme_image($post_id, $image_size, $count = 0)
     $i = 0;
     foreach($images as $image){
       if($count == 0 || ($i < $count)){
-        $output.= wp_get_attachment_image($image->ID, $image_size);
+        $output.= wp_get_attachment_image($image->ID, $style);
       }
       $i++;
     }

@@ -81,21 +81,21 @@
       // files
       if($field_settings['type'] == 'file_attachment')
       { ?>
-          <!-- image display -->
+          <!-- file display -->
           <div class="qw-options-group">
             <strong>Number of items to show:</strong> <br />
             <input type="text"
                 name='qw-query-options[display][field_settings][fields][<?php print $field_name; ?>][file_display_count]'
                 value="<?php print ($qw_query_options['display']['field_settings']['fields'][$field_name]['file_display_count']) ? $qw_query_options['display']['field_settings']['fields'][$field_name]['file_display_count']: 0;?>" />
             <br />
-            <strong>Image Display Style:</strong><br />
+            <strong>File Display Style:</strong><br />
             <select name='qw-query-options[display][field_settings][fields][<?php print $field_name; ?>][file_display_style]'>
               <?php
-                foreach($file_styles as $key => $style)
+                foreach($file_styles as $key => $file_style_details)
                 {
                   $style_selected = ($qw_query_options['display']['field_settings']['fields'][$field_name]['file_display_style'] == $key) ? 'selected="selected"' : '';
                   ?>
-                    <option value="<?php print $key; ?>" <?php print $style_selected; ?>><?php print $style; ?></option>
+                    <option value="<?php print $key; ?>" <?php print $style_selected; ?>><?php print $file_style_details['description']; ?></option>
                   <?php
                 }
               ?>

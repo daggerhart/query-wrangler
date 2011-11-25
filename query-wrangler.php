@@ -30,10 +30,12 @@ include QW_PLUGIN_DIR.'/query.inc';
 include QW_PLUGIN_DIR.'/theme.inc';
 // Query page handling
 include QW_PLUGIN_DIR.'/pages.inc';
+// Wordpress hooks
+include QW_PLUGIN_DIR.'/data.hooks.inc';
 // Field and field style definitions
 include QW_PLUGIN_DIR.'/data.fields.inc';
 // Query Widget
-include QW_PLUGIN_DIR.'/widget-query.php';
+include QW_PLUGIN_DIR.'/widget.query.php';
 
 /*
  * Ajax including form
@@ -42,7 +44,7 @@ function qw_form_field_ajax(){
   // image sizes
   $image_sizes = get_intermediate_image_sizes();
   // file styles
-  $file_styles = qw_file_styles();
+  $file_styles = qw_all_file_styles();
   // set some data from POST
   $field_name = $_POST['field_name'];
   $field_settings['type'] = $_POST['field_type'];
@@ -128,18 +130,21 @@ function qw_menu()
   $list_page    = add_menu_page( 'Query Wrangler', 'Query Wrangler', 'manage_options', 'query-wrangler', 'qw_page_handler', '', 30);
   // http://codex.wordpress.org/Function_Reference/add_submenu_page
   $create_page  = add_submenu_page( 'query-wrangler', 'Create New Query', 'Add New', 'manage_options', 'qw-create', 'qw_create_query');
-  //$debug_page  = add_submenu_page( 'query-wrangler', 'Debug', 'Debug', 'manage_options', 'qw-debug', 'qw_debug');
+  $debug_page  = add_submenu_page( 'query-wrangler', 'Debug', 'Debug', 'manage_options', 'qw-debug', 'qw_debug');
 }
 add_action( 'admin_menu', 'qw_menu');
 
 /*
  * Simple debugging location
  */
-//function qw_debug(){
+function qw_debug(){
+  krumo(qw_all_fields());
+  krumo(qw_all_field_styles());
+  krumo(qw_all_file_styles());
 //  print '<pre>';
 //  print_r(get_pages());
 //  print '</pre>';
-//}
+}
 
 /*
  * Handle the display of pages and actions

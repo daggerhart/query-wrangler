@@ -1,70 +1,72 @@
 <?php 
-
 /*
  * All Fields and Settings
  * 
  * @return array Available query fields
  */
-/*
-  Fields to add:
-    author (int) - use author id.
-    author_name (string) - use 'user_nicename' (NOT name). 
-
-*/
-function qw_all_fields(){
-  $fields = array(
-    'ID'  => array(
-      'label' => 'Post ID',
+function qw_default_fields($fields)
+{
+  $fields['ID'] = array(
+    'label' => 'Post ID',
+  );
+  $fields['post_title'] = array(
+    'label' => 'Post Title',
+    'callback' => 'get_the_title',
+  );
+  $fields['post_content'] = array(
+    'label' => 'Post Content',
+    'callback' => 'get_the_content',
+  );
+  $fields['post_excerpt'] = array(
+    'label' => 'Post Excerpt',
+    'callback' => 'get_the_excerpt',
+  );
+  $fields['post_author'] = array(
+    'label' => 'Post Author',
+    'callback' => 'get_the_author',
+  );
+  $fields['post_date'] = array(
+    'label' => 'Post Date',
+    'callback' => 'get_the_date',
+  );
+  $fields['post_status'] = array(
+    'label' => 'Post Status',
+  );
+  $fields['post_parent'] = array(
+    'label' => 'Post Parent',
+  );
+  $fields['post_modified'] = array(
+    'label' => 'Post Modified',
+  );
+  $fields['guid'] = array(
+    'label' => 'GUID',
+  );
+  $fields['post_type'] = array(
+    'label' => 'Post Type',
+  );
+  $fields['comment_count'] = array(
+    'label' => 'Comment Count',
+  );
+  $fields['permalink'] = array(
+    'label' => 'Permalink',
+    'callback' => 'get_permalink',
+  );
+  $fields['image_attachment'] = array(
+    'label' => 'Image Attachment',
+    'callback' => 'qw_theme_image',
+    'arguments' => array(
+      'post_id' => 'this:ID',
+      'style' => 'setting:image_display_style',
+      'count' => 'setting:image_display_count',
     ),
-    'post_title' => array(
-      'label' => 'Post Title',
-      'callback' => 'get_the_title',
-    ),
-    'post_content' => array(
-      'label' => 'Post Content',
-      'callback' => 'get_the_content',
-    ),
-    'post_excerpt' => array(
-      'label' => 'Post Excerpt',
-      'callback' => 'get_the_excerpt',
-    ),
-    'post_author' => array(
-      'label' => 'Post Author',
-      'callback' => 'get_the_author',
-    ),
-    'post_date' => array(
-      'label' => 'Post Date',
-      'callback' => 'get_the_date',
-    ),
-    'post_status' => array(
-      'label' => 'Post Status',
-    ),
-    'post_parent' => array(
-      'label' => 'Post Parent',
-    ),
-    'post_modified' => array(
-      'label' => 'Post Modified',
-    ),
-    'guid' => array(
-      'label' => 'GUID',
-    ),
-    'post_type' => array(
-      'label' => 'Post Type',
-    ),
-    'comment_count' => array(
-      'label' => 'Comment Count',
-    ),
-    'permalink' => array(
-      'label' => 'Permalink',
-      'callback' => 'get_permalink',
-    ),
-    'image_attachment' => array(
-      'label' => 'Image Attachment',
-      'callback' => 'qw_theme_image',
-    ),
-    'file_attachment' => array(
-      'label' => 'File Attachment',
-      'callback' => 'qw_theme_file'
+  );
+  $fields['file_attachment'] = array(
+    'label' => 'File Attachment',
+    'callback' => 'qw_theme_file',
+    'arguments' => array(
+      'post_id' => 'this:ID',
+      'style' => 'setting:file_display_style',
+      'count' => 'setting:file_display_count',
     ),
   );
   
@@ -81,7 +83,9 @@ function qw_all_fields(){
         'label' => 'Meta: '.$key,
         'callback' => 'get_post_meta',
         'arguments' => array(
-          'key' => $key,
+          'post_id' => 'this:ID',
+          'meta_key' => $key,
+          'single' => 1, // true
         ),
       );
     }
@@ -94,12 +98,31 @@ function qw_all_fields(){
  * 
  * @return array Field Styles
  */
-function qw_all_field_styles(){
-  $field_styles = array(
-    'unformatted' => array(),
-    'unordered_list' => array(),
-    'ordered_list' => array(),
-    'table' => array(),
+function qw_default_field_styles($field_styles)
+{
+  $field_styles['complete'] = array(
+    'template' => 'query-complete',
+    'default_path' => QW_PLUGIN_DIR.'/templates', // do not include last slash
+  );
+  $field_styles['excerpt'] = array(
+    'template' => 'query-excerpt',
+    'default_path' => QW_PLUGIN_DIR.'/templates', // do not include last slash
+  );
+  $field_styles['unformatted'] = array(
+    'template' => 'query-unformatted',
+    'default_path' => QW_PLUGIN_DIR.'/templates', // do not include last slash
+  );
+  $field_styles['unordered_list'] = array(
+    'template' => 'query-unordered_list',
+    'default_path' => QW_PLUGIN_DIR.'/templates', // do not include last slash
+  );
+  $field_styles['ordered_list'] = array(
+    'template' => 'query-ordered_list',
+    'default_path' => QW_PLUGIN_DIR.'/templates', // do not include last slash
+  );
+  $field_styles['table'] = array(
+    'template' => 'query-table',
+    'default_path' => QW_PLUGIN_DIR.'/templates', // do not include last slash
   );
   
   return $field_styles;
@@ -109,12 +132,18 @@ function qw_all_field_styles(){
  * 
  * @return array of file styles
  */
-function qw_file_styles(){
-  $file_styles = array(
-    'link' => 'Filename Link to File',
-    'link_url' => 'URL Link to File',
-    'url'  => 'URL of File',
+function qw_default_file_styles($file_styles)
+{
+  $file_styles['link'] = array(
+    'description' => 'Filename Link to File',
   );
+  $file_styles['link_url'] = array(
+    'description' => 'URL Link to File',
+  );
+  $file_styles['url'] = array(
+    'description' => 'URL of File',
+  );
+
   return $file_styles;
 }
 /*

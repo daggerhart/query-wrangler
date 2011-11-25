@@ -10,9 +10,11 @@
     <li class="<?php print $row['row_classes']; ?>">
       
       <?php foreach($row['fields'] as $field): ?>
-        <div class="<?php print $field['classes']; ?>">
-          <?php print $field['output']; ?>
-        </div>
+        <?php if(isset($field['output'])): ?>
+          <div class="<?php print $field['classes']; ?>">
+            <?php print $field['output']; ?>
+          </div>
+        <?php endif; ?>
       <?php endforeach; ?>
     
     </li>

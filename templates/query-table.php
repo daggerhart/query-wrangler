@@ -16,9 +16,11 @@
       <tr class="<?php print $row['row_classes']; ?>">
         
         <?php foreach($row['fields'] as $field): ?>
-          <td class="<?php print $field['classes']; ?>">
-            <?php print $field['output']; ?>
-          </td>
+          <?php if(isset($field['output'])): ?>
+            <div class="<?php print $field['classes']; ?>">
+              <?php print $field['output']; ?>
+            </div>
+          <?php endif; ?>
         <?php endforeach; ?>
       
       </tr>
