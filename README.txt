@@ -34,6 +34,11 @@ The easiest way is to add it as a custom link in the Menus section of your site.
 
 == Changelog ==
 
+= 1.2beta1 =
+
+ * Added Wordpress page overrides for categories and tags.
+ * Fixed query edit page js bug.
+
 = 1.1beta =
 
  * Bug with canceling forms.  Changed use of jQuery unserializeForm
@@ -44,4 +49,4 @@ The easiest way is to add it as a custom link in the Menus section of your site.
 
 == Upgrade Notice ==
 
-1.1beta Fixed Form Cancellation bug
+1.2beta1 Added Wordpress page overrides for categories and tags, fixed query edit page js bug.
