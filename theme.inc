@@ -1,5 +1,26 @@
 <?php
 /*
+ * Template Wrangler templates
+ */
+function qw_templates($templates){
+  $templates['query_edit'] = array(
+    'files' => 'forms/form.query-edit.inc',
+    'default_path' => QW_PLUGIN_DIR,
+  );
+  $templates['query_create'] = array(
+    'files' => 'forms/form.query-create.inc',
+    'default_path' => QW_PLUGIN_DIR,
+  );
+  $templates['query_field'] = array(
+    'files' => '/forms/form.query-field.inc',
+    'default_path' => QW_PLUGIN_DIR,
+  );    
+  return $templates;
+}
+// tw hook
+add_filter('tw_templates', 'qw_templates');
+
+/*
  * Template the entire query
  * 
  * @param array $wp_query Wordpress query object

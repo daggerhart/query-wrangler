@@ -25,30 +25,36 @@ define('QW_PLUGIN_DIR', dirname(__FILE__));
 define('QW_PLUGIN_URL', get_bloginfo('wpurl')."/wp-content/plugins/query-wrangler");
 
 // include Query Widgets functions
-include QW_PLUGIN_DIR.'/query.inc';
+include_once QW_PLUGIN_DIR.'/query.inc';
 // Theme functions
-include QW_PLUGIN_DIR.'/theme.inc';
+include_once QW_PLUGIN_DIR.'/theme.inc';
 // Query page handling
-include QW_PLUGIN_DIR.'/pages.inc';
+include_once QW_PLUGIN_DIR.'/pages.inc';
 // Wordpress hooks
-include QW_PLUGIN_DIR.'/data.hooks.inc';
+include_once QW_PLUGIN_DIR.'/data.hooks.inc';
 // Field and field style definitions
-include QW_PLUGIN_DIR.'/data.fields.inc';
+include_once QW_PLUGIN_DIR.'/data.fields.inc';
 // Query Widget
-include QW_PLUGIN_DIR.'/widget.query.php';
+include_once QW_PLUGIN_DIR.'/widget.query.php';
+
+// include Template Wrangler
+if(!function_exists('theme')){
+  include_once QW_PLUGIN_DIR.'/template-wrangler.inc';
+}
 
 /*
  * Ajax including form
  */
 function qw_form_field_ajax(){
-  // image sizes
-  $image_sizes = get_intermediate_image_sizes();
-  // file styles
-  $file_styles = qw_all_file_styles();
-  // set some data from POST
-  $field_name = $_POST['field_name'];
-  $field_settings['type'] = $_POST['field_type'];
-  include QW_PLUGIN_DIR.'/forms/form.query-field.inc';
+  $args = array(
+    'image_sizes' => get_intermediate_image_sizes(),
+    'file_styles' => qw_all_file_styles(),
+    'field_name' => $_POST['field_name'],
+    'field_settings' => array(
+      'type' => $_POST['field_type'],
+    ),   
+  );
+  print theme('query_field', $args);
   exit;
 }
 add_action( 'wp_ajax_nopriv_qw_form_field_ajax', 'qw_form_field_ajax' );
@@ -138,6 +144,8 @@ add_action( 'admin_menu', 'qw_menu');
  * Simple debugging location
  */
 function qw_debug(){
+  print theme('admin_wrapper');
+  
   krumo(qw_all_fields());
   krumo(qw_all_field_styles());
   krumo(qw_all_file_styles());
@@ -196,8 +204,81 @@ function qw_page_handler(){
  */
 function qw_create_query()
 {
-  include QW_PLUGIN_DIR.'/forms/form.query-create.inc';
+  print theme('admin_wrapper', array('title' => 'Create Query', 'content' => theme('query_create')));
 }
+/*
+ * Query Edit Page
+ */ 
+function qw_edit_query_form()
+{
+  if($_GET['edit'])
+  {
+    $query_id = $_GET['edit'];  
+    // get the query
+    global $wpdb;
+    $table_name = $wpdb->prefix."query_wrangler";
+    $sql = "SELECT name,type,data,path FROM ".$table_name." WHERE id = ".$query_id." LIMIT 1";
+    $row = $wpdb->get_row($sql);
+    
+    // Get all extra post types 
+    $post_types = get_post_types(array('public' => true, '_builtin' => false), 'names', 'and');
+    // Add standard types
+    $post_types['post'] = 'post';
+    $post_types['page'] = 'page';
+    // sort types
+    ksort($post_types); 
+    
+    // start building edit page data
+    $edit_args = array(
+      'query_id' => $query_id,
+      'qw_query_options' => unserialize($row->data),
+      'query_name' => $row->name,
+      'query_type' => $row->type,
+      // categories
+      'category_ids' => get_all_category_ids(),
+      // tags
+      'tags' => get_tags(array('hide_empty' => false)),
+      // image sizes
+      'image_sizes' => get_intermediate_image_sizes(),
+      // file styles
+      'file_styles' => qw_all_file_styles(),
+      // all qw fields
+      'fields' => qw_all_fields(),
+      // all qw field styles
+      'field_styles' => qw_all_field_styles(),
+      // all WP post types available for QWing
+      'post_types' => $post_types,
+    );
+    
+    // sort fields according to weight  
+    if(is_array($edit_args['qw_query_options']['display']['field_settings']['fields'])){  
+      uasort($edit_args['qw_query_options']['display']['field_settings']['fields'],'qw_cmp');
+    }
+    
+    // overrides
+    if($row->type == 'override'){
+      $edit_args['query_override_type'] = $row->override_type;
+    }
+    
+    // Page Queries
+    if($row->type == 'page'){
+      $edit_args['query_page_path'] = $row->path;
+      $edit_args['query_page_title'] = $edit_args['qw_query_options']['display']['title'];
+      $edit_args['page_templates'] = get_page_templates();
+    }
+    
+    // admin wrapper arguments
+    $admin_args = array(
+      'title' => 'Edit query <em>'.$edit_args['query_name'].'</em>',
+      // content is the query_edit page
+      'content' => theme('query_edit', $edit_args)
+    );
+    
+    // include the edit form
+    print theme('admin_wrapper', $admin_args); 
+  }
+}
+
 /*
  * Create the new Query
  * 
@@ -317,14 +398,4 @@ function qw_delete_query($query_id){
   $table_name = $wpdb->prefix."query_wrangler";
   $sql = "DELETE FROM ".$table_name." WHERE id = ".$query_id;
   $wpdb->query($sql);  
-}
-/*
- * Query Edit Page
- */ 
-function qw_edit_query_form()
-{
-  if($_GET['edit']){
-    // include the edit form
-    include QW_PLUGIN_DIR.'/forms/form.query-edit.inc'; 
-  }
 }
