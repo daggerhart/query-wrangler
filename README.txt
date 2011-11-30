@@ -1,5 +1,5 @@
 === Query Wrangler ===
-Contributors: daggerhart
+Contributors: daggerhart, forrest.livengood
 Tags: query, pages, widget, admin, widgets, administration, manage, views
 Requires at least: 3
 Tested up to: 3.2.1
@@ -9,12 +9,17 @@ This plugin lets you create new WP queries as pages or widgets. It's basically D
 
 == Description ==
 
-This plugin lets you create new WP queries as pages or widgets. It's basically Drupal Views for WordPress.
+This plugin lets you create new WP queries as pages or widgets.  It also allows you to override the way category and tag pages display.
 
 Highly based on Drupal's Views, the Query Wrangler's interface is highly intuitive for any Drupal View's user.
 
-This plugin will bring extreme flexibility to WordPress users with it's ability to create custom queries using the WP_Query class. 
+This plugin will bring extreme flexibility to WordPress users with it's ability to create custom queries using the WP_Query class with a user interface.
 
+Some examples of how you would use this plugin include:
+
+* Create a list of pages or posts with a specific category or tag
+* Create an image gallery
+* Modify the way your category pages look
 
 == Installation ==
 
@@ -28,18 +33,32 @@ This plugin will bring extreme flexibility to WordPress users with it's ability 
 
 The easiest way is to add it as a custom link in the Menus section of your site.
 
+= How do I use query shortcodes? =
+
+Easy, the code you're lookind for looks like this.   [query id=2] , where the number 2 is the query id.
+
+= What are overrides and how do I use them? =
+
+Overrides allow you to alter the display and information given on category and tag pages.
+For a simple example, add a new query and chose the type `override`.  Choose what you want to display then examine the `Override Settings` options.
+Select a category or multiple categories to override.   Save the query, then visit that category page.
+
 == Screenshots ==
 
 1. Query Wrangler edit screen
 
 == Changelog ==
 
-= 1.2beta2 =
+= 1.3beta1 =
 
  * Added Wordpress hooks for fields and field styles.
  * Fixed some bugs with replacement tokens and rewriting output
  * Fixed some templates from displaying excluded fields
  * Determined methodology for field callbacks and arguments
+
+= 1.2beta2 =
+
+ * Added shortcode support
 
 = 1.2beta1 =
 
@@ -56,4 +75,4 @@ The easiest way is to add it as a custom link in the Menus section of your site.
 
 == Upgrade Notice ==
 
-1.2beta2 Added wordpress hooks, improved fields 
+1.3beta1 Added wordpress hooks, improved fields, lots of other fixes and improvements

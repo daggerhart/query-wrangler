@@ -17,9 +17,9 @@
         
         <?php foreach($row['fields'] as $field): ?>
           <?php if(isset($field['output'])): ?>
-            <div class="<?php print $field['classes']; ?>">
+            <td class="<?php print $field['classes']; ?>">
               <?php print $field['output']; ?>
-            </div>
+            </td>
           <?php endif; ?>
         <?php endforeach; ?>
       

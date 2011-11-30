@@ -3,6 +3,7 @@
  * Template Wrangler templates
  */
 function qw_templates($templates){
+  // admin queries
   $templates['query_edit'] = array(
     'files' => 'forms/form.query-edit.inc',
     'default_path' => QW_PLUGIN_DIR,
@@ -12,14 +13,58 @@ function qw_templates($templates){
     'default_path' => QW_PLUGIN_DIR,
   );
   $templates['query_field'] = array(
-    'files' => '/forms/form.query-field.inc',
+    'files' => 'forms/form.query-field.inc',
     'default_path' => QW_PLUGIN_DIR,
-  );    
+  );
+  
+  // display queries style wrapper
+  $templates['query_display_wrapper'] = array(
+    'files' => array(
+      'query-wrapper-[slug].php',
+      'query-wrapper.php',
+      'templates/query-wrapper.php',
+    ),
+    'default_path' => QW_PLUGIN_DIR,
+    'arguments' => array(
+      'slug' => '',
+    )
+  );
+  // full and field styles
+  $templates['query_display_rows'] = array(
+    'files' => array(
+      '[template]-[slug].php',
+      '[template].php',
+      'templates/[template].php',
+    ),
+    'default_path' => QW_PLUGIN_DIR,
+    'arguments' => array(
+      'template' => '',
+      'slug' => '',
+      'style' => array(),
+      'rows' => array(),
+    )
+  );
+  
   return $templates;
 }
 // tw hook
 add_filter('tw_templates', 'qw_templates');
-
+/*
+ * Preprocess query_display_rows to allow field styles to define their own default path
+ */
+function theme_query_display_rows_preprocess($template)
+{
+  // make sure we know what style to use
+  if(isset($template['arguments']['style']))
+  {
+    // get the specific style
+    $all_styles = qw_all_field_styles();
+    $style = $all_styles[$template['arguments']['style']];
+    // set this template's default path to the style's default path
+    $template['default_path'] = $style['default_path'];
+  }
+  return $template;
+}
 /*
  * Template the entire query
  * 
@@ -32,75 +77,79 @@ function qw_template_query($wp_query, $options)
   $results_count = count($wp_query->posts);
   $content = '';
   
+  // start building theme arguments  
+  $wrapper_args = array(
+    'slug' => $options['meta']['slug'],
+  );
+  
   // look for empty results
   if ($results_count > 0)
   {
-    // see if page needs pagination
-    //if ($results_count < $options['args']['posts_per_page']){
-    //  $options['meta']['pagination'] = false;
-    //}
+    $all_styles = qw_all_field_styles();
     
     // the content of the widget is the result of the query
-    if($options['display']['type'] == "full"){
-      $content = qw_template_query_rows($options, $wp_query);
+    if($options['display']['type'] == "full")
+    {
+      // get style type from display style
+      $style = $all_styles[$options['display']['full_settings']['style']];
+      // setup row template arguments
+      $template_args = array(
+        'template' => $style['template'],
+        'slug' => $options['meta']['slug'],
+        'style' => $options['display']['full_settings']['style'],
+        'rows' => $wp_query,
+      );
     }
     else if ($options['display']['type'] == "fields")
     {
-      // run style function
-      $field_rows = qw_make_fields_rows($wp_query, $options['display']);
-      $content = qw_template_query_rows($options, $field_rows);
+      // get style type from display style
+      $style = $all_styles[$options['display']['field_settings']['style']];
+      // setup row template arguments
+      $template_args = array(
+        'template' => $style['template'],
+        'slug' => $options['meta']['slug'],
+        'style' => $options['display']['field_settings']['style'],
+        // make rows
+        'rows' => qw_make_fields_rows($wp_query, $options['display']),
+      );
     }
+    // template the query rows
+    $wrapper_args['content'] = theme('query_display_rows', $template_args);
   }
   // empty results  
   else {
-    // no pages
+    // no pagination
     $options['meta']['pagination'] = false;
-    $content = '<div class="query-empty">'.$options['meta']['empty'].'</div>';
+    // show empty text
+    $wrapper_args['content'] = '<div class="query-empty">'.$options['meta']['empty'].'</div>';
   }
   
   $wrapper_classes = array();
   $wrapper_classes[] = 'query';
   $wrapper_classes[] = 'query-'.$options['meta']['slug'].'-wrapper';
-  $wrapper_classes = implode(" ", $wrapper_classes);
+  $wrapper_args['wrapper_classes'] = implode(" ", $wrapper_classes);
   
   // header
   if($options['meta']['header'] != '') {
-    $header = $options['meta']['header'];
+    $wrapper_args['header'] = $options['meta']['header'];
   }
   // footer
   if($options['meta']['footer'] != '') {
-    $footer = $options['meta']['footer'];
+    $wrapper_args['footer'] = $options['meta']['footer'];
   }
     
   // pagination
   if($options['meta']['pagination'] && isset($options['display']['page']['pager']['active'])){
-    $pager = qw_make_pager($options['display']['page']['pager'], $wp_query);
     $pager_classes = array();
     $pager_classes[] = 'query-pager';
     $pager_classes[] = 'pager-'.$options['display']['page']['pager']['type'];
-    $pager_classes = implode(" ", $pager_classes);
+    $wrapper_args['pager_classes'] = implode(" ", $pager_classes);
+    // pager
+    $wrapper_args['pager'] = qw_make_pager($options['display']['page']['pager'], $wp_query);
   }
-  
-  // template the widget
-  ob_start();
-    // look for slug specific template in theme folder
-    // eg.  query-test_query-wrapper.php
-    if (file_exists(TEMPLATEPATH . "/query-".$options['meta']['slug']."-wrapper.php")){
-      include TEMPLATEPATH . "/query-".$options['meta']['slug']."-wrapper.php";
-    }
-    // look for generic  template in theme folder
-    // eg.  query-unformatted.php
-    else if (file_exists(TEMPLATEPATH . "/query-wrapper.php")){
-      include TEMPLATEPATH . "/query-wrapper.php";
-    }
-    // fallback on default template
-    else{
-      include QW_PLUGIN_DIR. '/templates/query-wrapper.php';
-    }
-    $themed = ob_get_clean();
-  
-  return $themed;
-  
+   
+  // template with wrapper
+  return theme('query_display_wrapper', $wrapper_args); 
 }
 /*
  * Build array of fields and rows for templating
@@ -228,49 +277,6 @@ function qw_make_fields_rows($new_query, $display)
   }
   
   return $rows;
-}
-/*
- * Look for possible custom templates, then default to query-style.php
- * 
- * @param string $style Query style
- * @param array $rows Generated rows
- * @return string Templated query
- */ 
-function qw_template_query_rows($options, $rows = array())
-{
-  $all_styles = qw_all_field_styles();
-  
-  // get style type from display style
-  if($options['display']['type'] == 'full'){
-    $style_type = $options['display']['full_settings']['style'];    
-  } else {
-    $style_type = $options['display']['field_settings']['style'];      
-  }
-  
-  $style = $all_styles[$style_type];
-  $slug = $options['meta']['slug'];
-  
-  if(is_array($style)){
-    ob_start();
-    
-    // look for slug specific template in theme folder
-    // eg.  query-unformatted-test_query.php
-    if (file_exists(TEMPLATEPATH . '/'.$style['template'].'-'.$slug.'.php')){
-      include TEMPLATEPATH . '/'.$style['template'].'-'.$slug.'.php';
-    }
-    // look for generic  template in theme folder
-    // eg.  query-unformatted.php
-    else if (file_exists(TEMPLATEPATH . '/'.$style['template'].'.php')){
-      include TEMPLATEPATH . '/'.$style['template'].'.php';
-    }
-    // fallback on default template
-    else {
-      include rtrim($style['default_path'], '/').'/'.$style['template'].'.php';
-    }
-    $templated = ob_get_clean();
-    
-    return $templated;
-  }
 }
 
 /*

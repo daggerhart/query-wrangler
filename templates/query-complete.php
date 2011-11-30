@@ -13,7 +13,6 @@
           <?php the_title(); ?>
         </a>
       </h2>
-      
       <div class="query-content post-content">
         <?php the_content(); ?>
       </div>

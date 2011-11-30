@@ -102,27 +102,27 @@ function qw_default_field_styles($field_styles)
 {
   $field_styles['complete'] = array(
     'template' => 'query-complete',
-    'default_path' => QW_PLUGIN_DIR.'/templates', // do not include last slash
+    'default_path' => QW_PLUGIN_DIR, // do not include last slash
   );
   $field_styles['excerpt'] = array(
     'template' => 'query-excerpt',
-    'default_path' => QW_PLUGIN_DIR.'/templates', // do not include last slash
+    'default_path' => QW_PLUGIN_DIR, // do not include last slash
   );
   $field_styles['unformatted'] = array(
     'template' => 'query-unformatted',
-    'default_path' => QW_PLUGIN_DIR.'/templates', // do not include last slash
+    'default_path' => QW_PLUGIN_DIR, // do not include last slash
   );
   $field_styles['unordered_list'] = array(
     'template' => 'query-unordered_list',
-    'default_path' => QW_PLUGIN_DIR.'/templates', // do not include last slash
+    'default_path' => QW_PLUGIN_DIR, // do not include last slash
   );
   $field_styles['ordered_list'] = array(
     'template' => 'query-ordered_list',
-    'default_path' => QW_PLUGIN_DIR.'/templates', // do not include last slash
+    'default_path' => QW_PLUGIN_DIR, // do not include last slash
   );
   $field_styles['table'] = array(
     'template' => 'query-table',
-    'default_path' => QW_PLUGIN_DIR.'/templates', // do not include last slash
+    'default_path' => QW_PLUGIN_DIR, // do not include last slash
   );
   
   return $field_styles;

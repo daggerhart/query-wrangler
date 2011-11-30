@@ -1,11 +1,11 @@
 <?php
 /*
 Plugin Name: Query Wrangler
-Plugin URI: http://www.daggerhart.com
+Plugin URI: http://www.widgetwrangler.com/query-wrangler
 Description: This plugin lets you create new WP queries as pages or widgets. It's basically Drupal Views for Wordpress.
-Author: Jonathan Daggerhart
-Version: 1.2beta2
-Author URI: http://www.daggerhart.com
+Author: Jonathan Daggerhart, Forrest Livengood
+Version: 1.3beta1
+Author URI: http://www.websmiths.co
 */
 /*  Copyright 2010  Jonathan Daggerhart  (email : jonathan@daggerhart.com)
   This program is free software; you can redistribute it and/or modify
@@ -136,23 +136,15 @@ function qw_menu()
   $list_page    = add_menu_page( 'Query Wrangler', 'Query Wrangler', 'manage_options', 'query-wrangler', 'qw_page_handler', '', 30);
   // http://codex.wordpress.org/Function_Reference/add_submenu_page
   $create_page  = add_submenu_page( 'query-wrangler', 'Create New Query', 'Add New', 'manage_options', 'qw-create', 'qw_create_query');
-  $debug_page  = add_submenu_page( 'query-wrangler', 'Debug', 'Debug', 'manage_options', 'qw-debug', 'qw_debug');
+  //$debug_page  = add_submenu_page( 'query-wrangler', 'Debug', 'Debug', 'manage_options', 'qw-debug', 'qw_debug');
 }
 add_action( 'admin_menu', 'qw_menu');
 
 /*
  * Simple debugging location
- */
-function qw_debug(){
-  print theme('admin_wrapper');
-  
-  krumo(qw_all_fields());
-  krumo(qw_all_field_styles());
-  krumo(qw_all_file_styles());
-//  print '<pre>';
-//  print_r(get_pages());
-//  print '</pre>';
-}
+ *
+function qw_debug(){}
+// */
 
 /*
  * Handle the display of pages and actions
@@ -202,8 +194,7 @@ function qw_page_handler(){
 /*
  * Create Query Page
  */
-function qw_create_query()
-{
+function qw_create_query() {
   print theme('admin_wrapper', array('title' => 'Create Query', 'content' => theme('query_create')));
 }
 /*
@@ -399,3 +390,13 @@ function qw_delete_query($query_id){
   $sql = "DELETE FROM ".$table_name." WHERE id = ".$query_id;
   $wpdb->query($sql);  
 }
+
+/*
+ * Shortcode support for all queries
+ */
+function qw_single_query_shortcode($atts) {
+  $short_array = shortcode_atts(array('id' => ''), $atts);
+  extract($short_array);
+  return qw_execute_query($id);
+}
+add_shortcode('query','qw_single_query_shortcode');

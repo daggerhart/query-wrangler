@@ -78,7 +78,24 @@ class Query_Wrangler_List_Table extends WP_List_Table
             case 'type':
                 return ucfirst($item[$column_name]);
             case 'details':
-                return 'ID: '.$item['ID'];
+                $details = '';
+                if($item['type'] != 'override') {
+                  $details.='Shortcode: [query id='.$item['ID'].']';
+                }
+                if($item['type'] == 'override'){
+                  global $wpdb;
+                  $terms = $wpdb->get_results("SELECT term_id FROM ".$wpdb->prefix."query_override_terms WHERE query_id = ".$item['ID']);
+                  // build a list of overridden terms
+                  if(is_array($terms)){
+                    $overrides = array();
+                    foreach($terms as $term){
+                      $t = $wpdb->get_row("SELECT name,slug FROM ".$wpdb->prefix."terms WHERE term_id = ".$term->term_id);
+                      $overrides[] = "<a href='".get_bloginfo('wpurl')."/".$t->slug."'>".$t->name."</a>";
+                    }
+                  }
+                  $details.= 'Overriding: '.implode(', ', $overrides);
+                }
+                return $details;
             default:
                 return print_r($item,true); //Show the whole array for troubleshooting purposes
         }
@@ -114,7 +131,7 @@ class Query_Wrangler_List_Table extends WP_List_Table
         }
         
         //Return the title contents
-        return sprintf('%1$s <span style="color:silver">(id:%2$s)</span>%3$s',
+        return sprintf('%1$s <span style="color:silver">(ID: %2$s)</span> %3$s',
             /*$1%s*/ '<a href="?page=query-wrangler&edit='.$item['ID'].'">'.$item['name'].'</a>',
             /*$2%s*/ $item['ID'],
             /*$3%s*/ $this->row_actions($actions)
@@ -300,7 +317,7 @@ class Query_Wrangler_List_Table extends WP_List_Table
          * to a custom query. The returned data will be pre-sorted, and this array
          * sorting technique would be unnecessary.
          */
-        // NOT IN USE
+        /*/ NOT IN USE
         function usort_reorder($a,$b){
             $orderby = (!empty($_REQUEST['orderby'])) ? $_REQUEST['orderby'] : 'name'; //If no sort, default to title
             $order = (!empty($_REQUEST['order'])) ? $_REQUEST['order'] : 'asc'; //If no order, default to asc
@@ -308,7 +325,7 @@ class Query_Wrangler_List_Table extends WP_List_Table
             return ($order==='asc') ? $result : -$result; //Send final sort direction to usort
         }
         //usort($data, 'usort_reorder');
-        
+        // */
         
         /***********************************************************************
          * ---------------------------------------------------------------------

@@ -26,6 +26,10 @@ function theme($template_name = '', $arguments = array())
     // template we're using
     $template = $templates[$template_name];
 
+    // get theme folder name
+    $theme_folder = explode("/", TEMPLATEPATH);
+    $theme_folder = array_pop($theme_folder);
+      
     // if not arguments array given, make empty array for future actions
     if(!is_array($template['arguments'])){
       $template['arguments'] = array();
@@ -33,10 +37,17 @@ function theme($template_name = '', $arguments = array())
     
     // merge passed arguments into array overriding defaults
     $arguments = array_merge($template['arguments'], $arguments);  
-  
-    // if there is a preprocess function, run it on the arguments
-    if(function_exists($template_name.'_preprocess')){
-      $preprocess = $template_name.'_preprocess';
+    // update the template arguments for preprocess functions
+    $template['arguments'] = $arguments;
+    
+    // if there is a theme based preprocess function, run it on the arguments
+    if(function_exists($theme_folder.'_'.$template_name.'_preprocess')){
+      $preprocess = $theme_folder.'_'.$template_name.'_preprocess';
+      $template = call_user_func($preprocess, $template);
+    }
+    // else if there is a default preprocess function, run it on the arguments
+    else if(function_exists('theme_'.$template_name.'_preprocess')){
+      $preprocess = 'theme_'.$template_name.'_preprocess';
       $template = call_user_func($preprocess, $template);
     }
   
@@ -54,11 +65,7 @@ function theme($template_name = '', $arguments = array())
     
     // if no templates were given, look for theme functions
     if(!isset($template['files']))
-    {
-      // get theme folder name
-      $theme_folder = explode("/", TEMPLATEPATH);
-      $theme_folder = array_pop($theme_folder);
-      
+    { 
       // look for theme folder name name based function
       if(function_exists($theme_folder.'_'.$template_name)){
         // function found, execute it and return the results

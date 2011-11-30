@@ -63,18 +63,13 @@ function qw_get_page_op()
  * Query pages
  */
 add_action('wp', 'qw_query_pages_handler');
+
 /*
  * Handle Query pages
  * ref: http://www.blogseye.com/2010/05/creating-fake-wordpress-posts-on-the-fly/
  */
 function qw_query_pages_handler()
-{
-  global $wp_query,$wpdb;
-  $table = $wpdb->prefix."query_wrangler";
-  
-  // We'll need to override query options
-  $options_override = array();
-  
+{ 
   // page op is based on WP tags like is_category() && is_404()
   $op = qw_get_page_op();
   
@@ -83,6 +78,11 @@ function qw_query_pages_handler()
      $op == 'tag' ||
      $op == '404')
   {
+    global $wp_query,$wpdb; 
+    $table = $wpdb->prefix."query_wrangler";
+    // We'll need to override query options
+    $options_override = array();
+    
     // Look at the requested uri w/o paginiation involved
     $dirty_path = explode('/page/', $_SERVER['REQUEST_URI']);
     
@@ -110,6 +110,11 @@ function qw_query_pages_handler()
      */
     if($op == '404')
     {
+      // include Template Wrangler
+      if(!function_exists('theme')){
+        include_once QW_PLUGIN_DIR.'/template-wrangler.inc';
+      }
+      
       // take into account trailing slash
       if(substr($path, strlen($path)-1, 1) != '/'){
         $alt_path = $path.'/';
@@ -172,6 +177,9 @@ function qw_query_pages_handler()
         // categories and tags use term name for title
         $post_title = $term->name;
       }
+      
+      // remove the autop filter to prevent paragraph randomly being added
+      remove_filter( 'the_content', 'wpautop' );
       
       // Make the post object
       $post = new stdClass();
