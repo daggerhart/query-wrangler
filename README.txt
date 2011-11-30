@@ -11,9 +11,9 @@ This plugin lets you create new WP queries as pages or widgets. It's basically D
 
 This plugin lets you create new WP queries as pages or widgets.  It also allows you to override the way category and tag pages display.
 
-Highly based on Drupal's Views, the Query Wrangler's interface is highly intuitive for any Drupal View's user.
+Query Wrangler's interface is highly intuitive way to create queries and will be second nature for any Drupal Views user.
 
-This plugin will bring extreme flexibility to WordPress users with it's ability to create custom queries using the WP_Query class with a user interface.
+This plugin will bring extreme flexibility to WordPress users with its ability to create custom queries using the WP_Query class with a user interface.
 
 Some examples of how you would use this plugin include:
 
