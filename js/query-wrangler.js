@@ -12,8 +12,11 @@ function qw_field_options_toggle(element) {
 /*
  * Simple hide functions for forms
  */
-function qw_hide_options(){
-  jQuery('.qw-query-content').hide();
+function qw_empty_form(){
+  // hide all forms
+  jQuery('#qw-options-forms .qw-query-content').hide();
+  // empty the title
+  jQuery('#qw-options-target-title').html('&nbsp;');
 }
 /*
  * Sortable callback for field weights
@@ -117,7 +120,6 @@ function qw_set_setting_title(){
   }
   // set new title
   jQuery('span[title='+qw_current_form_id+'] span').text(new_title);
-  qw_bind_events();
 }
 /*
  * Get Field Template and add new sortable items
@@ -128,6 +130,7 @@ function qw_new_field_template(field_type){
   var next_weight = jQuery('ul#qw-fields-sortable li').length;
 
   // new sortable item
+  // TODO: change this to an ajax call
   var output = '';
   output+= "<li class='qw-item qw-field-item'>";
   output+= "<div class='sort-handle'></div>";
@@ -152,7 +155,6 @@ function qw_new_field_template(field_type){
     }
   });
   
-  
   return field_name;
 }
 /*
@@ -173,66 +175,12 @@ function qw_add_new_fields(){
   });
   
   jQuery('#qw-query-fields-list').append(title_array.join(''));
-  // rebind events
-  qw_bind_events();
-}
-/*
- * Unbind then rebind events to items that get updated or replaced
- */
-function qw_bind_events(){
-  // unbind first
-  jQuery('#qw-add-selected-fields').unbind('click');
-  jQuery('span.qw-field-remove').unbind('click');
-  jQuery('#qw-options-form-target ul#qw-fields-sortable').unbind('sortable');
-  jQuery('.qw-query-fields-name').unbind('click');
-  jQuery('.qw-options-group-title input[type=checkbox]').unbind('click');
-  
-  // adding new fields
-  jQuery('#qw-add-selected-fields').click(function(){
-    qw_add_new_fields();
-    jQuery('#qw-options-forms .qw-query-content').hide();
-    jQuery('#qw-options-target-title').html('&nbsp;');
-  });
-  
-  // removing fields
-  jQuery('span.qw-field-remove').click(function(){
-    // remove the field's form
-    var form_name = jQuery(this).siblings('.qw-sort-field-name').text();
-    jQuery('#qw-options-forms #qw-field-'+form_name).remove();
-    // remove this sortable item
-    jQuery(this).parent('li.qw-field-item').remove();
-    qw_update_field_weights();
-  });
-  
-  // sortable fields
-  jQuery('#qw-options-form-target ul#qw-fields-sortable').sortable({
-    handle: '.sort-handle',
-    update: function(event,ui){
-      qw_update_field_weights();
-    }
-  }).disableSelection();
-  
-  // fields forms functionality
-  jQuery('.qw-query-fields-name').click(function(){
-    // get form id
-    qw_new_form_id = jQuery(this).attr('title');
-    // standard click actions
-    qw_title_click_action();
-    // set the title
-    var qw_form_title = jQuery(this).text();
-    // set title
-    jQuery('#qw-options-target-title').text(qw_form_title);    
-    // show action buttons
-    jQuery('#qw-options-actions').show();  
-  });
-  
-  // Field Options
-  jQuery('.qw-options-group-title input[type=checkbox]').click(function(){
-    qw_field_options_toggle(jQuery(this));
-  });
-  
   // Update Field tokens
   qw_generate_field_tokens();
+  // empty form title & hide form
+  qw_empty_form();
+  // refresh sortable items
+  jQuery('#qw-options-form-target ul#qw-fields-sortable').sortable("refreshItems");
 }
 /*
  * Standard operations of a title click action
@@ -249,7 +197,6 @@ function qw_title_click_action()
   jQuery('#qw-options-forms #'+qw_new_form_id).show();
   // backup the form
   qw_form_backup = jQuery('form#qw-edit-query-form').serialize();
-  //console.log(qw_form_backup);
   // make the new form id the current form id
   qw_current_form_id = qw_new_form_id;
 }
@@ -264,53 +211,32 @@ var qw_form_backup;
  * Execution
  */
 jQuery(document).ready(function(){
-  // bind click and stuff
-  qw_bind_events();
   // display style settings 
   qw_style_settings_toggle();
+  
   /*
    * Form handling
    */
-  // basic forms functionality
-  jQuery('span.qw-query-title span').click(function(){
-    // get new form info
-    qw_new_form_id = jQuery(this).parent('.qw-query-title').attr('title');
-    // standard click actions
-    qw_title_click_action();
-    // set the title
-    var qw_form_title = jQuery(this).parent('.qw-query-title').text().split(':');
-    qw_form_title = qw_form_title[0];
-    // set title
-    jQuery('#qw-options-target-title').text(qw_form_title);
-    // show buttons
-    jQuery('#qw-options-actions').show();
-  });
-  
-  // fields actions functionality
-  jQuery('.qw-query-fields-title').click(function(){
-    // get new form info
-    qw_new_form_id = jQuery(this).attr('title');
-    // standard click actions
-    qw_title_click_action();
-    // set the title
-    jQuery('#qw-options-target-title').text(jQuery(this).text());
-    // show buttons
-    if(qw_current_form_id == "qw-sort-fields"){
-      jQuery('#qw-options-actions').show();      
+  // sortable fields
+  jQuery('#qw-options-form-target ul#qw-fields-sortable').sortable({
+    handle: '.sort-handle',
+    update: function(event,ui){
+      // update field weights
+      qw_update_field_weights();
+      // Update Field tokens
+      qw_generate_field_tokens();
     }
-  });
+  }).disableSelection();
   
   /*
    * Update button
    */ 
   jQuery('#qw-options-actions-update').click(function(){
-    // hide forms
-    jQuery('#qw-options-forms .qw-query-content').hide();
-    // empty title
-    jQuery('#qw-options-target-title').html('&nbsp;');
+    // empty form title & hide form
+    qw_empty_form();
     // hide buttons
     jQuery('#qw-options-actions').hide();
-    
+    // set the title for the updated field
     qw_set_setting_title();  
     qw_current_form_id = '';
     // display style settings 
@@ -327,13 +253,81 @@ jQuery(document).ready(function(){
       // set backup_form
       jQuery('form#qw-edit-query-form').unserializeForm(qw_form_backup);
     }
-    // rebind events
-    qw_bind_events();
-    // empty title
-    jQuery('#qw-options-target-title').html('&nbsp;');
-    // hide buttons
-    jQuery('#qw-options-actions').hide();
+    // empty form title & hide form
+    qw_empty_form();
   });
+  
+  /*
+   * Adding new fields
+   */ 
+  jQuery('#qw-add-selected-fields').click(function(){
+    qw_add_new_fields();
+  });
+  
+  /* **********************************************************
+   * Delegates, handle updated binded functions
+   */
+  
+  // basic forms functionality
+  jQuery('span.qw-query-title').delegate('span', 'click', function(){
+    // get new form info
+    qw_new_form_id = jQuery(this).parent('.qw-query-title').attr('title');
+    // standard click actions
+    qw_title_click_action();
+    // set the title
+    var qw_form_title = jQuery(this).parent('.qw-query-title').text().split(':');
+    qw_form_title = qw_form_title[0];
+    // set title
+    jQuery('#qw-options-target-title').text(qw_form_title);
+    // show buttons
+    jQuery('#qw-options-actions').show();
+  });
+  
+  // fields actions functionality
+  jQuery('#qw-query-fields').delegate('.qw-query-fields-title', 'click', function(){
+    // get new form info
+    qw_new_form_id = jQuery(this).attr('title');
+    // standard click actions
+    qw_title_click_action();
+    // set the title
+    jQuery('#qw-options-target-title').text(jQuery(this).text());
+    // show buttons
+    if(qw_current_form_id == "qw-sort-fields"){
+      jQuery('#qw-options-actions').show();      
+    }
+  });
+  
+  // removing fields
+  jQuery('li.qw-field-item').delegate('span.qw-field-remove', 'click', function(){
+    // remove the field's form
+    var form_name = jQuery(this).siblings('.qw-sort-field-name').text();
+    jQuery('#qw-options-forms #qw-field-'+form_name).remove();
+    // remove this sortable item
+    jQuery(this).parent('li.qw-field-item').remove();
+    qw_update_field_weights();
+  });
+  
+  // fields forms functionality
+  jQuery('#qw-query-fields-list').delegate('.qw-query-fields-name','click', function(){
+    // get form id
+    qw_new_form_id = jQuery(this).attr('title');
+    // standard click actions
+    qw_title_click_action();
+    // set the title
+    var qw_form_title = jQuery(this).text();
+    // set title
+    jQuery('#qw-options-target-title').text(qw_form_title);    
+    // show action buttons
+    jQuery('#qw-options-actions').show();  
+  });
+  
+  // Field Options
+  jQuery('#qw-options-forms').delegate('.qw-options-group-title input[type=checkbox]','click', function(){
+    console.log('hello');
+    console.log(this);
+    qw_field_options_toggle(jQuery(this));
+  });
+  /*** end delegates ******************************************/
   
   // toggle selected fields
   jQuery('.qw-field-options-hidden').each(function(index,element){
