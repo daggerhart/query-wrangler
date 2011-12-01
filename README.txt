@@ -20,6 +20,7 @@ Some examples of how you would use this plugin include:
 * Create a list of pages or posts with a specific category or tag
 * Create an image gallery
 * Modify the way your category pages look
+* Create a category list widget with custom sorting
 
 == Installation ==
 
