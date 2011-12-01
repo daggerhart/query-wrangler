@@ -135,26 +135,36 @@ function qw_query_pages_handler()
     {
       // get first term
       if($op == 'category') {
-        $term = array_pop(get_the_category());  
-        // override options
-        $options_override['args']['cat_operator'] = 'cat';
-        $options_override['args']['cat'] = array($term->term_id => $term->name);
+        $terms = get_the_category();
+        if(is_array($terms)){
+           $term = array_pop($terms);  
+          // override options
+          $options_override['args']['cat_operator'] = 'cat';
+          $options_override['args']['cat'] = array($term->term_id => $term->name);
+        }
       }
       else if ($op == 'tag'){
-        $term = array_pop(get_the_tags());
-        // override options
-        $options_override['args']['tag_operator'] = 'tag__in';
-        $options_override['args']['tag'] = array($term->term_id => $term->name);
+        $terms = get_the_tags();
+        if(is_array($terms)){
+           $term = array_pop($terms);  
+          // override options
+          $options_override['args']['tag_operator'] = 'tag__in';
+          $options_override['args']['tag'] = array($term->term_id => $term->name);
+        }
       }
       
-      $sql = "SELECT qw.id,qw.name,qw.slug,qw.type,qw.data
-              FROM ".$table." as qw
-              LEFT JOIN ".$wpdb->prefix."query_override_terms as ot ON ot.query_id = qw.id
-              WHERE qw.type = 'override' AND ot.term_id = ".$term->term_id."
-              LIMIT 1"; 
+      if(isset($term)){
+        $sql = "SELECT qw.id,qw.name,qw.slug,qw.type,qw.data
+                FROM ".$table." as qw
+                LEFT JOIN ".$wpdb->prefix."query_override_terms as ot ON ot.query_id = qw.id
+                WHERE qw.type = 'override' AND ot.term_id = ".$term->term_id."
+                LIMIT 1";
+      }
     }
     
-    $rows = $wpdb->get_results($sql);
+    if(isset($sql)) {
+      $rows = $wpdb->get_results($sql);
+    }
     
     // if we found a path, lets use it
     if(is_object($rows[0]) && $query = $rows[0])

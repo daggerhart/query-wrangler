@@ -9,6 +9,7 @@
   <div id="qw-query-admin-options-wrap">
     <div id="qw-query-args" class="qw-query-admin-options">
       <h4>Basic settings</h4>
+      
       <span class="qw-query-title" title="qw-page-title">
         Title: <span><?php print ($query_page_title) ? $query_page_title : 'None'; ?></span>
       </span>
@@ -43,8 +44,15 @@
     
     <div id="qw-query-filters" class="qw-query-admin-options">
       <h4>Filters</h4>
+      
+      <span class="qw-query-title" title="qw-post-types">
+        Post Types: <span><?php print (is_array($qw_query_options['args']['post_types'])) ? implode(",", $qw_query_options['args']['post_types']) : 'None'; ?></span>
+      </span>
+      <span class="qw-query-title" title="qw-post-status">
+        Post Status: <span><?php print $qw_query_options['args']['post_status']; ?></span>
+      </span>
       <?php
-        // override queries can't choose categories or tags
+        // override queries can't choose categories or tags or page parents
         if ($query_type != "override")
         { ?>
           <span class="qw-query-title" title="qw-categories">
@@ -53,28 +61,14 @@
           <span class="qw-query-title" title="qw-tags">
             Tags: <span><?php print (is_array($qw_query_options['args']['tag'])) ? implode(",", $qw_query_options['args']['tag']): 'None'; ?></span>
           </span>
-          <?php
-        }
-      ?>
-      <span class="qw-query-title" title="qw-post-types">
-        Post Types: <span><?php print (is_array($qw_query_options['args']['post_types'])) ? implode(",", $qw_query_options['args']['post_types']) : 'None'; ?></span>
-      </span>
-      
-      <?php
-        // overrides don't have post parents
-        if($query_type != 'override')
-        { ?>
           <span class="qw-query-title" title="qw-post-parent">
             Page Parent: <span><?php print ($qw_query_options['args']['post_parent']) ? $qw_query_options['args']['post_parent'] : 'None'; ?></span>
           </span>
           <?php
         }
       ?>
-      
-      <span class="qw-query-title" title="qw-post-status">
-        Post Status: <span><?php print $qw_query_options['args']['post_status']; ?></span>
-      </span>
-    </div> <!-- /filters -->
+    </div>
+    <!-- /filters -->
     
     <div id="qw-query-fields" class="qw-query-admin-options">
       <h4>Fields</h4>
@@ -92,10 +86,12 @@
           {
             // loop through and display
             foreach($qw_query_options['display']['field_settings']['fields'] as $field_name => $field_settings)
-            { ?>
+            {
+              $field_type_data = $fields[$field_settings['type']];
+              ?>
                 <div>
                   <span class="qw-query-fields-name" title="qw-field-<?php print $field_name; ?>">
-                    <?php print str_replace("_", " ",$field_settings['type']); ?>
+                    <?php print $field_type_data['label']; ?>
                   </span>
                 </div>
               <?php
@@ -131,6 +127,7 @@
             Pager: <span><?php print ($qw_query_options['display']['page']['pager']['type']) ? $qw_query_options['display']['page']['pager']['type'] : 'Default'; ?></span>
           </span>
         </div>
+        <!-- /page settings -->
         
         <?php
           if($query_type == 'override')
@@ -145,6 +142,7 @@
                 Tags: <span><?php print (is_array($qw_query_options['override']['tags'])) ? implode(",", $qw_query_options['override']['tags']): 'None'; ?></span>
               </span>
             </div>
+            <!-- /override settings -->
             <?php
           }
       }
@@ -267,31 +265,6 @@
           <input class="qw-field-value" type="text" name="qw-query-options[args][offset]" value="<?php print $qw_query_options['args']['offset']; ?>" />
         </div>
         
-        <!-- post status -->
-        <div id="qw-post-status" class="qw-query-content qw-single-value">
-          <p>Select the status of the posts to show.</p>
-          <select name="qw-query-options[args][post_status]" class="qw-field-value">
-            <option value="publish" <?php if($qw_query_options['args']['post_status'] == "published") { print 'selected="selected"';} ?>>Published</option>
-            <option value="pending" <?php if($qw_query_options['args']['post_status'] == "pending") { print 'selected="selected"';} ?>>Pending</option>
-            <option value="draft" <?php if($qw_query_options['args']['post_status'] == "draft") { print 'selected="selected"';} ?>>Draft</option>
-            <option value="future" <?php if($qw_query_options['args']['post_status'] == "future") { print 'selected="selected"';} ?>>Future (Scheduled)</option>
-            <option value="trash" <?php if($qw_query_options['args']['post_status'] == "trash") { print 'selected="selected"';} ?>>Trashed</option>
-          </select>
-        </div>
-        
-        <?php
-          // overrides don't have page parents
-          if($query_type != 'override')
-          { ?>
-            <!-- page parents -->
-            <div id="qw-post-parent" class="qw-query-content qw-single-value">
-              <p>Use only with post type 'Page' to show results with the chosen parent ID.</p>
-              <input class="qw-field-value" type="text" name="qw-query-options[args][post_parent]" value="<?php print $qw_query_options['args']['post_parent']; ?>" />
-            </div>
-            <?php
-          }
-        ?>
-                
         <!-- display type -->
         <div id="qw-display-type" class="qw-query-content qw-single-value">
           <select name="qw-query-options[display][type]" class="qw-field-value">
@@ -315,9 +288,12 @@
             <?php
               // loop through field styles
               foreach($field_styles as $style_name => $style)
-              { ?>
-                <option value="<?php print $style_name; ?>" <?php if($qw_query_options['display']['field_settings']['style'] == $style_name) { print 'selected="selected"';} ?>><?php print str_replace("_"," ",$style_name); ?> </option>
-                <?php
+              {
+                if($style['type'] == 'fields')
+                { ?>
+                  <option value="<?php print $style_name; ?>" <?php if($qw_query_options['display']['field_settings']['style'] == $style_name) { print 'selected="selected"';} ?>><?php print $style['label']; ?> </option>
+                  <?php
+                }
               }
             ?>
           </select>
@@ -341,7 +317,7 @@
             <option value="menu_order" <?php if($qw_query_options['args']['orderby'] == "menu_order") { print 'selected="selected"';} ?>>Menu Order (for Page types)</option>
           </select> 
           <br /><br />
-          <strong>Order </strong><br />
+          <strong>Order</strong><br />
           <select name="qw-query-options[args][order]" class="qw-field-value">
             <option value="ASC" <?php if($qw_query_options['args']['order'] == "ASC") { print 'selected="selected"';} ?>>Ascending</option>
             <option value="DESC" <?php if($qw_query_options['args']['order'] == "DESC") { print 'selected="selected"';} ?>>Descending</option>
@@ -387,74 +363,18 @@
             </div>
             <?php
           }
-          else 
-          { ?>
-            <!-- categories -->
-            <div id="qw-categories" class="qw-query-content qw-checkbox-values">
-              <p>Select which categories to pull posts from, and how to treat those categories.</p>
-              <div class="qw-checkboxes">
-                <?php
-                  // List all categories as checkboxes
-                  foreach($category_ids as $cat_id)
-                  {
-                    $cat_name = get_cat_name($cat_id);
-                    $cat_checked = (isset($qw_query_options['args']['cat'][$cat_id])) ? 'checked="checked"' : '';
-                    ?>
-                    <label class="qw-query-checkbox"><input type="checkbox" name="qw-query-options[args][cat][<?php print $cat_id; ?>]" value="<?php print $cat_name; ?>" <?php print $cat_checked; ?> /><?php print $cat_name; ?></label> 
-                    <?php
-                  }
-                ?>
-              </div>
-              <p><strong>Categories Options</strong> - show posts that are:</p>
-              <select name="qw-query-options[args][cat_operator]" class="qw-field-value">
-                <option value="cat" <?php if($qw_query_options['args']['cat_operator'] == "cat") {print 'selected="selected"';} ?>>Any category plus children categories</option>
-                <option value="category__in" <?php if($qw_query_options['args']['cat_operator'] == "category__in") {print 'selected="selected"';} ?>>Any category without children categories</option>
-                <option value="category__and" <?php if($qw_query_options['args']['cat_operator'] == "category__and") {print 'selected="selected"';} ?>>All categories selected</option>
-                <option value="category__not_in" <?php if($qw_query_options['args']['cat_operator'] == "category__not_in") {print 'selected="selected"';} ?>>Not in the categories selected</option>
-              </select>
-            </div>
-            
-            <!-- tags -->
-            <div id="qw-tags" class="qw-query-content qw-checkbox-values">
-              <p>Select which tags to use.</p>
-              <div class="qw-checkboxes">
-                <?php
-                  foreach($tags as $tag)
-                  {
-                    $tag_checked = (isset($qw_query_options['args']['tag'][$tag->term_id])) ? 'checked="checked"' : '';
-                    ?>
-                    <label class="qw-query-checkbox"><input type="checkbox" name="qw-query-options[args][tag][<?php print $tag->term_id; ?>]" value="<?php print $tag->name; ?>" <?php print $tag_checked; ?> /><?php print $tag->name; ?></label> 
-                    <?php
-                  }
-                ?>
-              </div>
-              <p><strong>Tag Options</strong> - show posts that have:</p>
-              <select name="qw-query-options[args][tag_operator]" class="qw-field-value">
-                <option value="tag__in">Any of the selected tags</option>
-                <option value="tag__and">All of the selected tags</option>
-                <option value="tag__not_in">None of the selected tags</option>
-              </select>
-            </div>
-            <?php
-          }
         ?>
-        
-        <!-- post types -->
-        <div id="qw-post-types" class="qw-query-content qw-checkbox-values">
-          <p>Select which post types should be shown.</p>
-          <div class="qw-checkboxes">
-            <?php
-              // loop through post types
-              foreach ($post_types  as $post_type )
-              {
-                $post_type_checked = (isset($qw_query_options['args']['post_types'][$post_type])) ? 'checked="checked"' : '';
-                ?>
-                <label class="qw-query-checkbox"><input type="checkbox" name="qw-query-options[args][post_types][<?php print $post_type; ?>]" value="<?php print $post_type; ?>" <?php print $post_type_checked; ?> /><?php print ucfirst($post_type); ?> </label>
-                <?php
-              }
-            ?>
-          </div>
-        </div>
+<!-- Filters -->
+        <?php
+          $args = array(
+            'filters' => $qw_query_options['args'],
+            'query_type' => $query_type,
+            'post_types' => $post_types,
+            'category_ids' => $category_ids,
+            'tags' => $tags,
+          );
+          print theme('query_filters', $args);
+        ?>
 
 <!-- Fields -->        
         <!-- add fields -->
@@ -475,25 +395,25 @@
         </div>
         
         <!-- edit fields -->
-          <?php
-            if(is_array($qw_query_options['display']['field_settings']['fields']))
+        <?php
+          if(is_array($qw_query_options['display']['field_settings']['fields']))
+          {
+            // loop through existing fields
+            foreach($qw_query_options['display']['field_settings']['fields'] as $field_name => $field_settings)
             {
-              // loop through existing fields
-              foreach($qw_query_options['display']['field_settings']['fields'] as $field_name => $field_settings)
-              {
-                $args = array(
-                  'image_sizes' => $image_sizes,
-                  'file_styles' => $file_styles,
-                  'field_name' => $field_name,
-                  'field_settings' => $field_settings,   
-                );
-                print theme('query_field', $args);
-              }
+              $args = array(
+                'image_sizes' => $image_sizes,
+                'file_styles' => $file_styles,
+                'field_name' => $field_name,
+                'field_settings' => $field_settings,   
+              );
+              print theme('query_field', $args);
             }
-          ?>
+          }
+        ?>
         <!-- /edit fields -->
         
-        <!-- sort fields -->
+        <!-- sortable fields -->
         <div id="qw-sort-fields" class="qw-query-content qw-sort-fields-values">
           <strong>Fields</strong><br />
           <em>Click and Drag to sort</em><br />
@@ -527,6 +447,7 @@
     <div class="qw-clear-gone"><!-- ie hack -->&nbsp;</div>
   </div><!-- /qw-options-target-->
   
+<!-- Preview -->
   <div id="query-preview" class="qw-query-option">
     <h4 id="preview-title">Preview Query</h4>
     <p><em>This preview does not include your theme's CSS stylesheet.</em></p>
@@ -561,7 +482,6 @@
         <div class="qw-options-group-content qw-field-options-hidden">
           <?php
             print "<pre>".print_r($qw_query_options['display'], true)."</pre>";
-            // */
           ?>
         </div>
       </div>
@@ -577,7 +497,6 @@
             $old_query = $wp_query;
             $new_query = new WP_Query($new_query_args);
             print "<pre>".print_r($new_query, true)."</pre>";
-            // */
             wp_reset_postdata();
             $wp_query = $old_query;
           ?>

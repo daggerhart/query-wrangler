@@ -58,7 +58,7 @@ function qw_form_field_ajax(){
     );
     print theme('query_field', $args);
   }
-  else if($_POST['form'] == 'sortable'){
+  else if($_POST['form'] == 'field_sortable'){
     $args = array(
       'field_name' => $_POST['field_name'],
       'type' => $_POST['field_type'],
@@ -88,7 +88,19 @@ function qw_admin_js(){
                   false,
                   true);
   // declare the URL to the file that handles the AJAX request (wp-admin/admin-ajax.php)
-  wp_localize_script( 'qw-admin-js', 'QueryWrangler', array( 'formField' => admin_url( 'admin-ajax.php' ) ) );
+  
+  $data = array(
+    'allFields' => qw_all_fields(),
+    'allFieldStyles' => qw_all_field_styles(),
+    'ajaxForm' => admin_url( 'admin-ajax.php' ),
+  );
+  
+  wp_localize_script( 'qw-admin-js',
+                      'QueryWrangler',
+                      array(
+                        'l10n_print_after' => 'QueryWrangler = ' . json_encode( $data ) . ';'
+                      )
+                    );
 }
 // Add js
 if($_GET['page'] == 'query-wrangler'){
@@ -408,6 +420,20 @@ function qw_delete_query($query_id){
 function qw_single_query_shortcode($atts) {
   $short_array = shortcode_atts(array('id' => ''), $atts);
   extract($short_array);
-  return qw_execute_query($id);
+  
+  // get the query options
+  $options = qw_generate_query_options($id);
+  
+  // get formatted query arguments
+  $args = qw_generate_query_args($options);
+  
+  // set the new query
+  $wp_query = new WP_Query($args);
+  
+  // get the themed content
+  $themed = qw_template_query($wp_query, $options);
+  // reset because worpress hates programmers
+  wp_reset_postdata();
+  return $themed;
 }
 add_shortcode('query','qw_single_query_shortcode');

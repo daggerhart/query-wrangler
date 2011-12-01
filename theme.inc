@@ -3,21 +3,29 @@
  * Template Wrangler templates
  */
 function qw_templates($templates){
-  // admin queries
+  // edit query template
   $templates['query_edit'] = array(
     'files' => 'forms/form.query-edit.inc',
     'default_path' => QW_PLUGIN_DIR,
   );
+  // create query template
   $templates['query_create'] = array(
     'files' => 'forms/form.query-create.inc',
     'default_path' => QW_PLUGIN_DIR,
   );
+  // field template
   $templates['query_field'] = array(
     'files' => 'forms/form.query-field.inc',
     'default_path' => QW_PLUGIN_DIR,
   );
+  // sortable fields template
   $templates['query_field_sortable'] = array(
     'files' => 'forms/form.query-field-sortable.inc',
+    'default_path' => QW_PLUGIN_DIR,
+  );
+  // filters edit form
+  $templates['query_filters'] = array(
+    'files' => 'forms/form.query-filters.inc',
     'default_path' => QW_PLUGIN_DIR,
   );
   

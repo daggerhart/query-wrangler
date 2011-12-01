@@ -80,7 +80,7 @@ function qw_default_fields($fields)
        substr($key,0,3) != 'ww_')
     {
       $fields[$field_key] = array(
-        'label' => 'Meta: '.$key,
+        'label' => 'Custom Field: '.$key,
         'callback' => 'get_post_meta',
         'arguments' => array(
           'post_id' => 'this:ID',
@@ -101,26 +101,32 @@ function qw_default_fields($fields)
 function qw_default_field_styles($field_styles)
 {
   $field_styles['complete'] = array(
+    'type' => 'full',
     'template' => 'query-complete',
     'default_path' => QW_PLUGIN_DIR, // do not include last slash
   );
   $field_styles['excerpt'] = array(
+    'type' => 'full',
     'template' => 'query-excerpt',
     'default_path' => QW_PLUGIN_DIR, // do not include last slash
   );
   $field_styles['unformatted'] = array(
+    'type' => 'fields',
     'template' => 'query-unformatted',
     'default_path' => QW_PLUGIN_DIR, // do not include last slash
   );
   $field_styles['unordered_list'] = array(
+    'type' => 'fields',
     'template' => 'query-unordered_list',
     'default_path' => QW_PLUGIN_DIR, // do not include last slash
   );
   $field_styles['ordered_list'] = array(
+    'type' => 'fields',
     'template' => 'query-ordered_list',
     'default_path' => QW_PLUGIN_DIR, // do not include last slash
   );
   $field_styles['table'] = array(
+    'type' => 'fields',
     'template' => 'query-table',
     'default_path' => QW_PLUGIN_DIR, // do not include last slash
   );
