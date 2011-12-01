@@ -16,6 +16,10 @@ function qw_templates($templates){
     'files' => 'forms/form.query-field.inc',
     'default_path' => QW_PLUGIN_DIR,
   );
+  $templates['query_field_sortable'] = array(
+    'files' => 'forms/form.query-field-sortable.inc',
+    'default_path' => QW_PLUGIN_DIR,
+  );
   
   // display queries style wrapper
   $templates['query_display_wrapper'] = array(

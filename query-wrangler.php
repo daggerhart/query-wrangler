@@ -46,15 +46,26 @@ if(!function_exists('theme')){
  * Ajax including form
  */
 function qw_form_field_ajax(){
-  $args = array(
-    'image_sizes' => get_intermediate_image_sizes(),
-    'file_styles' => qw_all_file_styles(),
-    'field_name' => $_POST['field_name'],
-    'field_settings' => array(
+  
+  if($_POST['form'] == 'field_form'){
+    $args = array(
+      'image_sizes' => get_intermediate_image_sizes(),
+      'file_styles' => qw_all_file_styles(),
+      'field_name' => $_POST['field_name'],
+      'field_settings' => array(
+        'type' => $_POST['field_type'],
+      ),   
+    );
+    print theme('query_field', $args);
+  }
+  else if($_POST['form'] == 'sortable'){
+    $args = array(
+      'field_name' => $_POST['field_name'],
       'type' => $_POST['field_type'],
-    ),   
-  );
-  print theme('query_field', $args);
+      'weight' => $_POST['next_weight'],
+    );
+    print theme('query_field_sortable', $args);
+  }
   exit;
 }
 add_action( 'wp_ajax_nopriv_qw_form_field_ajax', 'qw_form_field_ajax' );

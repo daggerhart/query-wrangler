@@ -503,15 +503,13 @@
               {
                 // loop through existing fields
                 foreach($qw_query_options['display']['field_settings']['fields'] as $field_name => $field_settings)
-                { ?>
-                  <li class="qw-item qw-field-item">
-                    <div class='sort-handle'></div>                      
-                    <span class='qw-field-remove qw-button'>Remove this field</span>
-                    <span class='qw-sort-field-name'><?php print $field_name; ?></span>
-                    <input class='qw-field-weight' name='qw-query-options[display][field_settings][fields][<?php print $field_name; ?>][weight]' type='text' size='2' value='<?php print $field_settings['weight']; ?>' />
-                    <span class="qw-field-title"><?php print str_replace("_", " ", $field_settings['type']); ?></span>
-                  </li>
-                  <?php
+                {
+                  $args = array(
+                    'field_name' => $field_name,
+                    'weight' => $field_settings['weight'],
+                    'type' => $field_settings['type'],
+                  );
+                  print theme('query_field_sortable', $args);
                 }
               }
             ?>

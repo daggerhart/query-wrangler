@@ -130,15 +130,16 @@ function qw_new_field_template(field_type){
   var next_weight = jQuery('ul#qw-fields-sortable li').length;
 
   // new sortable item
-  // TODO: change this to an ajax call
-  var output = '';
-  output+= "<li class='qw-item qw-field-item'>";
-  output+= "<div class='sort-handle'></div>";
-  output+= "<span class='qw-field-remove qw-button'>Remove this field</span>";
-  output+= "<span class='qw-sort-field-name'>"+field_name+"</span>";
-  output+= "<input class='qw-field-weight' name='qw-query-options[display][field_settings][fields]["+field_name+"][weight]' type='text' size='2' value='"+(next_weight)+"' />";
-  output+= "<span class='qw-field-title'>"+field_type.replace("_", " ")+"</span>";
-  output+= "</li>";
+  jQuery.ajax({
+    url: QueryWrangler.formField,
+    type: 'POST',
+    async: false,
+    data: {'form': 'sortable', 'field_name': field_name, 'field_type': field_type, 'next_weight': next_weight, 'action': 'qw_form_field_ajax'},
+    success: function(results){
+      // add new sortable item
+      jQuery('#qw-options-forms ul#qw-fields-sortable').append(results);
+    }
+  });
   
   // TODO:  since this is synchronous, show a throbber
   // ajax call to get field form
@@ -146,12 +147,10 @@ function qw_new_field_template(field_type){
     url: QueryWrangler.formField,
     type: 'POST',
     async: false,
-    data: {'field_name': field_name, 'field_type': field_type, 'action': 'qw_form_field_ajax'},
+    data: {'form':'field_form', 'field_name': field_name, 'field_type': field_type, 'action': 'qw_form_field_ajax'},
     success: function(results){
       // append the results
       jQuery('#qw-options-forms').append(results);
-      // add new sortable item
-      jQuery('#qw-options-forms ul#qw-fields-sortable').append(output);
     }
   });
   
@@ -217,6 +216,22 @@ jQuery(document).ready(function(){
   /*
    * Form handling
    */
+  
+  // basic forms click link = show form functionality
+  jQuery('span.qw-query-title span').click(function(){
+    // get new form info
+    qw_new_form_id = jQuery(this).parent('.qw-query-title').attr('title');
+    // standard click actions
+    qw_title_click_action();
+    // set the title
+    var qw_form_title = jQuery(this).parent('.qw-query-title').text().split(':');
+    qw_form_title = qw_form_title[0];
+    // set title
+    jQuery('#qw-options-target-title').text(qw_form_title);
+    // show buttons
+    jQuery('#qw-options-actions').show();
+  });  
+  
   // sortable fields
   jQuery('#qw-options-form-target ul#qw-fields-sortable').sortable({
     handle: '.sort-handle',
@@ -267,21 +282,6 @@ jQuery(document).ready(function(){
   /* **********************************************************
    * Delegates, handle updated binded functions
    */
-  
-  // basic forms functionality
-  jQuery('span.qw-query-title').delegate('span', 'click', function(){
-    // get new form info
-    qw_new_form_id = jQuery(this).parent('.qw-query-title').attr('title');
-    // standard click actions
-    qw_title_click_action();
-    // set the title
-    var qw_form_title = jQuery(this).parent('.qw-query-title').text().split(':');
-    qw_form_title = qw_form_title[0];
-    // set title
-    jQuery('#qw-options-target-title').text(qw_form_title);
-    // show buttons
-    jQuery('#qw-options-actions').show();
-  });
   
   // fields actions functionality
   jQuery('#qw-query-fields').delegate('.qw-query-fields-title', 'click', function(){
