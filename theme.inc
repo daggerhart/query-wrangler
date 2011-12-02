@@ -481,7 +481,8 @@ function qw_theme_image($post_id, $style, $count = 0)
 /*
  * Get all images attached to a single post
  * 
- * @param $post_id
+ * @param int $post_id The Wordpress ID for the post or page to get images from
+ * 
  * @return sorted array of images
  */
 function qw_get_post_images($post_id)
