@@ -139,6 +139,7 @@ function qw_template_query($wp_query, $options)
   $wrapper_classes = array();
   $wrapper_classes[] = 'query';
   $wrapper_classes[] = 'query-'.$options['meta']['slug'].'-wrapper';
+  $wrapper_classes[] = $options['display']['wrapper-classes'];
   $wrapper_args['wrapper_classes'] = implode(" ", $wrapper_classes);
   
   // header
@@ -304,16 +305,21 @@ function qw_make_pager($pager, $wp_query)
   switch($pager['type'])
   {
     case 'default':
+    case 'simple':
+    case 'numbers':
       $pager_themed = qw_theme_pager_default($pager, $wp_query);
       break;
+
   }
   return $pager_themed;
 }
 /*
- * Custom Default Pager
+ * Custom Numbers Pager
  *
  * @param array $pager Query options for pager
  * @param object $wp_query Object
+ *
+ * @return string HTML pager
  */
 function qw_theme_pager_default($pager, $wp_query)
 {
@@ -340,26 +346,57 @@ function qw_theme_pager_default($pager, $wp_query)
   
   if(isset($page))
   {
-    // next link
-    if(($page+1) <= $wp_query->max_num_pages){
-      $pager_themed.= '<div class="query-nextpage">
-                      <a href="'.get_bloginfo('wpurl').$path_array[0].'/page/'.($page+1).'">'.$pager['next'].'</a>
-                    </div>';
-    }
+    // wrapper
+    $pager_themed = '<div class="query-pager-wrapper">
+                      <ul class="query-pager">';
     
+    $wpurl = get_bloginfo('wpurl');
     // previous link with page number
     if($page >= 3){
-      $pager_themed.= '<div class="query-prevpage">
-                    <a href="'.get_bloginfo('wpurl').$path_array[0].'/page/'.($page-1).'">'.$pager['previous'].'</a>
-                  </div>';
+      $pager_themed.= '<li class="query-pager-item query-prevpage">
+                        <span><a href="'.$wpurl.$path_array[0].'/page/'.($page-1).'">'.$pager['previous'].'</a></span>
+                      </li>';
     }
     // previous link with no page number
     else if ($page == 2)
     {
-      $pager_themed.= '<div class="query-prevpage">
-                    <a href="'.get_bloginfo('wpurl').$path_array[0].'">'.$pager['previous'].'</a>
-                  </div>';
+      $pager_themed.= '<li class="query-pager-item query-prevpage">
+                        <span><a href="'.$wpurl.$path_array[0].'">'.$pager['previous'].'</a></span>
+                      </li>';
     }
+    
+    // page numbers
+    if($pager['type'] == 'numbers')
+    {
+      // page 1
+      $pager_themed.= '<li class="query-pager-item query-pager-1"><span><a href="'.$wpurl.$path_array[0].'">1</a></span></li>';
+        
+      // loop through page numbers
+      for($i=2; $i<=$wp_query->max_num_pages; $i++)
+      {
+        if ($i == $page){
+          $pager_themed.= '<li class="query-pager-item query-pager-'.$i.' active"><span>'.$i.'</span></li>';
+        } else {
+          $pager_themed.= '<li class="query-pager-item query-pager-'.$i.'"><span><a href="'.$wpurl.$path_array[0].'/page/'.($i).'">'.$i.'</a></span></li>';
+        }
+      }
+    }
+    else if ($pager['type'] == 'simple')
+    {
+      $pager_themed.= '<li class="query-pager-item query-pager-simple">
+                        <span class="current-page">'.$page.'</span> of <span class="total-pages">'.$wp_query->max_num_pages.'</span>
+                      </li>';
+    }
+    
+    // next link
+    if(($page+1) <= $wp_query->max_num_pages){
+      $pager_themed.= '<li class="query-pager-item query-nextpage">
+                        <span><a href="'.$wpurl.$path_array[0].'/page/'.($page+1).'">'.$pager['next'].'</a></span>
+                      </li>';
+    }
+    
+    // close wrapper
+    $pager_themed.= '</ul></div>';
     
     return $pager_themed;
   }
@@ -369,7 +406,9 @@ function qw_theme_pager_default($pager, $wp_query)
  * Get and theme attached post files
  * 
  * @param int $post_id The post->ID
- * $param int $count Number of files to get
+ * @param int $count Number of files to get
+ *
+ * @return string HTML for file
  */
 function qw_theme_file($post_id, $style = 'link', $count = 0){
   $files = qw_get_post_files($post_id);
@@ -406,6 +445,7 @@ function qw_theme_file($post_id, $style = 'link', $count = 0){
  * Get files attached to a post
  *
  * @param int $post_id The WP post id
+ * 
  * @return Array of file posts
  */
 function qw_get_post_files($post_id)

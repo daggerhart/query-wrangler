@@ -39,6 +39,9 @@
       </span> 
       <span class="qw-query-title" title="qw-query-empty">
         Empty Text: <span><?php print ($qw_query_options['display']['empty']) ? 'In Use' : 'None'; ?></span>
+      </span>      
+      <span class="qw-query-title" title="qw-wrapper-classes">
+        CSS Classes: <span><?php print ($qw_query_options['display']['wrapper-classes']) ? $qw_query_options['display']['wrapper-classes'] : 'None'; ?></span>
       </span>          
     </div> <!-- /qw-query-args -->
     
@@ -193,6 +196,14 @@
           <input class="qw-field-value" size="60" type="text" name="qw-query-options[display][title]" value="<?php print $query_page_title; ?>" />
         </div>
         
+        <!-- Wrapper classes -->
+        <div id="qw-wrapper-classes" class="qw-query-content qw-single-value">
+          <p>
+            <em>The CSS class names will be added to the query. This enables you to use specific CSS code for each query. You may define multiples classes separated by spaces.</em>
+          </p>
+          <input class="qw-field-value" size="60" type="text" name="qw-query-options[display][wrapper-classes]" value="<?php print $qw_query_options['display']['wrapper-classes']; ?>" />
+        </div>        
+        
         <?php // pages only
           if($query_type == 'page')
           { ?>
@@ -237,8 +248,11 @@
               <p>
                 <em>Select which type of pager to use.</em>
               </p>
+              <?php $pager_type = $qw_query_options['display']['page']['pager']['type']; ?>
               <select name="qw-query-options[display][page][pager][type]" class="qw-field-value">
-                <option value="default">Default</option>
+                <option value="default" <?php print ($pager_type == 'default') ? 'selected="selected"' : ''; ?>>Default</option>
+                <option value="simple" <?php print ($pager_type == 'simple') ? 'selected="selected"' : ''; ?>>Simple</option>
+                <option value="numbers" <?php print ($pager_type == 'numbers') ? 'selected="selected"' : ''; ?>>Page Numbers</option>
               </select>
               <p>
                 <em>Use the following options to change the Default Pager labels.</em>
