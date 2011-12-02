@@ -301,12 +301,18 @@ function qw_make_fields_rows($new_query, $display)
 function qw_make_pager($pager, $wp_query)
 {
   $pager_themed = '';
-  switch($pager['type'])
-  {
-    case 'default':
-      $pager_themed = qw_theme_pager_default($pager, $wp_query);
-      break;
+  $pagers = qw_get_pager_types();
+
+  //set callback if function exists
+  if(function_exists($pagers[$pager['type']]['callback'])) {
+  	$callback = $pagers[$pager['type']]['callback'];	
+  } else {
+  	$callback = $pagers['default']['callback'];
   }
+  ob_start();
+  call_user_func_array($callback,array($pager,$wp_query));
+  $pager_themed = ob_get_contents();
+	ob_end_clean();
   return $pager_themed;
 }
 /*
@@ -363,6 +369,25 @@ function qw_theme_pager_default($pager, $wp_query)
     
     return $pager_themed;
   }
+}
+
+/*
+ * Default Pager with page numbers
+ *
+ * @param array $pager Query options for pager
+ * @param object $wp_query Object
+ */
+
+function qw_theme_pager_numbers($pager,$wp_query) 
+{
+		$big = intval($wp_query->found_posts.'000');
+		$pager_themed = paginate_links( array(
+			'base' => str_replace( $big, '%#%', get_pagenum_link( $big ) ),
+			'format' => '?paged=%#%',
+			'current' => max( 1, get_query_var('paged') ),
+			'total' => $wp_query->max_num_pages
+			) );    
+    return $pager_themed;	
 }
 
 /*
@@ -485,4 +510,18 @@ function qw_get_post_images($post_id)
     
 				return $sorted;
 		}
+}
+
+/*
+ * Setup pager types 
+*/
+function qw_get_pager_types() {
+	$pagers = apply_filters('qw_pager_types',array(
+		'default' => array('label'=>'Default','callback'=>'qw_theme_pager_default'),
+		'numbers'	=> array('label'=>'Page Numbers','callback'=>'qw_theme_pager_numbers'))
+	);
+	if(function_exists('wp_pagenavi')) {
+		$pagers['pagenavi'] = array('label'=>'PageNavi','callback'=>'wp_pagenavi');
+	}
+	return $pagers;
 }

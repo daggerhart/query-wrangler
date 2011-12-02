@@ -237,8 +237,12 @@
               <p>
                 <em>Select which type of pager to use.</em>
               </p>
-              <select name="qw-query-options[display][page][pager][type]" class="qw-field-value">
-                <option value="default">Default</option>
+							<?php $pager_types = qw_get_pager_types(); ?>
+							<select name="qw-query-options[display][page][pager][type]" class="qw-field-value">
+               <?php foreach($pager_types as $pager_name => $pager_options): ?>
+               <?php $selected = ($qw_query_options['display']['page']['pager']['type'] == $pager_name)?'selected':''; ?>
+              	<option value="<?php echo $pager_name; ?>" <?php echo $selected; ?>><?php echo $pager_options['label']; ?></option> 	
+              <?php endforeach; ?>
               </select>
               <p>
                 <em>Use the following options to change the Default Pager labels.</em>
