@@ -253,10 +253,7 @@ function qw_make_fields_rows($new_query, $display)
       else {
         $rows[$i]['fields'][$field_name]['output'].= $this_post->{$field_settings['type']};
       }
-      
-      // apply shortcodes to field output
-      $rows[$i]['fields'][$field_name]['output'] = do_shortcode($rows[$i]['fields'][$field_name]['output']);
-      
+       
       // apply link to field
       if(isset($field_settings['link'])){
         $rows[$i]['fields'][$field_name]['output'] = '<a class="query-field-link" href="'.get_permalink().'">'.$rows[$i]['fields'][$field_name]['output'].'</a>';
@@ -283,6 +280,9 @@ function qw_make_fields_rows($new_query, $display)
         $rows[$i]['fields'][$field_name]['output'] = $field_settings['custom_output'];
       }
       
+      // apply shortcodes to field output
+      $rows[$i]['fields'][$field_name]['output'] = do_shortcode($rows[$i]['fields'][$field_name]['output']);
+     
       // after all operations, remove if excluded
       if($field_settings['exclude_display']){
         unset($rows[$i]['fields'][$field_name]['output']);
