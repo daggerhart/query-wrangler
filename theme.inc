@@ -220,7 +220,7 @@ function qw_make_fields_rows($new_query, $display)
             // split the argument into op & value
             $op = explode(':', $argument_token);
             
-            // see if we have a value
+            // see if we have an argument value
             if(isset($op[1]))
             {
               // post object variable
@@ -228,12 +228,12 @@ function qw_make_fields_rows($new_query, $display)
                 $args[$key] = $this_post->{$op[1]};
               }
               
-              // feild setting  variable
+              // field setting  variable
               if($op[0] == 'setting'){
                 $args[$key] = $field_settings[$op[1]];
               }
             }
-            // if not, use the value given in the field definition
+            // if no argument value, use the value given in the field definition
             else
             {
               // acts as a default value
@@ -253,6 +253,9 @@ function qw_make_fields_rows($new_query, $display)
       else {
         $rows[$i]['fields'][$field_name]['output'].= $this_post->{$field_settings['type']};
       }
+      
+      // apply shortcodes to field output
+      $rows[$i]['fields'][$field_name]['output'] = do_shortcode($rows[$i]['fields'][$field_name]['output']);
       
       // apply link to field
       if(isset($field_settings['link'])){
