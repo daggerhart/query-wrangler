@@ -39,10 +39,10 @@
       </span> 
       <span class="qw-query-title" title="qw-query-empty">
         Empty Text: <span><?php print ($qw_query_options['display']['empty']) ? 'In Use' : 'None'; ?></span>
-      </span>      
+      </span>
       <span class="qw-query-title" title="qw-wrapper-classes">
         CSS Classes: <span><?php print ($qw_query_options['display']['wrapper-classes']) ? $qw_query_options['display']['wrapper-classes'] : 'None'; ?></span>
-      </span>          
+      </span> 
     </div> <!-- /qw-query-args -->
     
     <div id="qw-query-filters" class="qw-query-admin-options">
@@ -188,6 +188,14 @@
           <textarea name="qw-query-options[display][empty]" class="qw-field-textarea"><?php print htmlentities($qw_query_options['display']['empty']); ?></textarea>
         </div>
         
+        <!-- Wrapper classes -->
+        <div id="qw-wrapper-classes" class="qw-query-content qw-single-value">
+          <p>
+            <em>The CSS class names will be added to the query. This enables you to use specific CSS code for each query. You may define multiples classes separated by spaces.</em>
+          </p>
+          <input class="qw-field-value" size="60" type="text" name="qw-query-options[display][wrapper-classes]" value="<?php print $qw_query_options['display']['wrapper-classes']; ?>" />
+        </div>
+        
         <!-- page title -->
         <div id="qw-page-title" class="qw-query-content qw-single-value">
           <p>
@@ -195,14 +203,6 @@
           </p>
           <input class="qw-field-value" size="60" type="text" name="qw-query-options[display][title]" value="<?php print $query_page_title; ?>" />
         </div>
-        
-        <!-- Wrapper classes -->
-        <div id="qw-wrapper-classes" class="qw-query-content qw-single-value">
-          <p>
-            <em>The CSS class names will be added to the query. This enables you to use specific CSS code for each query. You may define multiples classes separated by spaces.</em>
-          </p>
-          <input class="qw-field-value" size="60" type="text" name="qw-query-options[display][wrapper-classes]" value="<?php print $qw_query_options['display']['wrapper-classes']; ?>" />
-        </div>        
         
         <?php // pages only
           if($query_type == 'page')
@@ -248,20 +248,29 @@
               <p>
                 <em>Select which type of pager to use.</em>
               </p>
-              <?php $pager_type = $qw_query_options['display']['page']['pager']['type']; ?>
+              
               <select name="qw-query-options[display][page][pager][type]" class="qw-field-value">
-                <option value="default" <?php print ($pager_type == 'default') ? 'selected="selected"' : ''; ?>>Default</option>
-                <option value="simple" <?php print ($pager_type == 'simple') ? 'selected="selected"' : ''; ?>>Simple</option>
-                <option value="numbers" <?php print ($pager_type == 'numbers') ? 'selected="selected"' : ''; ?>>Page Numbers</option>
+                <?php
+                  foreach($pager_types as $pager_name => $pager_options)
+                  {
+                    $selected = ($qw_query_options['display']['page']['pager']['type'] == $pager_name) ? 'selected="selected"' : '';
+                    ?>
+                    <option value="<?php echo $pager_name; ?>" <?php echo $selected; ?>><?php echo $pager_options['label']; ?></option> 	
+                    <?php 
+                  }
+                ?>
               </select>
               <p>
                 <em>Use the following options to change the Default Pager labels.</em>
               </p>
-              <strong>Previous Page Label:</strong><br />
-              <input type="text" name="qw-query-options[display][page][pager][previous]" value="<?php print $qw_query_options['display']['page']['pager']['previous']; ?>" />
-              <br /><br />
-              <strong>Next Page Label:</strong><br />
-              <input type="text" name="qw-query-options[display][page][pager][next]" value="<?php print $qw_query_options['display']['page']['pager']['next']; ?>" />
+              <strong>Previous Page Label:</strong>
+              <p>
+                <input type="text" name="qw-query-options[display][page][pager][previous]" value="<?php print $qw_query_options['display']['page']['pager']['previous']; ?>" />
+              </p>
+              <strong>Next Page Label:</strong>
+              <p>
+                <input type="text" name="qw-query-options[display][page][pager][next]" value="<?php print $qw_query_options['display']['page']['pager']['next']; ?>" />
+              </p>
             </div>
             <?php
           }
@@ -378,7 +387,7 @@
             <?php
           }
         ?>
-<!-- Filters -->
+      <!-- Filters -->
         <?php
           $args = array(
             'filters' => $qw_query_options['args'],
@@ -389,26 +398,7 @@
           );
           print theme('query_filters', $args);
         ?>
-
-<!-- Fields -->        
-        <!-- add fields -->
-        <div id="qw-display-add-fields" class="qw-query-content">
-          <div class="qw-checkboxes">
-            <?php
-              // loop through fields
-              foreach($fields as $field_name => $field)
-              {
-                $field_checked = (is_array($qw_query_options['display']['fields']) && in_array($field_name, $qw_query_options['display']['fields'])) ? 'checked="checked"' : '';
-                ?>
-                <label class="qw-field-checkbox"><input type="checkbox" value="<?php print $field_name; ?>" <?php print $field_checked; ?> /><?php print $field['label']; ?></label>
-                <?php
-              }
-            ?>
-          </div>
-          <div id="qw-add-selected-fields" class="qw-button">Add Selected Fields</div>
-        </div>
-        
-        <!-- edit fields -->
+      <!-- edit fields -->
         <?php
           if(is_array($qw_query_options['display']['field_settings']['fields']))
           {
@@ -426,6 +416,24 @@
           }
         ?>
         <!-- /edit fields -->
+        
+<!-- Fields -->        
+        <!-- add fields -->
+        <div id="qw-display-add-fields" class="qw-query-content">
+          <div class="qw-checkboxes">
+            <?php
+              // loop through fields
+              foreach($fields as $field_name => $field)
+              {
+                $field_checked = (is_array($qw_query_options['display']['fields']) && in_array($field_name, $qw_query_options['display']['fields'])) ? 'checked="checked"' : '';
+                ?>
+                <label class="qw-field-checkbox"><input type="checkbox" value="<?php print $field_name; ?>" <?php print $field_checked; ?> /><?php print $field['label']; ?></label>
+                <?php
+              }
+            ?>
+          </div>
+          <div id="qw-add-selected-fields" class="qw-button">Add Selected Fields</div>
+        </div>
         
         <!-- sortable fields -->
         <div id="qw-sort-fields" class="qw-query-content qw-sort-fields-values">

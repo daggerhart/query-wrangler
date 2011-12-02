@@ -262,6 +262,8 @@ function qw_edit_query_form()
       'field_styles' => qw_all_field_styles(),
       // all WP post types available for QWing
       'post_types' => $post_types,
+      // all Pager Types
+      'pager_types' => qw_all_pager_types(),
     );
     
     // sort fields according to weight  

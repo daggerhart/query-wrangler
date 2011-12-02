@@ -220,7 +220,7 @@ function qw_make_fields_rows($new_query, $display)
             // split the argument into op & value
             $op = explode(':', $argument_token);
             
-            // see if we have an argument value
+            // see if we have a value
             if(isset($op[1]))
             {
               // post object variable
@@ -228,12 +228,12 @@ function qw_make_fields_rows($new_query, $display)
                 $args[$key] = $this_post->{$op[1]};
               }
               
-              // field setting  variable
+              // feild setting  variable
               if($op[0] == 'setting'){
                 $args[$key] = $field_settings[$op[1]];
               }
             }
-            // if no argument value, use the value given in the field definition
+            // if not, use the value given in the field definition
             else
             {
               // acts as a default value
@@ -253,7 +253,7 @@ function qw_make_fields_rows($new_query, $display)
       else {
         $rows[$i]['fields'][$field_name]['output'].= $this_post->{$field_settings['type']};
       }
-       
+      
       // apply link to field
       if(isset($field_settings['link'])){
         $rows[$i]['fields'][$field_name]['output'] = '<a class="query-field-link" href="'.get_permalink().'">'.$rows[$i]['fields'][$field_name]['output'].'</a>';
@@ -282,7 +282,7 @@ function qw_make_fields_rows($new_query, $display)
       
       // apply shortcodes to field output
       $rows[$i]['fields'][$field_name]['output'] = do_shortcode($rows[$i]['fields'][$field_name]['output']);
-     
+      
       // after all operations, remove if excluded
       if($field_settings['exclude_display']){
         unset($rows[$i]['fields'][$field_name]['output']);
@@ -305,24 +305,25 @@ function qw_make_fields_rows($new_query, $display)
 function qw_make_pager($pager, $wp_query)
 {
   $pager_themed = '';
-  switch($pager['type'])
-  {
-    case 'default':
-    case 'simple':
-    case 'numbers':
-      $pager_themed = qw_theme_pager_default($pager, $wp_query);
-      break;
-
+  $pagers = qw_all_pager_types();
+  
+  //set callback if function exists
+  if(function_exists($pagers[$pager['type']]['callback'])) {
+    $callback = $pagers[$pager['type']]['callback'];	
+  } else {
+    $callback = $pagers['default']['callback'];
   }
+  
+  // execute callback
+  $pager_themed = call_user_func_array($callback, array($pager, $wp_query));
+  
   return $pager_themed;
 }
 /*
- * Custom Numbers Pager
+ * Custom Default Pager
  *
  * @param array $pager Query options for pager
  * @param object $wp_query Object
- *
- * @return string HTML pager
  */
 function qw_theme_pager_default($pager, $wp_query)
 {
@@ -349,69 +350,59 @@ function qw_theme_pager_default($pager, $wp_query)
   
   if(isset($page))
   {
-    // wrapper
-    $pager_themed = '<div class="query-pager-wrapper">
-                      <ul class="query-pager">';
-    
     $wpurl = get_bloginfo('wpurl');
+    
     // previous link with page number
     if($page >= 3){
-      $pager_themed.= '<li class="query-pager-item query-prevpage">
-                        <span><a href="'.$wpurl.$path_array[0].'/page/'.($page-1).'">'.$pager['previous'].'</a></span>
-                      </li>';
+      $pager_themed.= '<div class="query-prevpage">
+                        <a href="'.$wpurl.$path_array[0].'/page/'.($page-1).'">'.$pager['previous'].'</a>
+                      </div>';
     }
     // previous link with no page number
     else if ($page == 2)
     {
-      $pager_themed.= '<li class="query-pager-item query-prevpage">
-                        <span><a href="'.$wpurl.$path_array[0].'">'.$pager['previous'].'</a></span>
-                      </li>';
-    }
-    
-    // page numbers
-    if($pager['type'] == 'numbers')
-    {
-      // page 1
-      $pager_themed.= '<li class="query-pager-item query-pager-1"><span><a href="'.$wpurl.$path_array[0].'">1</a></span></li>';
-        
-      // loop through page numbers
-      for($i=2; $i<=$wp_query->max_num_pages; $i++)
-      {
-        if ($i == $page){
-          $pager_themed.= '<li class="query-pager-item query-pager-'.$i.' active"><span>'.$i.'</span></li>';
-        } else {
-          $pager_themed.= '<li class="query-pager-item query-pager-'.$i.'"><span><a href="'.$wpurl.$path_array[0].'/page/'.($i).'">'.$i.'</a></span></li>';
-        }
-      }
-    }
-    else if ($pager['type'] == 'simple')
-    {
-      $pager_themed.= '<li class="query-pager-item query-pager-simple">
-                        <span class="current-page">'.$page.'</span> of <span class="total-pages">'.$wp_query->max_num_pages.'</span>
-                      </li>';
+      $pager_themed.= '<div class="query-prevpage">
+                        <a href="'.$wpurl.$path_array[0].'">'.$pager['previous'].'</a>
+                      </div>';
     }
     
     // next link
     if(($page+1) <= $wp_query->max_num_pages){
-      $pager_themed.= '<li class="query-pager-item query-nextpage">
-                        <span><a href="'.$wpurl.$path_array[0].'/page/'.($page+1).'">'.$pager['next'].'</a></span>
-                      </li>';
+      $pager_themed.= '<div class="query-nextpage">
+                        <a href="'.$wpurl.$path_array[0].'/page/'.($page+1).'">'.$pager['next'].'</a>
+                      </div>';
     }
-    
-    // close wrapper
-    $pager_themed.= '</ul></div>';
     
     return $pager_themed;
   }
 }
 
 /*
+ * Default Pager with page numbers
+ *
+ * @param array $pager Query options for pager
+ * @param object $wp_query Object
+ *
+ * @return string HTML for pager
+ */
+function qw_theme_pager_numbers($pager, $wp_query) 
+{
+		$big = intval($wp_query->found_posts.'000');
+		$args = array(
+    'base' => str_replace( $big, '%#%', get_pagenum_link( $big ) ),
+    'format' => '?paged=%#%',
+    'current' => max( 1, get_query_var('paged') ),
+    'total' => $wp_query->max_num_pages
+		);
+  $pager_themed = paginate_links($args);
+  return $pager_themed;	
+}
+
+/*
  * Get and theme attached post files
  * 
  * @param int $post_id The post->ID
- * @param int $count Number of files to get
- *
- * @return string HTML for file
+ * $param int $count Number of files to get
  */
 function qw_theme_file($post_id, $style = 'link', $count = 0){
   $files = qw_get_post_files($post_id);
@@ -448,7 +439,6 @@ function qw_theme_file($post_id, $style = 'link', $count = 0){
  * Get files attached to a post
  *
  * @param int $post_id The WP post id
- * 
  * @return Array of file posts
  */
 function qw_get_post_files($post_id)
@@ -528,4 +518,27 @@ function qw_get_post_images($post_id)
     
 				return $sorted;
 		}
+}
+
+/*
+ * Setup pager types 
+ */
+function qw_default_pager_types($pagers) {
+  $pagers['default'] = array(
+    'label' => 'Default',
+    'callback' => 'qw_theme_pager_default'
+  );
+  $pagers['numbers']	= array(
+    'label' => 'Page Numbers',
+    'callback' => 'qw_theme_pager_numbers'
+  );
+  
+  // WP PageNavi Plugin
+  if(function_exists('wp_pagenavi')) {
+    $pagers['pagenavi'] = array(
+      'label' => 'PageNavi',
+      'callback' => 'wp_pagenavi'
+    );
+  }
+  return $pagers;
 }

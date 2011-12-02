@@ -28,3 +28,13 @@ function qw_all_file_styles(){
 }
 // add default file styles to the filter
 add_filter('qw_file_styles', 'qw_default_file_styles');
+
+/*
+ * Pager types
+ */
+function qw_all_pager_types(){
+  $pagers = apply_filters('qw_pager_types', array());
+  return $pagers;
+}
+// add default pager types
+add_filter('qw_pager_types', 'qw_default_pager_types');
