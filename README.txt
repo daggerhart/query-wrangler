@@ -1,9 +1,15 @@
 === Query Wrangler ===
 Contributors: daggerhart, forrest.livengood
+Plugin Name: Query Wrangler
+Plugin URI: http://www.widgetwrangler.com/query-wrangler
 Tags: query, pages, widget, admin, widgets, administration, manage, views
+Author URI: http://www.websmiths.co
+Author: Jonathan Daggerhart, Forrest Livengood
+Donate link: http://www.widgetwrangler.com/
 Requires at least: 3
 Tested up to: 3.2.1
 Stable tag: trunk
+Version: 1.3beta1
 
 This plugin lets you create new WP queries as pages or widgets. It's basically Drupal Views for Wordpress.
 

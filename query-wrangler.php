@@ -1,12 +1,20 @@
 <?php
 /*
+Contributors: daggerhart, forrest.livengood
 Plugin Name: Query Wrangler
 Plugin URI: http://www.widgetwrangler.com/query-wrangler
-Description: This plugin lets you create new WP queries as pages or widgets. It's basically Drupal Views for Wordpress.
-Author: Jonathan Daggerhart, Forrest Livengood
-Version: 1.3beta1
+Tags: query, pages, widget, admin, widgets, administration, manage, views
 Author URI: http://www.websmiths.co
+Author: Jonathan Daggerhart, Forrest Livengood
+Donate link: http://www.widgetwrangler.com/
+Requires at least: 3
+Tested up to: 3.2.1
+Stable tag: trunk
+Version: 1.3beta1
 */
+// Note: There are 3 places to change the version number; below, above, and in readme.txt
+define('QW_VERSION', 1.3);
+
 /*  Copyright 2010  Jonathan Daggerhart  (email : jonathan@daggerhart.com)
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License, version 2, as 
@@ -41,6 +49,21 @@ include_once QW_PLUGIN_DIR.'/widget.query.php';
 if(!function_exists('theme')){
   include_once QW_PLUGIN_DIR.'/template-wrangler.inc';
 }
+
+/*
+ * Checking current version of plugin to handle upgrades
+ */
+function qw_check_version()
+{
+  if($version = get_option('qw_plugin_version')){
+    // just setting up internal versioning for now
+    // include QW_PLUGIN_DIR.'/upgrade.php';
+  }
+  else{
+    update_option('qw_plugin_version', QW_VERSION);
+  }
+}
+add_action('admin_init', 'qw_check_version');
 
 /*
  * Ajax including form
