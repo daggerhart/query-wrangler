@@ -1,3 +1,14 @@
+<?php
+/*
+ * Where do all these variables come from?
+ * They are coming from the arguments sent along with the theme('query_edit') function in query-wrangler.php
+ *
+ * All keys in the argument array become variables in the template file
+ *
+ * See the following link for more details on how that works:
+ * https://github.com/daggerhart/Query-Wrangler/wiki/Template-Wrangler
+ */
+?>
 <form id="qw-edit-query-form" action='admin.php?page=query-wrangler&action=update&edit=<?php print $query_id; ?>&noheader=true' method='post'>
   <div id="qw-query-action-buttons">
     <input class='qw-button' type="submit" name="save" value="Save" />
@@ -47,29 +58,33 @@
     
     <div id="qw-query-filters" class="qw-query-admin-options">
       <h4>Filters</h4>
-      
-      <span class="qw-query-title" title="qw-post-types">
-        Post Types: <span><?php print (is_array($qw_query_options['args']['post_types'])) ? implode(",", $qw_query_options['args']['post_types']) : 'None'; ?></span>
+      <span class="qw-query-filters-title" title="qw-display-add-filters">
+        Add Filters
       </span>
-      <span class="qw-query-title" title="qw-post-status">
-        Post Status: <span><?php print $qw_query_options['args']['post_status']; ?></span>
+      <span class="qw-query-filters-title" title="qw-sort-filters">
+        Rearrange Filters
       </span>
-      <?php
-        // override queries can't choose categories or tags or page parents
-        if ($query_type != "override")
-        { ?>
-          <span class="qw-query-title" title="qw-categories">
-            Categories: <span><?php print (is_array($qw_query_options['args']['cat'])) ? implode(",", $qw_query_options['args']['cat']): 'None'; ?></span>
-          </span>
-          <span class="qw-query-title" title="qw-tags">
-            Tags: <span><?php print (is_array($qw_query_options['args']['tag'])) ? implode(",", $qw_query_options['args']['tag']): 'None'; ?></span>
-          </span>
-          <span class="qw-query-title" title="qw-post-parent">
-            Page Parent: <span><?php print ($qw_query_options['args']['post_parent']) ? $qw_query_options['args']['post_parent'] : 'None'; ?></span>
-          </span>
-          <?php
-        }
-      ?>
+      <div class="qw-clear-gone"><!-- ie hack -->&nbsp;</div>
+  
+      <div id="qw-query-filters-list">
+        <?php
+          if(is_array($qw_query_options['args']['filters']))
+          {
+            // loop through and display
+            foreach($qw_query_options['args']['filters'] as $filter_name => $filter_settings)
+            {
+              $filter_type_data = $filters[$filter_settings['type']];
+              ?>
+                <div>
+                  <span class="qw-query-filters-name" title="qw-filter-<?php print $filter_name; ?>">
+                    <?php print str_replace("_", " ", $filter_name); ?>
+                  </span>
+                </div>
+              <?php
+            }
+          }
+        ?>
+      </div>
     </div>
     <!-- /filters -->
     
@@ -94,7 +109,7 @@
               ?>
                 <div>
                   <span class="qw-query-fields-name" title="qw-field-<?php print $field_name; ?>">
-                    <?php print $field_type_data['label']; ?>
+                    <?php print str_replace("_", " ", $field_name);; ?>
                   </span>
                 </div>
               <?php
@@ -102,7 +117,8 @@
           }
         ?>
       </div>
-    </div><!-- /fields -->
+    </div>
+    <!-- /fields -->
     
     <?php
       // use pager on pages and overrides
@@ -387,17 +403,30 @@
             <?php
           }
         ?>
-      <!-- Filters -->
+      <!-- edit Filters -->
         <?php
-          $args = array(
-            'filters' => $qw_query_options['args'],
-            'query_type' => $query_type,
-            'post_types' => $post_types,
-            'category_ids' => $category_ids,
-            'tags' => $tags,
-          );
-          print theme('query_filters', $args);
+          if(is_array($qw_query_options['args']['filters']))
+          {
+            // loop through existing filters
+            foreach($qw_query_options['args']['filters'] as $filter_name => $filter_settings)
+            {
+              $filter = $filters[$filter_settings['type']];
+              $args = array(
+                'filter_name' => $filter_name,
+                'filter' => $filter['type'],
+                'filters' => $qw_query_options['args']['filters'],
+                'filter_settings' => $filter_settings,   
+                'query_type' => $query_type,
+                'post_types' => qw_all_post_types(),
+                'category_ids' => get_all_category_ids(),
+                'tags' => get_tags(array('hide_empty' => false)),
+              );
+              print theme('query_filter', $args);
+            }
+          }
         ?>
+      <!-- /edit filters -->  
+        
       <!-- edit fields -->
         <?php
           if(is_array($qw_query_options['display']['field_settings']['fields']))
@@ -457,6 +486,48 @@
             ?>
           </ul>
         </div>
+
+<!-- Filters -->
+        <!-- add filters -->
+        <div id="qw-display-add-filters" class="qw-query-content">
+          <div class="qw-checkboxes">
+            <?php
+              // loop through filters
+              foreach($filters as $filter_name => $filter)
+              {
+                $filter_checked = (is_array($qw_query_options['args']['filters']) && in_array($filter_name, $qw_query_options['args']['filters'])) ? 'checked="checked"' : '';
+                ?>
+                <label class="qw-filter-checkbox"><input type="checkbox" value="<?php print $filter_name; ?>" <?php print $filter_checked; ?> /><?php print $filter['label']; ?></label>
+                <?php
+              }
+            ?>
+          </div>
+          <div id="qw-add-selected-filters" class="qw-button">Add Selected filters</div>
+        </div>
+        
+        <!-- sortable filters -->
+        <div id="qw-sort-filters" class="qw-query-content qw-sort-filters-values">
+          <strong>Filters</strong><br />
+          <em>Click and Drag to sort</em><br />
+          <ul id="qw-filters-sortable">
+            <?php
+              if(is_array($qw_query_options['args']['filters']))
+              {
+                // loop through existing filters
+                foreach($qw_query_options['args']['filters'] as $filter_name => $filter_settings)
+                {
+                  $args = array(
+                    'filter_name' => $filter_name,
+                    'filter' => $filter_settings,
+                    'weight' => $filter_settings['weight'],
+                    'type' => $filter_settings['type'],
+                  );
+                  print theme('query_filter_sortable', $args);
+                }
+              }
+            ?>
+          </ul>
+        </div>
         
         <div class="qw-clear-gone"><!-- ie hack -->&nbsp;</div>
       
@@ -475,6 +546,7 @@
     <p><em>This preview does not include your theme's CSS stylesheet.</em></p>
     <div id="query-preview-target">
       <?php
+      krumo($qw_query_options);
         print qw_execute_query($query_id);
       ?>
     </div>

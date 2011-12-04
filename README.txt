@@ -52,10 +52,16 @@ Select a category or multiple categories to override.   Save the query, then vis
 
 = 1.3beta1 =
 
- * Added Wordpress hooks for fields and field styles.
+ * Added Wordpress hooks for fields, field styles, filters, and pagers
  * Fixed some bugs with replacement tokens and rewriting output
  * Fixed some templates from displaying excluded fields
  * Determined methodology for field callbacks and arguments
+ * Shortcode support for fields
+
+= 1.2beta3 =
+
+ * Bug fix for empty category and tag pages
+ * Bug fix for query shortcodes
 
 = 1.2beta2 =
 
@@ -76,4 +82,4 @@ Select a category or multiple categories to override.   Save the query, then vis
 
 == Upgrade Notice ==
 
-1.3beta1 Added wordpress hooks, improved fields, lots of other fixes and improvements
+1.3beta1 Added wordpress hooks, improved fields, lots of other fixes and improvements.  Made filters act like fields

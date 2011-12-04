@@ -93,6 +93,8 @@ function qw_default_fields($fields)
   
   return $fields;
 }
+// add default fields to the hook filter
+add_filter('qw_fields', 'qw_default_fields');
 /*
  * All Field Styles and settings
  * 
@@ -133,6 +135,38 @@ function qw_default_field_styles($field_styles)
   
   return $field_styles;
 }
+// add default field styles to the filter
+add_filter('qw_field_styles', 'qw_default_field_styles');
+
+/*
+ * Default Filters
+ */
+function qw_default_filters($filters){
+  $filters['post_types'] = array(
+    'label' => 'Post Type',
+    'type' => 'post_types',
+  );
+  $filters['post_status'] = array(
+    'label' => 'Post Status',
+    'type' => 'post_status',
+  );
+  $filters['post_parent'] = array(
+    'label' => 'Post Parent',
+    'type' => 'post_parent',
+  );
+  $filters['categories'] = array(
+    'label' => 'Categories',
+    'type' => 'categories',
+  );
+  $filters['tags'] = array(
+    'label' => 'Tags',
+    'type' => 'tags',
+  );
+  
+  return $filters;
+}
+// add default filters to the filter
+add_filter('qw_filters', 'qw_default_filters');
 /*
  * File Styles
  * 
@@ -152,6 +186,35 @@ function qw_default_file_styles($file_styles)
 
   return $file_styles;
 }
+// add default file styles to the filter
+add_filter('qw_file_styles', 'qw_default_file_styles');
+
+/*
+ * Setup pager types 
+ */
+function qw_default_pager_types($pagers) {
+  $pagers['default'] = array(
+    'label' => 'Default',
+    'callback' => 'qw_theme_pager_default'
+  );
+  $pagers['numbers']	= array(
+    'label' => 'Page Numbers',
+    'callback' => 'qw_theme_pager_numbers'
+  );
+  
+  // WP PageNavi Plugin
+  if(function_exists('wp_pagenavi')) {
+    $pagers['pagenavi'] = array(
+      'label' => 'PageNavi',
+      'callback' => 'wp_pagenavi'
+    );
+  }
+  return $pagers;
+}
+// add default pager types
+add_filter('qw_pager_types', 'qw_default_pager_types');
+
+
 /*
  * Function for grabbing meta keys
  * 

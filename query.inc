@@ -78,43 +78,37 @@ function qw_generate_query_options($query_id, $options_override = array())
  */
 function qw_generate_query_args($options = array(), $options_override = array())
 {  
-  //print_r($options);exit();
-  $display = $options['display'];
-
   // standard arguments
   $args['posts_per_page'] = ($options['args']['posts_per_page']) ? $options['args']['posts_per_page']: 5;
   $args['offset']         = ($options['args']['offset']) ? $options['args']['offset']: 0;
-  $args['post_status']    = ($options['args']['post_status']) ? $options['args']['post_status']: 'publish';
   $args['orderby']        = ($options['args']['orderby']) ? $options['args']['orderby']: 'none';
   $args['order']          = ($options['args']['order']) ? $options['args']['order']: 'ASC';
   $args['paged']          = $options['args']['paged'];
   //$args['']              = $options['args'][''];
   
-  // page parent
-  if($options['args']['post_parent'] != ""){
-    $args['post_parent'] = $options['args']['post_parent'];
-  }
-  
-  // post types
-  if(is_array($options['args']['post_types'])){
-    $args['post_type'] = array_values($options['args']['post_types']);
-  }
-  
-  // category arguments
-  if(is_array($options['args']['cat'])){
-    // handle normal cat operator as a string
-    if($options['args']['cat_operator'] == "cat"){
-      $args['cat'] = implode(",", array_keys($options['args']['cat']));      
+  // handle filters
+  foreach($options['args']['filters'] as $filter)
+  {
+    if($filter['type'] == 'categories'){
+      if($filter['cat_operator'] == 'cat'){
+        $args[$filter['cat_operator']] = implode(",", array_keys($filter['cat']));
+      }
+      else {
+        $args[$filter['cat_operator']] = $filter['cat'];
+      }
     }
-    // other cat operators are arrays
-    else {
-      $args[$options['args']['cat_operator']] = array_values($options['args']['cat']);      
+    else if($filter['type'] == 'tags'){
+      $args[$filter['tag_operator']] = array_keys($filter['tag']);
     }
-  }
-  
-  // tag arguments
-  if(is_array($options['args']['tag'])){
-    $args[$options['args']['tag_operator']] = array_keys($options['args']['tag']);      
+    else if($filter['type'] == 'post_types'){
+      $args['post_type'] = $filter['post_types'];
+    }
+    else if($filter['type'] == 'post_status'){
+      $args['post_status'] = $filter['post_status'];
+    }
+    else if($filter['type'] == 'post_parent'){
+      $args['post_parent'] = $filter['post_parent'];
+    }
   }
   
   return $args;
@@ -181,6 +175,7 @@ function qw_default_query_data(){
       'post_status'     => 'published',
       'orderby'         => 'date',
       'order'           => 'ASC',
+      'filters'         => array(),
     ),
     'display' => array(
       'type' => 'full',

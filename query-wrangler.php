@@ -33,7 +33,7 @@ include_once QW_PLUGIN_DIR.'/pages.inc';
 // Wordpress hooks
 include_once QW_PLUGIN_DIR.'/data.hooks.inc';
 // Field and field style definitions
-include_once QW_PLUGIN_DIR.'/data.fields.inc';
+include_once QW_PLUGIN_DIR.'/data.defaults.inc';
 // Query Widget
 include_once QW_PLUGIN_DIR.'/widget.query.php';
 
@@ -45,7 +45,7 @@ if(!function_exists('theme')){
 /*
  * Ajax including form
  */
-function qw_form_field_ajax(){
+function qw_form_ajax(){
   
   if($_POST['form'] == 'field_form'){
     $args = array(
@@ -66,10 +66,31 @@ function qw_form_field_ajax(){
     );
     print theme('query_field_sortable', $args);
   }
+  else if($_POST['form'] == 'filter_form')
+  {
+    $args = array(
+      'filter' => $_POST['filter_type'],
+      'filter_name' => $_POST['filter_name'],
+      'query_type' => $_POST['query_type'],
+      'post_types' => qw_all_post_types(),
+      'category_ids' => get_all_category_ids(),
+      'tags' => get_tags(array('hide_empty' => false)),
+    );
+    print theme('query_filter', $args);
+  }
+  else if($_POST['form'] == 'filter_sortable') {
+    $args = array(
+      'filter_name' => $_POST['filter_name'],
+      'filter' => $_POST['filter_type'],
+      'weight' => $_POST['next_weight'],
+    );
+    print theme('query_filter_sortable', $args);
+  }
+  
   exit;
 }
-add_action( 'wp_ajax_nopriv_qw_form_field_ajax', 'qw_form_field_ajax' );
-add_action( 'wp_ajax_qw_form_field_ajax', 'qw_form_field_ajax' );
+add_action( 'wp_ajax_nopriv_qw_form_ajax', 'qw_form_ajax' );
+add_action( 'wp_ajax_qw_form_ajax', 'qw_form_ajax' );
 
 /*
  * Javascript for query page
@@ -88,12 +109,37 @@ function qw_admin_js(){
                   false,
                   true);
   // declare the URL to the file that handles the AJAX request (wp-admin/admin-ajax.php)
-  
+
+  // @TODO: make LOTS of things available as js objects.  almost everything
   $data = array(
+    'ajaxForm' => admin_url( 'admin-ajax.php' ),
     'allFields' => qw_all_fields(),
     'allFieldStyles' => qw_all_field_styles(),
-    'ajaxForm' => admin_url( 'admin-ajax.php' ),
+    'allPostTypes' => qw_all_post_types,
+    'allPagerTypes' => qw_all_pager_types(),
+    'allImageSizes' => get_intermediate_image_sizes(),
+    'allFileStyles' => qw_all_file_styles(),
+    'allFilters'  => qw_all_filters(),
   );
+
+  // editing a query  
+  if($query_id = $_GET['edit'])  
+  {
+    // get the query
+    global $wpdb;
+    $table_name = $wpdb->prefix."query_wrangler";
+    $sql = "SELECT name,type,data,path FROM ".$table_name." WHERE id = ".$query_id." LIMIT 1";
+    $row = $wpdb->get_row($sql);
+    
+    $additional_data ['query'] = array(
+      'id' => $query_id,
+      'options' => unserialize($row->data),
+      'name' => $row->name,
+      'type' => $row->type,
+    );
+    
+    $data = array_merge($data, $additional_data);
+  }
   
   wp_localize_script( 'qw-admin-js',
                       'QueryWrangler',
@@ -234,13 +280,7 @@ function qw_edit_query_form()
     $sql = "SELECT name,type,data,path FROM ".$table_name." WHERE id = ".$query_id." LIMIT 1";
     $row = $wpdb->get_row($sql);
     
-    // Get all extra post types 
-    $post_types = get_post_types(array('public' => true, '_builtin' => false), 'names', 'and');
-    // Add standard types
-    $post_types['post'] = 'post';
-    $post_types['page'] = 'page';
-    // sort types
-    ksort($post_types); 
+    $post_types = qw_all_post_types();
     
     // start building edit page data
     $edit_args = array(
@@ -260,6 +300,8 @@ function qw_edit_query_form()
       'fields' => qw_all_fields(),
       // all qw field styles
       'field_styles' => qw_all_field_styles(),
+      // all filters
+      'filters' => qw_all_filters(),
       // all WP post types available for QWing
       'post_types' => $post_types,
       // all Pager Types
@@ -270,6 +312,11 @@ function qw_edit_query_form()
     if(is_array($edit_args['qw_query_options']['display']['field_settings']['fields'])){  
       uasort($edit_args['qw_query_options']['display']['field_settings']['fields'],'qw_cmp');
     }
+    
+    // sort filters according to weight  
+    if(is_array($edit_args['qw_query_options']['args']['filters'])){  
+      uasort($edit_args['qw_query_options']['args']['filters'],'qw_cmp');
+    }    
     
     // overrides
     if($row->type == 'override'){

@@ -24,8 +24,13 @@ function qw_templates($templates){
     'default_path' => QW_PLUGIN_DIR,
   );
   // filters edit form
-  $templates['query_filters'] = array(
+  $templates['query_filter'] = array(
     'files' => 'forms/form.query-filters.inc',
+    'default_path' => QW_PLUGIN_DIR,
+  );
+  // sortable filters template
+  $templates['query_filter_sortable'] = array(
+    'files' => 'forms/form.query-filter-sortable.inc',
     'default_path' => QW_PLUGIN_DIR,
   );
   
@@ -519,27 +524,4 @@ function qw_get_post_images($post_id)
     
 				return $sorted;
 		}
-}
-
-/*
- * Setup pager types 
- */
-function qw_default_pager_types($pagers) {
-  $pagers['default'] = array(
-    'label' => 'Default',
-    'callback' => 'qw_theme_pager_default'
-  );
-  $pagers['numbers']	= array(
-    'label' => 'Page Numbers',
-    'callback' => 'qw_theme_pager_numbers'
-  );
-  
-  // WP PageNavi Plugin
-  if(function_exists('wp_pagenavi')) {
-    $pagers['pagenavi'] = array(
-      'label' => 'PageNavi',
-      'callback' => 'wp_pagenavi'
-    );
-  }
-  return $pagers;
 }

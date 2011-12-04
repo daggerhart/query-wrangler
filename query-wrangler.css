@@ -69,7 +69,8 @@ a.toplevel_page_query-wrangler {
 #qw-list-title {
   width: 70%;
 }
-#qw-query-fields-list {
+#qw-query-fields-list,
+#qw-query-filters-list {
   border-top: 1px solid #bbb;
   padding: 4px 16px;
   text-transform: capitalize;
@@ -86,7 +87,8 @@ a.toplevel_page_query-wrangler {
 .qw-query-content select,
 .qw-query-content select option,
 .qw-field-checkbox,
-.qw-field-title {
+.qw-field-title,
+.qw-filter-title {
   text-transform: capitalize;
 }
 .qw-button {
@@ -113,13 +115,15 @@ span.qw-query-title {
   font-size: 0.9em;
 }
 span.qw-query-title span,
-span.qw-query-fields-name {
+span.qw-query-fields-name,
+span.qw-query-filters-name {
   color: blue;
   text-decoration: underline;
   cursor: pointer;
 }
 label.qw-query-checkbox,
-label.qw-field-checkbox {
+label.qw-field-checkbox,
+label.qw-filter-checkbox {
   display: block;
   margin: 3px 0px;
   padding: 3px;
@@ -157,7 +161,8 @@ label.qw-field-checkbox input {
   height: 0px;
   font-size: 0px;
 }
-ul#qw-fields-sortable li.qw-field-item{
+ul#qw-fields-sortable li.qw-field-item,
+ul#qw-filters-sortable li.qw-filter-item {
   line-height: 30px;
   border: 1px solid #bbb;
   border-radius: 4px;
@@ -170,7 +175,8 @@ ul#qw-fields-sortable li.qw-field-item{
 ul.qw-field-tokens-list li {
   font-weight: bold;
 }
-li.qw-field-item .sort-handle {
+li.qw-field-item .sort-handle,
+li.qw-filter-item .sort-handle {
   display: block;
   background: transparent url('images/handle2.png') center center no-repeat;
   float: left;
@@ -184,19 +190,22 @@ li.qw-field-item .sort-handle {
   padding: 4px;
   border: 1px solid #ddd;
 }
-.qw-field-weight {
+.qw-field-weight,
+.qw-filter-weight {
   display: block;
   float: right;
   margin-top: 4px;
 }
-.qw-field-remove {
+.qw-field-remove,
+.qw-filter-remove {
   display: block;
   float: right;
   cursor: pointer;
   margin: 4px 6px 0px;
   padding: 3px 8px;
 }
-.qw-query-fields-title {
+.qw-query-fields-title,
+.qw-query-filters-title {
   display: block;
   text-align: center;
   width: 48%;
@@ -206,8 +215,8 @@ li.qw-field-item .sort-handle {
   cursor: pointer;
 }
 
-
-.qw-sort-field-name {
+.qw-sort-field-name,
+.qw-sort-filter-name {
   display: none;
 }
 .qw-options-group {

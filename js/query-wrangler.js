@@ -32,6 +32,16 @@ function qw_update_field_weights()
   qw_generate_field_tokens();
 }
 /*
+ * Sortable callback for filter weights
+ */
+function qw_update_filter_weights()
+{
+  jQuery("#qw-sort-filters  ul#qw-filters-sortable li.qw-filter-item").each(function(i){
+    jQuery(this).find(".qw-filter-weight").attr('value', i);
+    jQuery(this).find(".qw-filter-weight").val(i);
+  });
+}
+/*
  * make tokens for fields
  */
 function qw_generate_field_tokens() {
@@ -105,10 +115,19 @@ function qw_set_setting_title(){
     var title_array = [];
     jQuery('#'+qw_current_form_id).find('.qw-field-title').each(function(index, element){
       var field_name = jQuery(element).siblings('.qw-sort-field-name').text();
-      title_array.push('<div><span class="qw-query-fields-name" title="qw-field-'+field_name+'">'+jQuery(element).text()+'</span></div>'); 
+      title_array.push('<div><span class="qw-query-fields-name" title="qw-field-'+field_name+'">'+field_name.replace("_", " ")+'</span></div>'); 
     });
     jQuery('#qw-query-fields-list').html(title_array.join(''));
   }
+  // filters
+  else if (jQuery('#'+qw_current_form_id).hasClass('qw-sort-filters-values')) {
+    var title_array = [];
+    jQuery('#'+qw_current_form_id).find('.qw-filter-title').each(function(index, element){
+      var filter_name = jQuery(element).siblings('.qw-sort-filter-name').text();
+      title_array.push('<div><span class="qw-query-filters-name" title="qw-filter-'+filter_name+'">'+filter_name.replace("_", " ")+'</span></div>'); 
+    });
+    jQuery('#qw-query-filters-list').html(title_array.join(''));
+  }  
   // header - footer - empty
   else if (jQuery('#'+qw_current_form_id).hasClass('qw-header-footer-empty')){
     if(jQuery('#'+qw_current_form_id).find('.qw-field-textarea').val().trim() == ""){
@@ -128,32 +147,67 @@ function qw_get_field_templates(field_type){
   var field_name = (item_count > 0) ? field_type + "_" + item_count: field_type;
   var next_weight = jQuery('ul#qw-fields-sortable li').length;
 
-  // new sortable item
-  jQuery.ajax({
-    url: QueryWrangler.ajaxForm,
-    type: 'POST',
-    async: false,
-    data: {'form': 'field_sortable', 'field_name': field_name, 'field_type': field_type, 'next_weight': next_weight, 'action': 'qw_form_field_ajax'},
-    success: function(results){
-      // add new sortable item
-      jQuery('#qw-options-forms ul#qw-fields-sortable').append(results);
-    }
-  });
-  
   // TODO:  since this is synchronous, show a throbber
   // ajax call to get field form
   jQuery.ajax({
     url: QueryWrangler.ajaxForm,
     type: 'POST',
     async: false,
-    data: {'form':'field_form', 'field_name': field_name, 'field_type': field_type, 'action': 'qw_form_field_ajax'},
+    data: {'form':'field_form', 'field_name': field_name, 'field_type': field_type, 'query_type': QueryWrangler.query.type, 'action': 'qw_form_ajax'},
     success: function(results){
       // append the results
       jQuery('#qw-options-forms').append(results);
     }
   });
   
+  // new sortable item
+  jQuery.ajax({
+    url: QueryWrangler.ajaxForm,
+    type: 'POST',
+    async: false,
+    data: {'form': 'field_sortable', 'field_name': field_name, 'field_type': field_type, 'next_weight': next_weight, 'action': 'qw_form_ajax'},
+    success: function(results){
+      // add new sortable item
+      jQuery('#qw-options-forms ul#qw-fields-sortable').append(results);
+    }
+  });
+  
   return field_name;
+}
+/*
+ * Get filter and sortable item template
+ */
+function qw_get_filter_templates(filter_type){
+  var item_count = jQuery('#qw-options-forms input.qw-filter-type[value='+filter_type+']').length;
+  var filter_name = (item_count > 0) ? filter_type + "_" + item_count: filter_type;
+  var next_weight = jQuery('ul#qw-filters-sortable li').length;
+
+  // new sortable item
+  jQuery.ajax({
+    url: QueryWrangler.ajaxForm,
+    type: 'POST',
+    async: false,
+    data: {'form': 'filter_sortable', 'filter_name': filter_name, 'filter_type': filter_type, 'next_weight': next_weight, 'action': 'qw_form_ajax'},
+    success: function(results){
+      // add new sortable item
+      jQuery('#qw-options-forms ul#qw-filters-sortable').append(results);
+    }
+  });
+  
+  // TODO:  since this is synchronous, show a throbber
+  // ajax call to get filter form
+  jQuery.ajax({
+    url: QueryWrangler.ajaxForm,
+    type: 'POST',
+    async: false,
+    data: {'form':'filter_form', 'filter_name': filter_name, 'filter_type': filter_type, 'action': 'qw_form_ajax'},
+    success: function(results){
+      // append the results
+      jQuery('#qw-options-forms').append(results);
+    }
+  });
+  
+  return filter_name;
 }
 /*
  * Add selected fields
@@ -168,7 +222,7 @@ function qw_add_new_fields(){
       var true_name = qw_get_field_templates(field_type);
       // remove check
       jQuery(this).removeAttr('checked');
-      title_array.push('<div><span class="qw-query-fields-name" title="qw-field-'+true_name+'">'+QueryWrangler.allFields[field_type]['label']+'</span></div>'); 
+      title_array.push('<div><span class="qw-query-fields-name" title="qw-field-'+true_name+'">'+true_name.replace("_", " ")+'</span></div>'); 
     }
   });
   
@@ -179,6 +233,29 @@ function qw_add_new_fields(){
   qw_empty_form();
   // refresh sortable items
   jQuery('#qw-options-form-target ul#qw-fields-sortable').sortable("refreshItems");
+}
+/*
+ * Add selected filters
+ */
+function qw_add_new_filters(){
+  var title_array = [];
+  jQuery('#qw-options-form-target #qw-display-add-filters input[type=checkbox]').each(function(index,element){
+    if(jQuery(this).is(':checked')){
+      // filter type
+      var filter_type = jQuery(this).val();
+      // add a new filter
+      var true_name = qw_get_filter_templates(filter_type);
+      // remove check
+      jQuery(this).removeAttr('checked');
+      title_array.push('<div><span class="qw-query-filters-name" title="qw-filter-'+true_name+'">'+QueryWrangler.allFilters[filter_type]['label']+'</span></div>'); 
+    }
+  });
+  
+  jQuery('#qw-query-filters-list').append(title_array.join(''));
+  // empty form title & hide form
+  qw_empty_form();
+  // refresh sortable items
+  jQuery('#qw-options-form-target ul#qw-filters-sortable').sortable("refreshItems");
 }
 /*
  * Standard operations of a title click action
@@ -242,6 +319,14 @@ jQuery(document).ready(function(){
     }
   }).disableSelection();
   
+  // sortable filters
+  jQuery('#qw-options-form-target ul#qw-filters-sortable').sortable({
+    handle: '.sort-handle',
+    update: function(event,ui){
+      // update filter weights
+      qw_update_filter_weights();
+    }
+  }).disableSelection();  
   /*
    * Update button
    */ 
@@ -277,6 +362,12 @@ jQuery(document).ready(function(){
   jQuery('#qw-add-selected-fields').click(function(){
     qw_add_new_fields();
   });
+  /*
+   * Adding new filters
+   */ 
+  jQuery('#qw-add-selected-filters').click(function(){
+    qw_add_new_filters();
+  });
   
   /* **********************************************************
    * Delegates, handle updated binded functions
@@ -296,6 +387,20 @@ jQuery(document).ready(function(){
     }
   });
   
+  // filters actions functionality
+  jQuery('#qw-query-filters').delegate('.qw-query-filters-title', 'click', function(){
+    // get new form info
+    qw_new_form_id = jQuery(this).attr('title');
+    // standard click actions
+    qw_title_click_action();
+    // set the title
+    jQuery('#qw-options-target-title').text(jQuery(this).text());
+    // show buttons
+    if(qw_current_form_id == "qw-sort-filters"){
+      jQuery('#qw-options-actions').show();      
+    }
+  });
+  
   // Remove Field buttons
   jQuery('li.qw-field-item').delegate('span.qw-field-remove', 'click', function(){
     // remove the field's form
@@ -305,6 +410,17 @@ jQuery(document).ready(function(){
     jQuery(this).parent('li.qw-field-item').remove();
     qw_update_field_weights();
   });
+
+  // Remove filter buttons
+  jQuery('li.qw-filter-item').delegate('span.qw-filter-remove', 'click', function(){
+    // remove the filter's form
+    var form_name = jQuery(this).siblings('.qw-sort-filter-name').text();
+    jQuery('#qw-options-forms #qw-filter-'+form_name).remove();
+    // remove this sortable item
+    jQuery(this).parent('li.qw-filter-item').remove();
+    qw_update_filter_weights();
+  });
+
   
   // Field Name click 
   jQuery('#qw-query-fields-list').delegate('.qw-query-fields-name','click', function(){
@@ -319,11 +435,23 @@ jQuery(document).ready(function(){
     // show action buttons
     jQuery('#qw-options-actions').show();  
   });
+ 
+  // filter Name click 
+  jQuery('#qw-query-filters-list').delegate('.qw-query-filters-name','click', function(){
+    // get form id
+    qw_new_form_id = jQuery(this).attr('title');
+    // standard click actions
+    qw_title_click_action();
+    // set the title
+    var qw_form_title = jQuery(this).text();
+    // set title
+    jQuery('#qw-options-target-title').text(qw_form_title);    
+    // show action buttons
+    jQuery('#qw-options-actions').show();  
+  });
   
   // Field Options Checkboxes
   jQuery('#qw-options-forms, #query-preview').delegate('.qw-options-group-title input[type=checkbox]','click', function(){
-    console.log('hello');
-    console.log(this);
     qw_field_options_toggle(jQuery(this));
   });
   /*** end delegates ******************************************/
