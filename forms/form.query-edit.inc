@@ -1,7 +1,7 @@
 <?php
 /*
  * Where do all these variables come from?
- * They are coming from the arguments sent along with the theme('query_edit') function in query-wrangler.php
+ * They are coming from the arguments sent along with the theme('query_edit', $args) function in query-wrangler.php
  *
  * All keys in the argument array become variables in the template file
  *
@@ -413,7 +413,7 @@
               $filter = $filters[$filter_settings['type']];
               $args = array(
                 'filter_name' => $filter_name,
-                'filter' => $filter['type'],
+                'filter_type' => $filter['type'],
                 'filters' => $qw_query_options['args']['filters'],
                 'filter_settings' => $filter_settings,   
                 'query_type' => $query_type,
@@ -453,9 +453,7 @@
             <?php
               // loop through fields
               foreach($fields as $field_name => $field)
-              {
-                $field_checked = (is_array($qw_query_options['display']['fields']) && in_array($field_name, $qw_query_options['display']['fields'])) ? 'checked="checked"' : '';
-                ?>
+              { ?>
                 <label class="qw-field-checkbox"><input type="checkbox" value="<?php print $field_name; ?>" <?php print $field_checked; ?> /><?php print $field['label']; ?></label>
                 <?php
               }
@@ -495,10 +493,23 @@
               // loop through filters
               foreach($filters as $filter_name => $filter)
               {
-                $filter_checked = (is_array($qw_query_options['args']['filters']) && in_array($filter_name, $qw_query_options['args']['filters'])) ? 'checked="checked"' : '';
-                ?>
-                <label class="qw-filter-checkbox"><input type="checkbox" value="<?php print $filter_name; ?>" <?php print $filter_checked; ?> /><?php print $filter['label']; ?></label>
-                <?php
+                // for now, this is how I'll prevent certain filters on overrides
+                if($query_type == 'override' &&
+                   ($filter_name == 'categories' ||
+                    $filter_name == 'tags' ||
+                    $filter_name == 'post_parent')
+                  )
+                {
+                  $hide = true;
+                } else {
+                  $hide = false;
+                }
+                
+                if(!$hide)
+                {  ?>
+                  <label class="qw-filter-checkbox"><input type="checkbox" value="<?php print $filter_name; ?>" <?php print $filter_checked; ?> /><?php print $filter['label']; ?></label>
+                  <?php
+                }
               }
             ?>
           </div>

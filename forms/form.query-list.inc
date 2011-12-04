@@ -123,7 +123,7 @@ class Query_Wrangler_List_Table extends WP_List_Table
         //Build row actions
         $actions = array(
             'edit'      => sprintf('<a href="?page=%s&edit=%s">Edit</a>',$_REQUEST['page'], $item['ID']),
-            'delete'    => sprintf('<a href="?page=%s&noheader=true&action=delete&edit=%s">Delete</a>',$_REQUEST['page'], $item['ID']),
+            'delete'    => sprintf('<a class="qw-delete-query" href="?page=%s&noheader=true&action=delete&edit=%s">Delete</a>',$_REQUEST['page'], $item['ID']),
         );
         // pages
         if($item['type'] == 'page'){

@@ -139,8 +139,9 @@ function qw_query_pages_handler()
         if(is_array($terms)){
            $term = array_pop($terms);  
           // override options
-          $options_override['args']['cat_operator'] = 'cat';
-          $options_override['args']['cat'] = array($term->term_id => $term->name);
+          $options_override['args']['filters']['categories']['type'] = 'categories';
+          $options_override['args']['filters']['categories']['cat_operator'] = 'cat';
+          $options_override['args']['filters']['categories']['cats'] = array($term->term_id => $term->name);
         }
       }
       else if ($op == 'tag'){
@@ -148,8 +149,9 @@ function qw_query_pages_handler()
         if(is_array($terms)){
            $term = array_pop($terms);  
           // override options
-          $options_override['args']['tag_operator'] = 'tag__in';
-          $options_override['args']['tag'] = array($term->term_id => $term->name);
+          $options_override['args']['filters']['tags']['type'] = 'tags';
+          $options_override['args']['filters']['tags']['tag_operator'] = 'tag__in';
+          $options_override['args']['filters']['tags']['tags'] = array($term->term_id => $term->name);
         }
       }
       

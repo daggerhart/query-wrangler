@@ -74,17 +74,17 @@ function qw_form_ajax(){
     $args = array(
       'image_sizes' => get_intermediate_image_sizes(),
       'file_styles' => qw_all_file_styles(),
-      'field_name' => $_POST['field_name'],
+      'field_name' => $_POST['name'],
       'field_settings' => array(
-        'type' => $_POST['field_type'],
+        'type' => $_POST['type'],
       ),   
     );
     print theme('query_field', $args);
   }
   else if($_POST['form'] == 'field_sortable'){
     $args = array(
-      'field_name' => $_POST['field_name'],
-      'type' => $_POST['field_type'],
+      'field_name' => $_POST['name'],
+      'type' => $_POST['type'],
       'weight' => $_POST['next_weight'],
     );
     print theme('query_field_sortable', $args);
@@ -92,8 +92,8 @@ function qw_form_ajax(){
   else if($_POST['form'] == 'filter_form')
   {
     $args = array(
-      'filter' => $_POST['filter_type'],
-      'filter_name' => $_POST['filter_name'],
+      'filter_type' => $_POST['type'],
+      'filter_name' => $_POST['name'],
       'query_type' => $_POST['query_type'],
       'post_types' => qw_all_post_types(),
       'category_ids' => get_all_category_ids(),
@@ -103,8 +103,8 @@ function qw_form_ajax(){
   }
   else if($_POST['form'] == 'filter_sortable') {
     $args = array(
-      'filter_name' => $_POST['filter_name'],
-      'filter' => $_POST['filter_type'],
+      'filter_type' => $_POST['type'],
+      'filter_name' => $_POST['name'],
       'weight' => $_POST['next_weight'],
     );
     print theme('query_filter_sortable', $args);
@@ -464,7 +464,7 @@ function qw_update_query($post){
       $terms = array_merge($terms, array_keys($post['qw-query-options']['override']['cats']));
     }
     // merge tags
-    if(is_array($post['qw-query-options']['override']['cats'])){
+    if(is_array($post['qw-query-options']['override']['tags'])){
       $terms = array_merge($terms, array_keys($post['qw-query-options']['override']['tags']));
     }
     

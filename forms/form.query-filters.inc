@@ -1,10 +1,10 @@
 <?php  
  
- if($filter == "post_types")
+ if($filter_type == "post_types")
  { ?> 
     <!-- post types -->
     <div id="qw-filter-<?php print $filter_name; ?>" class="qw-query-content qw-checkbox-values">
-      <input class='qw-filter-type' type='hidden' name='qw-query-options[args][filters][<?php print $filter_name; ?>][type]' value='<?php print $filter; ?>' />
+      <input class='qw-filter-type' type='hidden' name='qw-query-options[args][filters][<?php print $filter_name; ?>][type]' value='<?php print $filter_type; ?>' />
       <p>Select which post types should be shown.</p>
       <div class="qw-checkboxes">
         <?php
@@ -21,12 +21,12 @@
     </div>
     <?php
  }
- else if($filter == "post_status")
+ else if($filter_type == "post_status")
  {
   ?>
     <!-- post status -->
     <div id="qw-filter-<?php print $filter_name; ?>" class="qw-query-content qw-single-value">
-      <input class='qw-filter-type' type='hidden' name='qw-query-options[args][filters][<?php print $filter_name; ?>][type]' value='<?php print $filter; ?>' />
+      <input class='qw-filter-type' type='hidden' name='qw-query-options[args][filters][<?php print $filter_name; ?>][type]' value='<?php print $filter_type; ?>' />
       <p>Select the status of the posts to show.</p>
       <select name="qw-query-options[args][filters][<?php print $filter_name; ?>][post_status]" class="qw-field-value">
         <option value="publish" <?php if($filters[$filter_name]['post_status'] == "publish") { print 'selected="selected"';} ?>>Published</option>
@@ -42,21 +42,21 @@
   // overrides don't have page parents, categories or tags
   if($query_type != 'override')
   {
-    if($filter == "post_parent")
+    if($filter_type == "post_parent")
     { ?>
       <!-- page parents -->
       <div id="qw-filter-<?php print $filter_name; ?>" class="qw-query-content qw-single-value">
-        <input class='qw-filter-type' type='hidden' name='qw-query-options[args][filters][<?php print $filter_name; ?>][type]' value='<?php print $filter; ?>' />
+        <input class='qw-filter-type' type='hidden' name='qw-query-options[args][filters][<?php print $filter_name; ?>][type]' value='<?php print $filter_type; ?>' />
         <p>Use only with post type 'Page' to show results with the chosen parent ID.</p>
         <input class="qw-field-value" type="text" name="qw-query-options[args][filters][<?php print $filter_name; ?>][post_parent]" value="<?php print $filters[$filter_name]['post_parent']; ?>" />
       </div>
       <?php
     }
-    else if($filter == "categories")
+    else if($filter_type == "categories")
     { ?>
       <!-- categories -->
       <div id="qw-filter-<?php print $filter_name; ?>" class="qw-query-content qw-checkbox-values">
-        <input class='qw-filter-type' type='hidden' name='qw-query-options[args][filters][<?php print $filter_name; ?>][type]' value='<?php print $filter; ?>' />
+        <input class='qw-filter-type' type='hidden' name='qw-query-options[args][filters][<?php print $filter_name; ?>][type]' value='<?php print $filter_type; ?>' />
         <p>Select which categories to pull posts from, and how to treat those categories.</p>
         <div class="qw-checkboxes">
           <?php
@@ -64,9 +64,9 @@
             foreach($category_ids as $cat_id)
             {
               $cat_name = get_cat_name($cat_id);
-              $cat_checked = (isset($filters[$filter_name]['cat'][$cat_id])) ? 'checked="checked"' : '';
+              $cat_checked = (isset($filters[$filter_name]['cats'][$cat_id])) ? 'checked="checked"' : '';
               ?>
-              <label class="qw-query-checkbox"><input type="checkbox" name="qw-query-options[args][filters][<?php print $filter_name; ?>][cat][<?php print $cat_id; ?>]" value="<?php print $cat_name; ?>" <?php print $cat_checked; ?> /><?php print $cat_name; ?></label> 
+              <label class="qw-query-checkbox"><input type="checkbox" name="qw-query-options[args][filters][<?php print $filter_name; ?>][cats][<?php print $cat_id; ?>]" value="<?php print $cat_name; ?>" <?php print $cat_checked; ?> /><?php print $cat_name; ?></label> 
               <?php
             }
           ?>
@@ -81,19 +81,19 @@
       </div>
       <?php
     }
-    else if($filter == "tags")
+    else if($filter_type == "tags")
     { ?>
       <!-- tags -->
       <div id="qw-filter-<?php print $filter_name; ?>" class="qw-query-content qw-checkbox-values">
-        <input class='qw-filter-type' type='hidden' name='qw-query-options[args][filters][<?php print $filter_name; ?>][type]' value='<?php print $filter; ?>' />
+        <input class='qw-filter-type' type='hidden' name='qw-query-options[args][filters][<?php print $filter_name; ?>][type]' value='<?php print $filter_type; ?>' />
         <p>Select which tags to use.</p>
         <div class="qw-checkboxes">
           <?php
             foreach($tags as $tag)
             {
-              $tag_checked = (isset($filters[$filter_name]['tag'][$tag->term_id])) ? 'checked="checked"' : '';
+              $tag_checked = (isset($filters[$filter_name]['tags'][$tag->term_id])) ? 'checked="checked"' : '';
               ?>
-              <label class="qw-query-checkbox"><input type="checkbox" name="qw-query-options[args][filters][<?php print $filter_name; ?>][tag][<?php print $tag->term_id; ?>]" value="<?php print $tag->name; ?>" <?php print $tag_checked; ?> /><?php print $tag->name; ?></label> 
+              <label class="qw-query-checkbox"><input type="checkbox" name="qw-query-options[args][filters][<?php print $filter_name; ?>][tags][<?php print $tag->term_id; ?>]" value="<?php print $tag->name; ?>" <?php print $tag_checked; ?> /><?php print $tag->name; ?></label> 
               <?php
             }
           ?>

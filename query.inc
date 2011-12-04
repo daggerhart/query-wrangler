@@ -91,14 +91,14 @@ function qw_generate_query_args($options = array(), $options_override = array())
   {
     if($filter['type'] == 'categories'){
       if($filter['cat_operator'] == 'cat'){
-        $args[$filter['cat_operator']] = implode(",", array_keys($filter['cat']));
+        $args[$filter['cat_operator']] = implode(",", array_keys($filter['cats']));
       }
       else {
-        $args[$filter['cat_operator']] = $filter['cat'];
+        $args[$filter['cat_operator']] = $filter['cats'];
       }
     }
     else if($filter['type'] == 'tags'){
-      $args[$filter['tag_operator']] = array_keys($filter['tag']);
+      $args[$filter['tag_operator']] = array_keys($filter['tags']);
     }
     else if($filter['type'] == 'post_types'){
       $args['post_type'] = $filter['post_types'];
