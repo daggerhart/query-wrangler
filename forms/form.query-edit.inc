@@ -546,7 +546,6 @@
     <p><em>This preview does not include your theme's CSS stylesheet.</em></p>
     <div id="query-preview-target">
       <?php
-      krumo($qw_query_options);
         print qw_execute_query($query_id);
       ?>
     </div>

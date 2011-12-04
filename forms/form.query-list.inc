@@ -411,7 +411,7 @@ function qw_list_queries_form(){
       <div class="wrap">
           
           <div id="icon-tools" class="icon32"><br/></div>
-          <h2>Query Wrangler</h2>
+          <h2>Query Wrangler  <a class="add-new-h2" href="admin.php?page=qw-create">Add New</a></h2>
           
           <!-- Forms are NOT created automatically, so you need to wrap the table in one to use features like bulk actions -->
           <form id="queries-filter" method="get">
