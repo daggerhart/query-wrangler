@@ -192,7 +192,8 @@ function qw_default_query_data(){
  * Slug creation
  */
 function qw_make_slug($string){
-  return stripcslashes(preg_replace('/[\s_\'\"]/','_', strtolower(strip_tags($string))));
+  $search = array("!","@","#","$","%","^","&","*","(",")","-","+","=","{","}","[","]","\\","|",":",";","'","<",",",">",".","?","/","~","`");
+  return str_replace(" ", "_", strtolower(str_replace($search, "", strip_tags($string))));
 }
 /*
  * usort callback. I likely stole this from somewhere.. like php.net
