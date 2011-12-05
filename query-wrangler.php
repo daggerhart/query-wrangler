@@ -59,14 +59,19 @@ function qw_check_version()
     // just setting up internal versioning for now
     // include QW_PLUGIN_DIR.'/upgrade.php';
   }
-  else{
+  else
+  {
+    // first upgrade
+    include QW_PLUGIN_DIR.'/upgrade.php';
+    qw_upgrade_12_to_13();
+    // set our version numer
     update_option('qw_plugin_version', QW_VERSION);
   }
 }
 add_action('admin_init', 'qw_check_version');
 
 /*
- * Ajax including form
+ * Ajax form templates
  */
 function qw_form_ajax(){
   

@@ -438,7 +438,8 @@
                 'image_sizes' => $image_sizes,
                 'file_styles' => $file_styles,
                 'field_name' => $field_name,
-                'field_settings' => $field_settings,   
+                'field_settings' => $field_settings,
+                'qw_query_options' => $qw_query_options,
               );
               print theme('query_field', $args);
             }
