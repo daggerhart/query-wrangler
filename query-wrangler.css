@@ -238,3 +238,12 @@ li.qw-filter-item .sort-handle {
 .qw-create-select option {
   padding: 6px;
 }
+.add-selected-wrapper {
+  display: block;
+  height: 40px;
+  background: transparent url('images/loading.gif') -40px top no-repeat;  
+}
+.add-selected-wrapper-active {
+  background: transparent url('images/loading.gif') left center no-repeat;  
+  padding-left: 28px;
+}

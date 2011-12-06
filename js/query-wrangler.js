@@ -12,7 +12,7 @@ function qw_options_group_toggle(element) {
 /*
  * Simple hide functions for forms
  */
-function qw_empty_form(){
+QueryWrangler.hide_forms = function(){
   // hide all forms
   jQuery('#qw-options-forms .qw-query-content').hide();
   // empty the title
@@ -22,7 +22,7 @@ function qw_empty_form(){
  * Sortable callback for field weights
  * @param {String} type field or filter
  */
-function qw_update_weights(type)
+QueryWrangler.update_weights = function(type)
 {
   jQuery("#qw-sort-"+type+"s  ul#qw-"+type+"s-sortable li.qw-"+type+"-item").each(function(i){
     jQuery(this).find(".qw-"+type+"-weight").attr('value', i);
@@ -31,13 +31,13 @@ function qw_update_weights(type)
   
   if (type == 'field') {
     // Update Field tokens
-    qw_generate_field_tokens();
+    QueryWrangler.generate_field_tokens();
   }
 }
 /*
  * make tokens for fields
  */
-function qw_generate_field_tokens() {
+QueryWrangler.generate_field_tokens = function() {
   var tokens = [];
   jQuery('#qw-fields-sortable .qw-field-item').each(function(){
     // field name
@@ -51,7 +51,7 @@ function qw_generate_field_tokens() {
 /*
  * toggle settings for display type
  */ 
-function qw_style_settings_toggle()
+QueryWrangler.style_settings_toggle = function()
 {
   if(jQuery('#qw-query-admin-options-wrap span[title=qw-display-type] span').text() == 'full'){
     jQuery('#qw-query-admin-options-wrap span[title=qw-display-full-settings]').show();
@@ -137,8 +137,8 @@ function qw_set_setting_title(){
  * @param {String} option field or filter
  * @param {String} option_type the field or filter type
  */
-function qw_get_option_templates(option, option_type){
-  var item_count = jQuery('#qw-options-forms input.qw-field-type[value='+option_type+']').length;
+QueryWrangler.get_option_templates = function(option, option_type){
+  var item_count = jQuery('#qw-options-forms input.qw-'+option+'-type[value='+option_type+']').length;
   var next_name = (item_count > 0) ? option_type + "_" + item_count: option_type;
   var next_weight = jQuery('ul#qw-'+option+'s-sortable li').length;
 
@@ -190,14 +190,15 @@ function qw_get_option_templates(option, option_type){
  * Add selected fields
  * @param {String} option field or filter
  */
-function qw_add_new_option(option){
+QueryWrangler.add_new_option = function(option){
+  jQuery('#qw-options-forms .add-selected-wrapper').addClass('add-selected-wrapper-active');
   var title_array = [];
   jQuery('#qw-options-form-target #qw-display-add-'+option+'s input[type=checkbox]').each(function(index,element){
     if(jQuery(this).is(':checked')){
       // option type
       var option_type = jQuery(this).val();
       // add a new field
-      var next_name = qw_get_option_templates(option, option_type);
+      var next_name = QueryWrangler.get_option_templates(option, option_type);
       // remove check
       jQuery(this).removeAttr('checked');
       title_array.push('<div><span class="qw-query-'+option+'s-name" title="qw-'+option+'-'+next_name+'">'+next_name.replace("_", " ")+'</span></div>'); 
@@ -209,27 +210,30 @@ function qw_add_new_option(option){
   jQuery('#qw-query-'+option+'s-list').append(title_array.join(''));
   
   // empty form title & hide form
-  qw_empty_form();
+  QueryWrangler.hide_forms();
   
   if(option == 'field'){
     // Update Field tokens
-    qw_generate_field_tokens();
+    QueryWrangler.generate_field_tokens();
   }
 
   // refresh sortable items
   jQuery('#qw-options-form-target ul#qw-'+option+'s-sortable').sortable("refreshItems");
+  jQuery('.add-selected-wrapper').removeClass('add-selected-wrapper-active');
 }
 /*
  * Standard operations of a title click action
  */
-function qw_title_click_action()
+QueryWrangler.title_click_action = function()
 {
+  // hide forms
+  QueryWrangler.hide_forms();
+  // hide buttons
+  jQuery('#qw-options-actions').hide();
   // trigger cancel button
   if(qw_current_form_id !== undefined && qw_current_form_id != ''){
     jQuery('#qw-options-actions-cancel').trigger('click');
   }
-  // hide forms
-  jQuery('#qw-options-forms .qw-query-content').hide();
   // show form
   jQuery('#qw-options-forms #'+qw_new_form_id).show();
   // backup the form
@@ -251,7 +255,7 @@ var qw_options = ['field','filter'];
  */
 jQuery(document).ready(function(){
   // display style settings 
-  qw_style_settings_toggle();
+  QueryWrangler.style_settings_toggle();
   
   /*
    * Form handling
@@ -264,7 +268,7 @@ jQuery(document).ready(function(){
     // get new form info
     qw_new_form_id = jQuery(this).parent('.qw-query-title').attr('title');
     // standard click actions
-    qw_title_click_action();
+    QueryWrangler.title_click_action();
     // set the title
     var qw_form_title = jQuery(this).parent('.qw-query-title').text().split(':');
     qw_form_title = qw_form_title[0];
@@ -279,7 +283,7 @@ jQuery(document).ready(function(){
    */ 
   jQuery('#qw-options-actions-update').click(function(){
     // empty form title & hide form
-    qw_empty_form();
+    QueryWrangler.hide_forms();
     // hide buttons
     jQuery('#qw-options-actions').hide();
     // set the title for the updated field
@@ -287,7 +291,7 @@ jQuery(document).ready(function(){
     // clear the current form id
     qw_current_form_id = '';
     // display style settings 
-    qw_style_settings_toggle();
+    QueryWrangler.style_settings_toggle();
   });
   
   /*
@@ -299,7 +303,7 @@ jQuery(document).ready(function(){
       jQuery('form#qw-edit-query-form').unserializeForm(qw_form_backup);
     }
     // empty form title & hide form
-    qw_empty_form();
+    QueryWrangler.hide_forms();
   });
   
   /*
@@ -327,7 +331,7 @@ jQuery(document).ready(function(){
    */
   jQuery.each(qw_options, function(index, option){
     jQuery('#qw-add-selected-'+option+'s').click(function(){
-      qw_add_new_option(option);
+      QueryWrangler.add_new_option(option);
     });  
   });
   
@@ -339,7 +343,7 @@ jQuery(document).ready(function(){
       handle: '.sort-handle',
       update: function(event,ui){
         // update option weights
-        qw_update_weights(option);
+        QueryWrangler.update_weights(option);
       }
     }).disableSelection();  
   });  
@@ -351,7 +355,7 @@ jQuery(document).ready(function(){
       // get new form info
       qw_new_form_id = jQuery(this).attr('title');
       // standard click actions
-      qw_title_click_action();
+      QueryWrangler.title_click_action();
       // set the title
       jQuery('#qw-options-target-title').text(jQuery(this).text());
       // show buttons
@@ -363,13 +367,14 @@ jQuery(document).ready(function(){
   
   // Remove buttons for all qw_options
   jQuery.each(qw_options, function(index, option){
+    // delegate the remove click function to all remove buttons
     jQuery('li.qw-'+option+'-item').delegate('span.qw-'+option+'-remove', 'click', function(){
       // remove the field's form
       var form_name = jQuery(this).siblings('.qw-sort-'+option+'-name').text();
       jQuery('#qw-options-forms #qw-'+option+'-'+form_name).remove();
       // remove this sortable item
       jQuery(this).parent('li.qw-'+option+'-item').remove();
-      qw_update_weights(option);
+      QueryWrangler.update_weights(option);
     });
   });
 
@@ -380,7 +385,7 @@ jQuery(document).ready(function(){
       // get form id
       qw_new_form_id = jQuery(this).attr('title');
       // standard click actions
-      qw_title_click_action();
+      QueryWrangler.title_click_action();
       // set the title
       var qw_form_title = jQuery(this).text();
       // set title

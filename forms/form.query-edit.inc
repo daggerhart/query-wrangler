@@ -179,7 +179,53 @@
       <div id="qw-options-forms">
         
 <!-- Single Values -->
-  
+        
+        <!-- posts per page -->
+        <div id="qw-posts-per-page" class="qw-query-content qw-single-value">
+          <p>Number of post to show per page </p>
+          <input class="qw-field-value" type="text" name="qw-query-options[args][posts_per_page]" value="<?php print $qw_query_options['args']['posts_per_page']; ?>" />
+        </div>
+        
+        <!-- offset -->
+        <div id="qw-offset" class="qw-query-content qw-single-value">
+          <p>Number of post to displace or pass over. </p>
+          <input class="qw-field-value" type="text" name="qw-query-options[args][offset]" value="<?php print $qw_query_options['args']['offset']; ?>" />
+        </div>
+        
+        <!-- Style: display type -->
+        <div id="qw-display-type" class="qw-query-content qw-single-value">
+          <select name="qw-query-options[display][type]" class="qw-field-value">
+            <option value="full" <?php if($qw_query_options['display']['type'] == "full") { print 'selected="selected"';} ?>>Full Posts </option>
+            <option value="fields" <?php if($qw_query_options['display']['type'] == "fields") { print 'selected="selected"';} ?>>Fields </option>
+          </select>
+        </div>
+        
+        <!-- display full settings -->
+        <div id="qw-display-full-settings" class="qw-query-content qw-single-value">
+          <select name="qw-query-options[display][full_settings][style]" class="qw-field-value">
+            <option value="complete" <?php if($qw_query_options['display']['full_settings']['style'] == "complete") { print 'selected="selected"';} ?>>Complete</option>
+            <option value="excerpt" <?php if($qw_query_options['display']['full_settings']['style'] == "excerpt") { print 'selected="selected"';} ?>>Excerpt</option>
+          </select>
+        </div>
+        
+        <!-- display fields settings -->
+        <div id="qw-display-fields-settings" class="qw-query-content qw-single-value">
+          <strong>Field Style</strong><br />
+          <select name="qw-query-options[display][field_settings][style]" class="qw-field-value">
+            <?php
+              // loop through field styles
+              foreach($field_styles as $style_name => $style)
+              {
+                if($style['type'] == 'fields')
+                { ?>
+                  <option value="<?php print $style_name; ?>" <?php if($qw_query_options['display']['field_settings']['style'] == $style_name) { print 'selected="selected"';} ?>><?php print $style['label']; ?> </option>
+                  <?php
+                }
+              }
+            ?>
+          </select>
+        </div>
+        
         <!-- header -->
         <div id="qw-query-header" class="qw-query-content qw-header-footer-empty">
           <p>
@@ -291,52 +337,6 @@
             <?php
           }
         ?>
-        
-        <!-- posts per page -->
-        <div id="qw-posts-per-page" class="qw-query-content qw-single-value">
-          <p>Number of post to show per page </p>
-          <input class="qw-field-value" type="text" name="qw-query-options[args][posts_per_page]" value="<?php print $qw_query_options['args']['posts_per_page']; ?>" />
-        </div>
-        
-        <!-- offset -->
-        <div id="qw-offset" class="qw-query-content qw-single-value">
-          <p>Number of post to displace or pass over. </p>
-          <input class="qw-field-value" type="text" name="qw-query-options[args][offset]" value="<?php print $qw_query_options['args']['offset']; ?>" />
-        </div>
-        
-        <!-- display type -->
-        <div id="qw-display-type" class="qw-query-content qw-single-value">
-          <select name="qw-query-options[display][type]" class="qw-field-value">
-            <option value="full" <?php if($qw_query_options['display']['type'] == "full") { print 'selected="selected"';} ?>>Full Posts </option>
-            <option value="fields" <?php if($qw_query_options['display']['type'] == "fields") { print 'selected="selected"';} ?>>Fields </option>
-          </select>
-        </div>
-        
-        <!-- display full settings -->
-        <div id="qw-display-full-settings" class="qw-query-content qw-single-value">
-          <select name="qw-query-options[display][full_settings][style]" class="qw-field-value">
-            <option value="complete" <?php if($qw_query_options['display']['full_settings']['style'] == "complete") { print 'selected="selected"';} ?>>Complete</option>
-            <option value="excerpt" <?php if($qw_query_options['display']['full_settings']['style'] == "excerpt") { print 'selected="selected"';} ?>>Excerpt</option>
-          </select>
-        </div>
-        
-        <!-- display fields settings -->
-        <div id="qw-display-fields-settings" class="qw-query-content qw-single-value">
-          <strong>Field Style</strong><br />
-          <select name="qw-query-options[display][field_settings][style]" class="qw-field-value">
-            <?php
-              // loop through field styles
-              foreach($field_styles as $style_name => $style)
-              {
-                if($style['type'] == 'fields')
-                { ?>
-                  <option value="<?php print $style_name; ?>" <?php if($qw_query_options['display']['field_settings']['style'] == $style_name) { print 'selected="selected"';} ?>><?php print $style['label']; ?> </option>
-                  <?php
-                }
-              }
-            ?>
-          </select>
-        </div>
         
 <!-- Multiple Values-->
         <!-- sort options -->
@@ -460,7 +460,9 @@
               }
             ?>
           </div>
-          <div id="qw-add-selected-fields" class="qw-button">Add Selected Fields</div>
+          <div class="add-selected-wrapper">
+            <div id="qw-add-selected-fields" class="qw-button">Add Selected Fields</div>
+          </div>
         </div>
         
         <!-- sortable fields -->
@@ -514,7 +516,9 @@
               }
             ?>
           </div>
-          <div id="qw-add-selected-filters" class="qw-button">Add Selected filters</div>
+          <div class="add-selected-wrapper">
+            <div id="qw-add-selected-filters" class="qw-button">Add Selected filters</div>
+          </div>
         </div>
         
         <!-- sortable filters -->
