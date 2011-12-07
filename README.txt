@@ -9,7 +9,7 @@ Donate link: http://www.widgetwrangler.com/
 Requires at least: 3
 Tested up to: 3.2.1
 Stable tag: trunk
-Version: 1.3beta1
+Version: 1.3.2beta
 
 This plugin lets you create new WP queries as pages or widgets. It's basically Drupal Views for Wordpress.
 
@@ -27,6 +27,8 @@ Some examples of how you would use this plugin include:
 * Create an image gallery
 * Modify the way your category pages look
 * Create a category list widget with custom sorting
+
+[Introduction to Query Wrangler](http://www.widgetwrangler.com/forum/query-wrangler/general/intro-query-wrangler "Learn to setup Queries")
 
 == Installation ==
 
@@ -55,6 +57,12 @@ Select a category or multiple categories to override.   Save the query, then vis
 1. Query Wrangler edit screen
 
 == Changelog ==
+
+= 1.3.2beta =
+
+ * Fixed template-wrangler comments bug
+ * Fixed display style bug
+ * Refactored javascript some
 
 = 1.3beta1 =
 
@@ -88,4 +96,4 @@ Select a category or multiple categories to override.   Save the query, then vis
 
 == Upgrade Notice ==
 
-1.3beta1 Added wordpress hooks, improved fields, lots of other fixes and improvements.  Made filters act like fields
+1.3.2beta Fixed some critical bugs, please upgrade.

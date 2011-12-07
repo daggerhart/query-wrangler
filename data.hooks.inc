@@ -8,11 +8,19 @@ function qw_all_fields(){
 }
 
 /*
- * Field Styles Hook
+ * Styles Hook
  */
-function qw_all_field_styles(){
-  $styles = apply_filters('qw_field_styles', array());
+function qw_all_styles(){
+  $styles = apply_filters('qw_styles', array());
   return $styles;
+}
+
+/*
+ * Row Styles Hook
+ */
+function qw_all_row_styles(){
+  $row_styles = apply_filters('qw_row_styles', array());
+  return $row_styles;
 }
 
 /*

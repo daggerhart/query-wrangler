@@ -100,50 +100,53 @@ add_filter('qw_fields', 'qw_default_fields');
  * 
  * @return array Field Styles
  */
-function qw_default_field_styles($field_styles)
+function qw_default_styles($styles)
 {
-  $field_styles['complete'] = array(
-    'type' => 'full',
-    'label' => 'Complete',
-    'template' => 'query-complete',
-    'default_path' => QW_PLUGIN_DIR, // do not include last slash
-  );
-  $field_styles['excerpt'] = array(
-    'type' => 'full',
-    'label' => 'Excerpt',
-    'template' => 'query-excerpt',
-    'default_path' => QW_PLUGIN_DIR, // do not include last slash
-  );
-  $field_styles['unformatted'] = array(
+  $styles['unformatted'] = array(
     'type' => 'fields',
     'label' => 'Unformatted',
     'template' => 'query-unformatted',
     'default_path' => QW_PLUGIN_DIR, // do not include last slash
   );
-  $field_styles['unordered_list'] = array(
+  $styles['unordered_list'] = array(
     'type' => 'fields',
     'label' => 'Unordered List',
     'template' => 'query-unordered_list',
     'default_path' => QW_PLUGIN_DIR, // do not include last slash
   );
-  $field_styles['ordered_list'] = array(
+  $styles['ordered_list'] = array(
     'type' => 'fields',
     'label' => 'Ordered List',
     'template' => 'query-ordered_list',
     'default_path' => QW_PLUGIN_DIR, // do not include last slash
   );
-  $field_styles['table'] = array(
+  $styles['table'] = array(
     'type' => 'fields',
     'label' => 'Table',
     'template' => 'query-table',
     'default_path' => QW_PLUGIN_DIR, // do not include last slash
   );
   
-  return $field_styles;
+  return $styles;
 }
 // add default field styles to the filter
-add_filter('qw_field_styles', 'qw_default_field_styles');
-
+add_filter('qw_styles', 'qw_default_styles');
+/*
+ * Default Row Styles
+ */
+function qw_default_row_styles($row_styles){
+  $row_styles['posts'] = array(
+    'type' => 'posts',
+    'label' => 'Complete Posts',
+  );
+  $row_styles['fields'] = array(
+    'type' => 'fields',
+    'label' => 'Fields',
+  );
+  return $row_styles;
+}
+// add default field styles to the filter
+add_filter('qw_row_styles', 'qw_default_row_styles');
 /*
  * Default Filters
  */

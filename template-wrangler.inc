@@ -272,3 +272,4 @@ function example_template_preprocess($template)
 function theme_link($href, $text){
   return "<a href='$href'>$text</a>";
 }
+*/

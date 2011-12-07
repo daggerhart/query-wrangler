@@ -1,4 +1,35 @@
 <?php
+function qw_upgrade_13_to_132(){
+  // get all queries
+  global $wpdb;
+  $table = $wpdb->prefix."query_wrangler";
+  $sql = "SELECT * FROM ".$table;
+  
+  $rows = $wpdb->get_results($sql);
+  
+  //adjust arguments to filter values
+  foreach($rows as $query){
+    $data = unserialize($query->data);
+
+    // convert field settings style to style
+    if(isset($data['display']['field_settings']['style'])){
+      $data['display']['style'] = $data['display']['field_settings']['style'];
+    }
+    // convert 'full' type to 'posts'
+    if($data['display']['type'] == 'full'){
+      $data['display']['type'] = 'posts';
+    }
+    
+    $update = array(
+      'data' => serialize($data),
+    );
+    $where = array(
+      'id' => $query->id,
+    );
+    $wpdb->update($table, $update, $where);     
+  }
+}
+
 // handle upgrades in the future  
 function qw_upgrade_12_to_13(){
   // get all queries
@@ -86,5 +117,8 @@ function qw_upgrade_12_to_13(){
     );
     $wpdb->update($table, $update, $where);    
   }
+  
+  // continue upgrading
+  qw_upgrade_13_to_132();
   
 }

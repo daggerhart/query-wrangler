@@ -75,7 +75,7 @@ function theme_query_display_rows_preprocess($template)
   if(isset($template['arguments']['style']))
   {
     // get the specific style
-    $all_styles = qw_all_field_styles();
+    $all_styles = qw_all_styles();
     $style = $all_styles[$template['arguments']['style']];
     // set this template's default path to the style's default path
     $template['default_path'] = $style['default_path'];
@@ -102,34 +102,38 @@ function qw_template_query($wp_query, $options)
   // look for empty results
   if ($results_count > 0)
   {
-    $all_styles = qw_all_field_styles();
+    $all_styles = qw_all_styles();
     
     // the content of the widget is the result of the query
-    if($options['display']['type'] == "full")
+    if($options['display']['type'] == "posts")
     {
       // get style type from display style
-      $style = $all_styles[$options['display']['full_settings']['style']];
+      // @TODO: change to ['style']['post_settings']
+      $style = array();
+      $style['name'] = $options['display']['full_settings']['style'];
+      
       // setup row template arguments
       $template_args = array(
-        'template' => $style['template'],
+        'template' => 'query-'.$style['name'],
         'slug' => $options['meta']['slug'],
-        'style' => $options['display']['full_settings']['style'],
+        'style' => $style['name'],
         'rows' => $wp_query,
       );
     }
     else if ($options['display']['type'] == "fields")
     {
       // get style type from display style
-      $style = $all_styles[$options['display']['field_settings']['style']];
+      $style = $all_styles[$options['display']['style']];
       // setup row template arguments
       $template_args = array(
         'template' => $style['template'],
         'slug' => $options['meta']['slug'],
-        'style' => $options['display']['field_settings']['style'],
+        'style' => $options['display']['style'],
         // make rows
         'rows' => qw_make_fields_rows($wp_query, $options['display']),
       );
     }
+    
     // template the query rows
     $wrapper_args['content'] = theme('query_display_rows', $template_args);
   }

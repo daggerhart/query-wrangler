@@ -184,7 +184,7 @@ function qw_default_query_data(){
       'filters'         => array(),
     ),
     'display' => array(
-      'type' => 'full',
+      'type' => 'posts',
       'full_settings' => array(
         'style' => 'complete',
       ),

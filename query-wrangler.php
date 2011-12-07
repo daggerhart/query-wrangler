@@ -10,10 +10,10 @@ Donate link: http://www.widgetwrangler.com/
 Requires at least: 3
 Tested up to: 3.2.1
 Stable tag: trunk
-Version: 1.3beta1
+Version: 1.3.2beta
 */
 // Note: There are 3 places to change the version number; below, above, and in readme.txt
-define('QW_VERSION', 1.3);
+define('QW_VERSION', 1.32);
 
 /*  Copyright 2010  Jonathan Daggerhart  (email : jonathan@daggerhart.com)
   This program is free software; you can redistribute it and/or modify
@@ -55,9 +55,20 @@ if(!function_exists('theme')){
  */
 function qw_check_version()
 {
-  if($version = get_option('qw_plugin_version')){
-    // just setting up internal versioning for now
-    // include QW_PLUGIN_DIR.'/upgrade.php';
+  if($last_version = get_option('qw_plugin_version')){
+    
+    // compare versions
+    if ($last_version < QW_VERSION)
+    {
+      // include upgrade inc
+      include_once QW_PLUGIN_DIR.'/upgrade.php';
+      $upgrade_function = 'qw_upgrade_'.qw_make_slug($last_version).'_to_'.qw_make_slug(QW_VERSION);
+      
+      if(function_exists($upgrade_function)){
+        $upgrade_function();
+      }
+      update_option('qw_plugin_version', QW_VERSION);
+    }
   }
   else
   {
@@ -142,7 +153,8 @@ function qw_admin_js(){
   $data = array(
     'ajaxForm' => admin_url( 'admin-ajax.php' ),
     'allFields' => qw_all_fields(),
-    'allFieldStyles' => qw_all_field_styles(),
+    'allStyles' => qw_all_styles(),
+    'allRowStyles' => qw_all_row_styles(),
     'allPostTypes' => qw_all_post_types,
     'allPagerTypes' => qw_all_pager_types(),
     'allImageSizes' => get_intermediate_image_sizes(),
@@ -331,8 +343,10 @@ function qw_edit_query_form()
       'file_styles' => qw_all_file_styles(),
       // all qw fields
       'fields' => qw_all_fields(),
-      // all qw field styles
-      'field_styles' => qw_all_field_styles(),
+      // all qw styles
+      'styles' => qw_all_styles(),
+      // all qw row styles
+      'row_styles' => qw_all_row_styles(),
       // all filters
       'filters' => qw_all_filters(),
       // all WP post types available for QWing
