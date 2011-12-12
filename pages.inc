@@ -167,7 +167,7 @@ function qw_query_pages_handler()
     if(isset($sql)) {
       $rows = $wpdb->get_results($sql);
     }
-    
+
     // if we found a path, lets use it
     if(is_object($rows[0]) && $query = $rows[0])
     {
@@ -176,7 +176,7 @@ function qw_query_pages_handler()
     
       // actual options 
       $options = unserialize($query->data);
-      
+
       // resulting query
       $themed_query = qw_execute_query($query->id, $options_override, false);
       
@@ -223,7 +223,12 @@ function qw_query_pages_handler()
       // we can safely exit here. The template will take care of the rest.
       // chosen template path
       $template_path = TEMPLATEPATH."/".$options['display']['page']['template-file'];
+      if(!file_exists($template_path)) {
+      	$template_path = TEMPLATEPATH."/".qw_default_template_file();	
+      } 
+      
       include($template_path);
+      
       exit();
     }
   }
