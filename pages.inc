@@ -224,7 +224,7 @@ function qw_query_pages_handler()
       // chosen template path
       $template_path = TEMPLATEPATH."/".$options['display']['page']['template-file'];
       if(!file_exists($template_path)) {
-      	include(TEMPLATEPATH."/".qw_default_template_file());	
+      	$template_path = TEMPLATEPATH."/".qw_default_template_file();	
       } 
       
       include($template_path);
