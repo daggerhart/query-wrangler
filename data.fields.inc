@@ -112,21 +112,25 @@ function qw_default_field_styles($field_styles)
   );
   $field_styles['unformatted'] = array(
     'type' => 'fields',
+    'label'=>'Unformatted',
     'template' => 'query-unformatted',
     'default_path' => QW_PLUGIN_DIR, // do not include last slash
   );
   $field_styles['unordered_list'] = array(
     'type' => 'fields',
+    'label'=>'Unordered List',
     'template' => 'query-unordered_list',
     'default_path' => QW_PLUGIN_DIR, // do not include last slash
   );
   $field_styles['ordered_list'] = array(
     'type' => 'fields',
+    'label'=> 'Ordered List',
     'template' => 'query-ordered_list',
     'default_path' => QW_PLUGIN_DIR, // do not include last slash
   );
   $field_styles['table'] = array(
     'type' => 'fields',
+    'label'=> 'Table',
     'template' => 'query-table',
     'default_path' => QW_PLUGIN_DIR, // do not include last slash
   );
