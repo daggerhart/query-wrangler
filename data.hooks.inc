@@ -63,3 +63,10 @@ function qw_all_pager_types(){
   $pagers = apply_filters('qw_pager_types', array());
   return $pagers;
 }
+
+/*
+ * Return Default Template File
+ */
+function qw_default_template_file() {
+	return apply_filters('qw_default_template_file','index.php');
+}
