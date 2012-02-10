@@ -8,15 +8,15 @@
 <div class="qw-query-unformatted query-<?php print $slug; ?>">
   <?php foreach($rows as $row): ?>
     <div class="<?php print $row['row_classes']; ?>">
-      
-      <?php foreach($row['fields'] as $field): ?>
-        <?php if(isset($field['output'])): ?>
-          <div class="<?php print $field['classes']; ?>">
-            <?php print $field['output']; ?>
-          </div>
-        <?php endif; ?>
-      <?php endforeach; ?>
-    
+      <?php if ($row['fields']) : ?>
+        <?php foreach($row['fields'] as $field): ?>
+          <?php if(isset($field['output'])): ?>
+            <div class="<?php print $field['classes']; ?>">
+              <?php print $field['output']; ?>
+            </div>
+          <?php endif; ?>
+        <?php endforeach; ?>
+      <?php endif; ?>
     </div>
   <?php endforeach; ?>
 </div>

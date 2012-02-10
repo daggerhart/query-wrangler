@@ -33,7 +33,7 @@ function qw_templates($templates){
     'files' => 'forms/form.query-filter-sortable.inc',
     'default_path' => QW_PLUGIN_DIR,
   );
-  
+
   // display queries style wrapper
   $templates['query_display_wrapper'] = array(
     'files' => array(
@@ -61,7 +61,7 @@ function qw_templates($templates){
       'rows' => array(),
     )
   );
-  
+
   return $templates;
 }
 // tw hook
@@ -84,7 +84,7 @@ function theme_query_display_rows_preprocess($template)
 }
 /*
  * Template the entire query
- * 
+ *
  * @param array $wp_query Wordpress query object
  * @param array $options the query options
  * @return string HTML for themed/templated query
@@ -93,17 +93,17 @@ function qw_template_query($wp_query, $options)
 {
   $results_count = count($wp_query->posts);
   $content = '';
-  
-  // start building theme arguments  
+
+  // start building theme arguments
   $wrapper_args = array(
     'slug' => $options['meta']['slug'],
   );
-  
+
   // look for empty results
   if ($results_count > 0)
   {
     $all_styles = qw_all_styles();
-    
+
     // the content of the widget is the result of the query
     if($options['display']['type'] == "posts")
     {
@@ -111,7 +111,7 @@ function qw_template_query($wp_query, $options)
       // @TODO: change to ['style']['post_settings']
       $style = array();
       $style['name'] = $options['display']['full_settings']['style'];
-      
+
       // setup row template arguments
       $template_args = array(
         'template' => 'query-'.$style['name'],
@@ -133,24 +133,24 @@ function qw_template_query($wp_query, $options)
         'rows' => qw_make_fields_rows($wp_query, $options['display']),
       );
     }
-    
+
     // template the query rows
     $wrapper_args['content'] = theme('query_display_rows', $template_args);
   }
-  // empty results  
+  // empty results
   else {
     // no pagination
     $options['meta']['pagination'] = false;
     // show empty text
     $wrapper_args['content'] = '<div class="query-empty">'.$options['meta']['empty'].'</div>';
   }
-  
+
   $wrapper_classes = array();
   $wrapper_classes[] = 'query';
   $wrapper_classes[] = 'query-'.$options['meta']['slug'].'-wrapper';
   $wrapper_classes[] = $options['display']['wrapper-classes'];
   $wrapper_args['wrapper_classes'] = implode(" ", $wrapper_classes);
-  
+
   // header
   if($options['meta']['header'] != '') {
     $wrapper_args['header'] = $options['meta']['header'];
@@ -159,7 +159,7 @@ function qw_template_query($wp_query, $options)
   if($options['meta']['footer'] != '') {
     $wrapper_args['footer'] = $options['meta']['footer'];
   }
-    
+
   // pagination
   if($options['meta']['pagination'] && isset($options['display']['page']['pager']['active'])){
     $pager_classes = array();
@@ -169,13 +169,13 @@ function qw_template_query($wp_query, $options)
     // pager
     $wrapper_args['pager'] = qw_make_pager($options['display']['page']['pager'], $wp_query);
   }
-   
+
   // template with wrapper
-  return theme('query_display_wrapper', $wrapper_args); 
+  return theme('query_display_wrapper', $wrapper_args);
 }
 /*
  * Build array of fields and rows for templating
- * 
+ *
  * @param object $new_query WP_Query objecte generated
  * @param array $display Query display data
  * @return array Executed query rows
@@ -185,43 +185,43 @@ function qw_make_fields_rows($new_query, $display)
   $all_fields = qw_all_fields();
   $rows = array();
   $tokens = array();
-  
+
   // loop through each post
   $i = 0;
   while($new_query->have_posts())
   {
     $new_query->the_post();
-    //  
+    //
     $this_post = $new_query->post;
     $rows[$i] = array();
-    
+
     // make row classes
     $row_classes   = array('qw-query-row');
     $row_classes[] = ($i%2) ? 'qw-odd' : 'qw-even';
     $row_classes[] = 'qw-row-'.$i;
-    
+
     $rows[$i]['row_classes'] = implode(" ", $row_classes);
-    
+
     if(is_array($display['field_settings']['fields']))
     {
       // sort according to weights
       uasort($display['field_settings']['fields'],'qw_cmp');
-     
+
       // loop through each field
       foreach($display['field_settings']['fields'] as $field_name => $field_settings)
       {
         // field open
         $field_classes = array('qw-field');
         $field_classes[] = 'qw-field-'.$field_settings['name'];
-        
+
         $rows[$i]['fields'][$field_name]['classes'] = implode(" ",$field_classes);
-          
+
         // get field details from all fields list
         $field_defaults = $all_fields[$field_settings['type']];
-        
+
         // look for callback
         if(isset($field_defaults['callback']))
-        {       
+        {
           // callbacks with arguments
           if (is_array($field_defaults['arguments']))
           {
@@ -230,7 +230,7 @@ function qw_make_fields_rows($new_query, $display)
             {
               // split the argument into op & value
               $op = explode(':', $argument_token);
-              
+
               // see if we have a value
               if(isset($op[1]))
               {
@@ -238,7 +238,7 @@ function qw_make_fields_rows($new_query, $display)
                 if($op[0] == 'this'){
                   $args[$key] = $this_post->{$op[1]};
                 }
-                
+
                 // feild setting  variable
                 if($op[0] == 'setting'){
                   $args[$key] = $field_settings[$op[1]];
@@ -251,12 +251,12 @@ function qw_make_fields_rows($new_query, $display)
                 $args[$key] = $argument_token;
               }
             }
-            
+
             // run the callback function with the arguments list
             $rows[$i]['fields'][$field_name]['output'] = call_user_func_array($field_defaults['callback'], array_values($args));
           }
           // normal callback w/o arguments
-          else { 
+          else {
             $rows[$i]['fields'][$field_name]['output'].= $field_defaults['callback']();
           }
         }
@@ -264,15 +264,15 @@ function qw_make_fields_rows($new_query, $display)
         else {
           $rows[$i]['fields'][$field_name]['output'].= $this_post->{$field_settings['type']};
         }
-        
+
         // apply link to field
         if(isset($field_settings['link'])){
           $rows[$i]['fields'][$field_name]['output'] = '<a class="query-field-link" href="'.get_permalink().'">'.$rows[$i]['fields'][$field_name]['output'].'</a>';
         }
-        
+
         // get default field label for tables
         $rows[$i]['fields'][$field_name]['label'] = ($field_settings['has_label']) ? $field_settings['label'] : '';
-        
+
         // apply labels to full style fields
         if(isset($field_settings['has_label']) &&
            $display['type'] != 'full' &&
@@ -280,20 +280,20 @@ function qw_make_fields_rows($new_query, $display)
         {
           $rows[$i]['fields'][$field_name]['output'] = '<label class="query-label">'.$field_settings['label'].'</label>'.$rows[$i]['fields'][$field_name]['output'];
         }
-        
+
         // add token for replace
         $tokens['{{'.$field_name.'}}'] = $rows[$i]['fields'][$field_name]['output'];
-        
+
         // look for rewrite output
         if(isset($field_settings['rewrite_output'])){
           // replace tokens with results
           $field_settings['custom_output'] = str_replace(array_keys($tokens), array_values($tokens), $field_settings['custom_output']);
           $rows[$i]['fields'][$field_name]['output'] = $field_settings['custom_output'];
         }
-        
+
         // apply shortcodes to field output
         $rows[$i]['fields'][$field_name]['output'] = do_shortcode($rows[$i]['fields'][$field_name]['output']);
-        
+
         // after all operations, remove if excluded
         if($field_settings['exclude_display']){
           unset($rows[$i]['fields'][$field_name]['output']);
@@ -303,32 +303,32 @@ function qw_make_fields_rows($new_query, $display)
     // increment row
     $i++;
   }
-  
+
   return $rows;
 }
 
 /*
  * Custom Pager function
- * 
+ *
  * @param array $pager Query pager details
  * @param object $wp_query Object
  * @return HTML processed pager
  */
-function qw_make_pager($pager, $wp_query)
+function qw_make_pager($pager, &$wp_query)
 {
   $pager_themed = '';
   $pagers = qw_all_pager_types();
-  
+
   //set callback if function exists
   if(function_exists($pagers[$pager['type']]['callback'])) {
-    $callback = $pagers[$pager['type']]['callback'];	
+    $callback = $pagers[$pager['type']]['callback'];
   } else {
     $callback = $pagers['default']['callback'];
   }
-  
+
   // execute callback
   $pager_themed = call_user_func_array($callback, array($pager, $wp_query));
-  
+
   return $pager_themed;
 }
 /*
@@ -337,33 +337,16 @@ function qw_make_pager($pager, $wp_query)
  * @param array $pager Query options for pager
  * @param object $wp_query Object
  */
-function qw_theme_pager_default($pager, $wp_query)
+function qw_theme_pager_default($pager, &$wp_query)
 {
   $pager_themed = '';
   $pager['next'] = ($pager['next']) ? $pager['next'] : 'Next Page &raquo;';
   $pager['previous'] = ($pager['previous']) ? $pager['previous'] : '&laquo; Previous Page';
 
-  // figure out the current page
-  $path_array = explode('/page/', $_SERVER['REQUEST_URI']);
-
-  // look for WP paging first
-  if($wp_query->query_vars['paged']){
-    $page = $wp_query->query_vars['paged'];
-  }
-  // paging with slashes
-  else if(isset($path_array[1])) {
-    $page = explode('/', $path_array[1]);
-    $page = $page[0];
-  }
-  // paging with get variable
-  else if (isset($_GET['page'])) {
-    $page = $_GET['page'];
-  }
-  
-  if(isset($page))
+  if($page = qw_get_page_number($wp_query))
   {
     $wpurl = get_bloginfo('wpurl');
-    
+
     // previous link with page number
     if($page >= 3){
       $pager_themed.= '<div class="query-prevpage">
@@ -377,18 +360,54 @@ function qw_theme_pager_default($pager, $wp_query)
                         <a href="'.$wpurl.$path_array[0].'">'.$pager['previous'].'</a>
                       </div>';
     }
-    
+
     // next link
     if(($page+1) <= $wp_query->max_num_pages){
       $pager_themed.= '<div class="query-nextpage">
                         <a href="'.$wpurl.$path_array[0].'/page/'.($page+1).'">'.$pager['next'].'</a>
                       </div>';
     }
-    
+
     return $pager_themed;
   }
 }
+/*
+ * Helper function: Get the current page number
+ * @param object $wp_query - the query being displayed
+ *
+ * @return
+ *    int - the page number
+ */
+function qw_get_page_number(&$wp_query){
+  // help figure out the current page
+  $path_array = explode('/page/', $_SERVER['REQUEST_URI']);
 
+  // look for WP paging first
+  if($wp_query->query_vars['paged']){
+    $page = $wp_query->query_vars['paged'];
+  }
+  // try wordpress method
+  else if(get_query_var('paged')){
+    $page = get_query_var('paged');
+  }
+  // paging with slashes
+  else if(isset($path_array[1])) {
+    $page = explode('/', $path_array[1]);
+    $page = $page[0];
+  }
+  // paging with get variable
+  else if (isset($_GET['page'])) {
+    $page = $_GET['page'];
+  }
+  // paging with a different get variable
+  else if (isset($_GET['paged'])) {
+    $page = $_GET['paged'];
+  }
+  else {
+    $page = 0;
+  }
+  return $page;
+}
 /*
  * Default Pager with page numbers
  *
@@ -397,7 +416,7 @@ function qw_theme_pager_default($pager, $wp_query)
  *
  * @return string HTML for pager
  */
-function qw_theme_pager_numbers($pager, $wp_query) 
+function qw_theme_pager_numbers($pager, $wp_query)
 {
 		$big = intval($wp_query->found_posts.'000');
 		$args = array(
@@ -407,12 +426,12 @@ function qw_theme_pager_numbers($pager, $wp_query)
     'total' => $wp_query->max_num_pages
 		);
   $pager_themed = paginate_links($args);
-  return $pager_themed;	
+  return $pager_themed;
 }
 
 /*
  * Get and theme attached post files
- * 
+ *
  * @param int $post_id The post->ID
  * $param int $count Number of files to get
  */
@@ -429,16 +448,16 @@ function qw_theme_file($post_id, $style = 'link', $count = 0){
           case 'url':
           $output .= wp_get_attachment_url($file->ID);
           break;
-        
+
           case 'link':
           // complete file name
           $file_name = explode("/", $file->guid);
           $file_name = $file_name[count($file_name)-1];
-          $output.= '<a href="'.wp_get_attachment_url($file->ID).'" class="query-file-link">'.$file_name.'</a>';    
+          $output.= '<a href="'.wp_get_attachment_url($file->ID).'" class="query-file-link">'.$file_name.'</a>';
           break;
-        
+
           case 'link_url':
-            $output.= '<a href="'.wp_get_attachment_url($file->ID).'" class="query-file-link">'.$file->guid.'</a>';    
+            $output.= '<a href="'.wp_get_attachment_url($file->ID).'" class="query-file-link">'.$file->guid.'</a>';
             break;
         }
       }
@@ -461,7 +480,7 @@ function qw_get_post_files($post_id)
   );
 		// Get images for this post
   $files = get_posts($child_args);
-  
+
   if(is_array($files))
 		{
     return $files;
@@ -470,7 +489,7 @@ function qw_get_post_files($post_id)
 }
 /*
  * Turn a list of images into html
- * 
+ *
  * @param $post_id
  * @param $image_type
  * @param $count;
@@ -492,9 +511,9 @@ function qw_theme_image($post_id, $style, $count = 0)
 }
 /*
  * Get all images attached to a single post
- * 
+ *
  * @param int $post_id The Wordpress ID for the post or page to get images from
- * 
+ *
  * @return sorted array of images
  */
 function qw_get_post_images($post_id)
@@ -506,7 +525,7 @@ function qw_get_post_images($post_id)
   );
 		// Get images for this post
   $images = &get_children($child_args);
-		
+
 		// If images exist for this page
 		if(is_array($images))
 		{
@@ -528,7 +547,7 @@ function qw_get_post_images($post_id)
     $sorted = array_values($sorted);
     // add unsorted
     $sorted = array_merge($sorted, $unsorted);
-    
+
 				return $sorted;
 		}
 }

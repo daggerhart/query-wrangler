@@ -18,6 +18,7 @@ QueryWrangler.options_group_toggle  = function(element) {
     jQuery(element).parent().parent().siblings('.qw-options-group-content').hide();
   }
 }
+
 /*
  * Simple hide functions for forms
  */
@@ -37,7 +38,7 @@ QueryWrangler.update_weights = function(type)
     jQuery(this).find(".qw-"+type+"-weight").attr('value', i);
     jQuery(this).find(".qw-"+type+"-weight").val(i);
   });
-  
+
   if (type == 'field') {
     // Update Field tokens
     QueryWrangler.generate_field_tokens();
@@ -59,7 +60,7 @@ QueryWrangler.generate_field_tokens = function() {
 }
 /*
  * toggle settings for display type
- */ 
+ */
 QueryWrangler.style_settings_toggle = function()
 {
   if(jQuery('#qw-query-admin-options-wrap span[title=qw-display-type] span').text() == 'full'){
@@ -89,7 +90,7 @@ function qw_set_setting_title(){
     jQuery('#'+QueryWrangler.current_form_id).children('.qw-field-value').each(function(index, element){
       title_array.push(jQuery(element).val());
     });
-    
+
     // handle empty
     if(title_array.length > 0){
       new_title = title_array.join(" - ");
@@ -104,7 +105,7 @@ function qw_set_setting_title(){
     jQuery('#'+QueryWrangler.current_form_id).find('input[type=checkbox]:checked').each(function(index, element){
       title_array.push(jQuery(element).val());
     });
-    
+
     // handle empty
     if(title_array.length > 0){
       new_title = title_array.join(",");
@@ -117,7 +118,7 @@ function qw_set_setting_title(){
     var title_array = [];
     jQuery('#'+QueryWrangler.current_form_id).find('.qw-field-title').each(function(index, element){
       var field_name = jQuery(element).siblings('.qw-sort-field-name').text();
-      title_array.push('<div><span class="qw-query-fields-name" title="qw-field-'+field_name+'">'+field_name.replace("_", " ")+'</span></div>'); 
+      title_array.push('<div><span class="qw-query-fields-name" title="qw-field-'+field_name+'">'+field_name.replace("_", " ")+'</span></div>');
     });
     jQuery('#qw-query-fields-list').html(title_array.join(''));
   }
@@ -126,10 +127,10 @@ function qw_set_setting_title(){
     var title_array = [];
     jQuery('#'+QueryWrangler.current_form_id).find('.qw-filter-title').each(function(index, element){
       var filter_name = jQuery(element).siblings('.qw-sort-filter-name').text();
-      title_array.push('<div><span class="qw-query-filters-name" title="qw-filter-'+filter_name+'">'+filter_name.replace("_", " ")+'</span></div>'); 
+      title_array.push('<div><span class="qw-query-filters-name" title="qw-filter-'+filter_name+'">'+filter_name.replace("_", " ")+'</span></div>');
     });
     jQuery('#qw-query-filters-list').html(title_array.join(''));
-  }  
+  }
   // header - footer - empty
   else if (jQuery('#'+QueryWrangler.current_form_id).hasClass('qw-header-footer-empty')){
     if(jQuery('#'+QueryWrangler.current_form_id).find('.qw-field-textarea').val().trim() == ""){
@@ -167,7 +168,7 @@ QueryWrangler.get_handler_templates = function(handler, handler_type){
     'query_type': QueryWrangler.query.type,
     'next_weight': next_weight
   };
-  
+
   // ajax call to get form
   jQuery.ajax({
     url: QueryWrangler.ajaxForm,
@@ -179,7 +180,7 @@ QueryWrangler.get_handler_templates = function(handler, handler_type){
       jQuery('#qw-options-forms').append(results);
     }
   });
-  
+
   // new sortable item
   jQuery.ajax({
     url: QueryWrangler.ajaxForm,
@@ -191,7 +192,7 @@ QueryWrangler.get_handler_templates = function(handler, handler_type){
       jQuery('#qw-options-forms ul#qw-'+handler+'s-sortable').append(results);
     }
   });
-  
+
   return next_name;
 }
 /*
@@ -209,17 +210,17 @@ QueryWrangler.add_new_handler = function(handler){
       var next_name = QueryWrangler.get_handler_templates(handler, handler_type);
       // remove check
       jQuery(this).removeAttr('checked');
-      title_array.push('<div><span class="qw-query-'+handler+'s-name" title="qw-'+handler+'-'+next_name+'">'+next_name.replace("_", " ")+'</span></div>'); 
+      title_array.push('<div><span class="qw-query-'+handler+'s-name" title="qw-'+handler+'-'+next_name+'">'+next_name.replace("_", " ")+'</span></div>');
     }
   });
-  
+
   // Update the 'titles' for the given handler
   // Titles are fields or filter names that are clickable
   jQuery('#qw-query-'+handler+'s-list').append(title_array.join(''));
-  
+
   // empty form title & hide form
   QueryWrangler.hide_forms();
-  
+
   if(handler == 'field'){
     // Update Field tokens
     QueryWrangler.generate_field_tokens();
@@ -253,16 +254,16 @@ QueryWrangler.title_click_action = function()
  * Execution
  */
 jQuery(document).ready(function(){
-  // display style settings 
+  // display style settings
   QueryWrangler.style_settings_toggle();
-  
+
   /*
    * Form handling
    */
-  
+
   /*
    * Basic forms click link = show form functionality
-   */ 
+   */
   jQuery('span.qw-query-title span').click(function(){
     // get new form info
     QueryWrangler.new_form_id = jQuery(this).parent('.qw-query-title').attr('title');
@@ -275,11 +276,11 @@ jQuery(document).ready(function(){
     jQuery('#qw-options-target-title').text(qw_form_title);
     // show buttons
     jQuery('#qw-options-actions').show();
-  });  
-  
+  });
+
   /*
    * Update button
-   */ 
+   */
   jQuery('#qw-options-actions-update').click(function(){
     // empty form title & hide form
     QueryWrangler.hide_forms();
@@ -289,13 +290,13 @@ jQuery(document).ready(function(){
     qw_set_setting_title();
     // clear the current form id
     QueryWrangler.current_form_id = '';
-    // display style settings 
+    // display style settings
     QueryWrangler.style_settings_toggle();
   });
-  
+
   /*
    * Cancel button
-   */ 
+   */
   jQuery('#qw-options-actions-cancel').click(function(){
     if(QueryWrangler.current_form_id != ''){
       // set backup_form
@@ -304,39 +305,39 @@ jQuery(document).ready(function(){
     // empty form title & hide form
     QueryWrangler.hide_forms();
   });
-  
+
   /*
    * Field options Checkboxes
-   */ 
+   */
   jQuery('#qw-options-forms, #query-preview').delegate('.qw-options-group-title input[type=checkbox]','click', function(){
     QueryWrangler.options_group_toggle(jQuery(this));
   });
-  
+
   /*
    * Toggle selected fields
-   */ 
+   */
   jQuery('.qw-field-options-hidden').each(function(index,element){
     if(jQuery(element).parent().find('input[type=checkbox]').is(':checked')){
       jQuery(element).removeClass('qw-field-options-hidden');
     }
   });
-  
+
   /*****************************************************************************
    * handler init functions/delegates
    */
-  
+
   /*
    * Adding new buttons for all QueryWrangler.handlers
    */
   jQuery.each(QueryWrangler.handlers, function(index, handler){
     jQuery('#qw-add-selected-'+handler+'s').click(function(){
       QueryWrangler.add_new_handler(handler);
-    });  
+    });
   });
-  
+
   /*
    * Sortable lists for all QueryWrangler.handlers
-   */ 
+   */
   jQuery.each(QueryWrangler.handlers, function(index, handler){
     jQuery('#qw-options-form-target ul#qw-'+handler+'s-sortable').sortable({
       handle: '.sort-handle',
@@ -344,9 +345,9 @@ jQuery(document).ready(function(){
         // update option weights
         QueryWrangler.update_weights(handler);
       }
-    }).disableSelection();  
-  });  
-  
+    }).disableSelection();
+  });
+
   // Title click actions for all QueryWrangler.handlers
   // Titles for handlers are Add Field/Filter & Rearrange Field/Filter, etc
   jQuery.each(QueryWrangler.handlers, function(index, handler){
@@ -359,11 +360,11 @@ jQuery(document).ready(function(){
       jQuery('#qw-options-target-title').text(jQuery(this).text());
       // show buttons
       if(QueryWrangler.current_form_id == 'qw-sort-'+handler+'s'){
-        jQuery('#qw-options-actions').show();      
+        jQuery('#qw-options-actions').show();
       }
     });
   });
-  
+
   // Remove buttons for all QueryWrangler.handlers
   jQuery.each(QueryWrangler.handlers, function(index, handler){
     // delegate the remove click function to all remove buttons
@@ -377,7 +378,7 @@ jQuery(document).ready(function(){
     });
   });
 
-  
+
   // handlers Name click, like field and filter name clicking
   jQuery.each(QueryWrangler.handlers, function(index,handler){
     jQuery('#qw-query-'+handler+'s-list').delegate('.qw-query-'+handler+'s-name','click', function(){
@@ -388,13 +389,13 @@ jQuery(document).ready(function(){
       // set the title
       var qw_form_title = jQuery(this).text();
       // set title
-      jQuery('#qw-options-target-title').text(qw_form_title);    
+      jQuery('#qw-options-target-title').text(qw_form_title);
       // show action buttons
-      jQuery('#qw-options-actions').show();  
+      jQuery('#qw-options-actions').show();
     });
   });
   /********* end handlers functions ********************************************/
-  
+
   /*
    * Query List page
    */
