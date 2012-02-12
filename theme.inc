@@ -13,6 +13,19 @@ function qw_templates($templates){
     'files' => 'forms/form.query-create.inc',
     'default_path' => QW_PLUGIN_DIR,
   );
+  // import query template
+  $templates['query_import'] = array(
+    'files' => 'forms/form.query-import.inc',
+    'default_path' => QW_PLUGIN_DIR,
+  );
+  // export query template
+  $templates['query_export'] = array(
+    'files' => 'forms/form.query-export.inc',
+    'default_path' => QW_PLUGIN_DIR,
+    'arguments' => array(
+      'query_id' => 0,
+    ),
+  );
   // field template
   $templates['query_field'] = array(
     'files' => 'forms/form.query-field.inc',
@@ -370,43 +383,6 @@ function qw_theme_pager_default($pager, &$wp_query)
 
     return $pager_themed;
   }
-}
-/*
- * Helper function: Get the current page number
- * @param object $wp_query - the query being displayed
- *
- * @return
- *    int - the page number
- */
-function qw_get_page_number(&$wp_query){
-  // help figure out the current page
-  $path_array = explode('/page/', $_SERVER['REQUEST_URI']);
-
-  // look for WP paging first
-  if($wp_query->query_vars['paged']){
-    $page = $wp_query->query_vars['paged'];
-  }
-  // try wordpress method
-  else if(get_query_var('paged')){
-    $page = get_query_var('paged');
-  }
-  // paging with slashes
-  else if(isset($path_array[1])) {
-    $page = explode('/', $path_array[1]);
-    $page = $page[0];
-  }
-  // paging with get variable
-  else if (isset($_GET['page'])) {
-    $page = $_GET['page'];
-  }
-  // paging with a different get variable
-  else if (isset($_GET['paged'])) {
-    $page = $_GET['paged'];
-  }
-  else {
-    $page = 0;
-  }
-  return $page;
 }
 /*
  * Default Pager with page numbers

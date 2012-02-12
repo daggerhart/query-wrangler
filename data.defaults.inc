@@ -1,7 +1,7 @@
-<?php 
+<?php
 /*
  * All Fields and Settings
- * 
+ *
  * @return array Available query fields
  */
 function qw_default_fields($fields)
@@ -69,7 +69,7 @@ function qw_default_fields($fields)
       'count' => 'setting:file_display_count',
     ),
   );
-  
+
   // add meta keys to field list
   $meta = qw_get_meta_keys();
   foreach($meta as $key){
@@ -90,14 +90,14 @@ function qw_default_fields($fields)
       );
     }
   }
-  
+
   return $fields;
 }
 // add default fields to the hook filter
 add_filter('qw_fields', 'qw_default_fields');
 /*
  * All Field Styles and settings
- * 
+ *
  * @return array Field Styles
  */
 function qw_default_styles($styles)
@@ -126,7 +126,7 @@ function qw_default_styles($styles)
     'template' => 'query-table',
     'default_path' => QW_PLUGIN_DIR, // do not include last slash
   );
-  
+
   return $styles;
 }
 // add default field styles to the filter
@@ -137,7 +137,7 @@ add_filter('qw_styles', 'qw_default_styles');
 function qw_default_row_styles($row_styles){
   $row_styles['posts'] = array(
     'type' => 'posts',
-    'label' => 'Complete Posts',
+    'label' => 'Posts',
   );
   $row_styles['fields'] = array(
     'type' => 'fields',
@@ -147,38 +147,93 @@ function qw_default_row_styles($row_styles){
 }
 // add default field styles to the filter
 add_filter('qw_row_styles', 'qw_default_row_styles');
+
 /*
- * Default Filters
+ * Default Row 'Posts' Styles
  */
-function qw_default_filters($filters){
-  $filters['post_types'] = array(
-    'label' => 'Post Type',
-    'type' => 'post_types',
+function qw_default_row_complete_styles($row_complete_styles){
+  $row_complete_styles['complete'] = array(
+    'type' => 'complete',
+    'label' => 'Complete Post',
   );
-  $filters['post_status'] = array(
-    'label' => 'Post Status',
-    'type' => 'post_status',
+  $row_complete_styles['excerpt'] = array(
+    'type' => 'excerpt',
+    'label' => 'Excerpt',
   );
-  $filters['post_parent'] = array(
-    'label' => 'Post Parent',
-    'type' => 'post_parent',
-  );
-  $filters['categories'] = array(
-    'label' => 'Categories',
-    'type' => 'categories',
-  );
-  $filters['tags'] = array(
-    'label' => 'Tags',
-    'type' => 'tags',
-  );
-  
-  return $filters;
+  return $row_complete_styles;
 }
-// add default filters to the filter
-add_filter('qw_filters', 'qw_default_filters');
+// add default field styles to the filter
+add_filter('qw_row_complete_styles', 'qw_default_row_complete_styles');
+
+/*
+ * Default Row 'Fields' Styles
+ */
+function qw_default_row_fields_styles($row_fields_styles){
+  $row_fields_styles['posts'] = array(
+    'type' => 'posts',
+    'label' => 'Posts',
+  );
+  $row_fields_styles['fields'] = array(
+    'type' => 'fields',
+    'label' => 'Fields',
+  );
+  return $row_styles;
+}
+// add default field styles to the filter
+add_filter('qw_row_fields_styles', 'qw_default_row_fields_styles');
+
+/*
+ * Default Sort Options
+ */
+function qw_default_sort_options($sort_options){
+  $sort_options['none'] = array(
+    'type' => 'none',
+    'label' => 'Nonde',
+  );
+  $sort_options['ID'] = array(
+    'type' => 'ID',
+    'label' => 'Post ID',
+  );
+  $sort_options['author'] = array(
+    'type' => 'author',
+    'label' => 'Author',
+  );
+  $sort_options['title'] = array(
+    'type' => 'title',
+    'label' => 'Title',
+  );
+  $sort_options['date'] = array(
+    'type' => 'date',
+    'label' => 'Date',
+  );
+  $sort_options['modified'] = array(
+    'type' => 'modified',
+    'label' => 'Last Modified',
+  );
+  $sort_options['parent'] = array(
+    'type' => 'parent',
+    'label' => 'Parent',
+  );
+  $sort_options['rand'] = array(
+    'type' => 'rand',
+    'label' => 'Random',
+  );
+  $sort_options['comment_count'] = array(
+    'type' => 'comment_count',
+    'label' => 'Comment Count',
+  );
+  $sort_options['menu_order'] = array(
+    'type' => 'menu_order',
+    'label' => 'Menu Order (for Page post_types)',
+  );
+  return $sort_options;
+}
+// add default field styles to the filter
+add_filter('qw_sort_options', 'qw_default_sort_options');
+
 /*
  * File Styles
- * 
+ *
  * @return array of file styles
  */
 function qw_default_file_styles($file_styles)
@@ -199,7 +254,7 @@ function qw_default_file_styles($file_styles)
 add_filter('qw_file_styles', 'qw_default_file_styles');
 
 /*
- * Setup pager types 
+ * Setup pager types
  */
 function qw_default_pager_types($pagers) {
   $pagers['default'] = array(
@@ -210,7 +265,7 @@ function qw_default_pager_types($pagers) {
     'label' => 'Page Numbers',
     'callback' => 'qw_theme_pager_numbers'
   );
-  
+
   // WP PageNavi Plugin
   if(function_exists('wp_pagenavi')) {
     $pagers['pagenavi'] = array(
@@ -226,7 +281,7 @@ add_filter('qw_pager_types', 'qw_default_pager_types');
 
 /*
  * Function for grabbing meta keys
- * 
+ *
  * @return array All meta keys in WP
  */
 function qw_get_meta_keys() {

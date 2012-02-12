@@ -72,6 +72,15 @@ QueryWrangler.style_settings_toggle = function()
     jQuery('#qw-query-admin-options-wrap span[title=qw-display-full-settings]').hide();
   }
 }
+function qw_get_single_title(field){
+  title = 'None';
+  if (jQuery(field).is('input')){
+    title = jQuery(field).val();
+  } else if (jQuery(field).is('select')){
+    title = jQuery(field).children('option[value='+jQuery(field).val()+']').text();
+  }
+  return title;
+}
 /*
  * Dynamically set the setting title for updated fields
  */
@@ -80,15 +89,16 @@ function qw_set_setting_title(){
   var new_title = '';
 
   // single value
-  if(jQuery('#'+QueryWrangler.current_form_id).hasClass('qw-single-value')){
-    new_title = jQuery('#'+QueryWrangler.current_form_id).children('.qw-field-value').val();
+  if (jQuery('#'+QueryWrangler.current_form_id).hasClass('qw-single-value')){
+    field = jQuery('#'+QueryWrangler.current_form_id).children('.qw-field-value');
+    new_title = qw_get_single_title(field);
   }
   // multiple values
   else if (jQuery('#'+QueryWrangler.current_form_id).hasClass('qw-multiple-values')){
     // use an array and join it
     var title_array = [];
     jQuery('#'+QueryWrangler.current_form_id).children('.qw-field-value').each(function(index, element){
-      title_array.push(jQuery(element).val());
+      title_array.push(qw_get_single_title(element));
     });
 
     // handle empty

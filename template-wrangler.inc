@@ -4,7 +4,7 @@
  *
  * Functions
  * theme() - template some arguments
- * 
+ *
  */
 
 /*
@@ -17,29 +17,33 @@
  */
 function theme($template_name = '', $arguments = array())
 {
+  if(is_null($arguments)){
+    $arguments = array();
+  }
+
   // get all the hooks
   $templates = tw_templates();
-  
+
   // make sure given templates key exists
   if(is_array($templates[$template_name]))
-  {    
+  {
     // template we're using
     $template = $templates[$template_name];
 
     // get theme folder name
     $theme_folder = explode("/", TEMPLATEPATH);
     $theme_folder = array_pop($theme_folder);
-      
+
     // if not arguments array given, make empty array for future actions
     if(!is_array($template['arguments'])){
       $template['arguments'] = array();
     }
-    
+
     // merge passed arguments into array overriding defaults
-    $arguments = array_merge($template['arguments'], $arguments);  
+    $arguments = array_merge($template['arguments'], $arguments);
     // update the template arguments for preprocess functions
     $template['arguments'] = $arguments;
-    
+
     // if there is a theme based preprocess function, run it on the arguments
     if(function_exists($theme_folder.'_'.$template_name.'_preprocess')){
       $preprocess = $theme_folder.'_'.$template_name.'_preprocess';
@@ -50,22 +54,22 @@ function theme($template_name = '', $arguments = array())
       $preprocess = 'theme_'.$template_name.'_preprocess';
       $template = call_user_func($preprocess, $template);
     }
-  
+
     // if no default_path, set to function execution path
     if(!isset($template['default_path']))
     {
       // get function caller backtrace
       $bt = debug_backtrace();
       $caller = array_shift($bt);
-      
+
       // set the function caller's file
       // @TODO: instead, find a way to set the default path to where the hook was set
       $template['default_path'] = dirname($caller['file']);
     }
-    
+
     // if no templates were given, look for theme functions
     if(!isset($template['files']))
-    { 
+    {
       // look for theme folder name name based function
       if(function_exists($theme_folder.'_'.$template_name)){
         // function found, execute it and return the results
@@ -82,11 +86,12 @@ function theme($template_name = '', $arguments = array())
     {
       $template['files'] = array($template['files']);
     }
-    
+
     // loop through and find an existing suggested template
     $found_path = '';
+    //krumo($template_name);
     foreach($template['files'] as $suggestion)
-    { 
+    {
       // look for an argument in template suggestions
       if (preg_match('/\[.*\]/',$suggestion))
       {
@@ -101,15 +106,15 @@ function theme($template_name = '', $arguments = array())
             $replace[] = $value;
           }
         }
-        
+
         // do the replacement
         $suggestion = str_replace($search, $replace, $suggestion);
       }
-      
-      // easier to read this way  
+
+      // easier to read this way
       $theme_path = TEMPLATEPATH.'/'.$suggestion;
       $default_path = rtrim($template['default_path']).'/'.$suggestion;
-      
+
       // look in the theme folder
       if(file_exists($theme_path)){
         $found_path = $theme_path;
@@ -121,22 +126,22 @@ function theme($template_name = '', $arguments = array())
         break;
       }
     }
-    
+
     // proceed if file found
     if($found_path != '')
-    { 
+    {
       // start output buffer
       ob_start();
-      
+
         // turn arguments into variables
-        extract($arguments);   
-   
+        extract($arguments);
+
         // include the file
         include $found_path;
-        
-      // return output buffer 
-      return ob_get_clean();  
-    } 
+
+      // return output buffer
+      return ob_get_clean();
+    }
   }
 }
 
@@ -170,7 +175,7 @@ function tw_admin_page_wrapper($templates)
         'content' => 'content goes here.',
     ),
   );
-  
+
   return $templates;
 }
 add_filter('tw_templates', 'tw_admin_page_wrapper');
@@ -220,12 +225,12 @@ function example_template($templates)
         'mytemplate-[arg1]-[arg2].php',
         'mytemplate-[arg1].php',
         // a default fall back template name
-        'mytemplate.php' 
+        'mytemplate.php'
     ),
-    
+
     // location of the default template if nothing is found
     'default_path' => dirname(__FILE__),
-    
+
     // optional arguments to be passed to the themeing function
     'arguments' => array(
         // must be key => value pairs
@@ -233,7 +238,7 @@ function example_template($templates)
         'arg2' => 'arg2_default_value',
     ),
   );
-  
+
   // theme function example
   // since no template files are specified, it will attempt to run a function named theme_link()
   // it will look first for a funtion name THEME_FOLDER_NAME_link()
@@ -245,7 +250,7 @@ function example_template($templates)
       'text' => 'your link text',
     )
   );
-  
+
   return $templates;
 }
 // hook your function into the wordpress filter
@@ -258,12 +263,12 @@ function example_template_preprocess($template)
   $template['arguments']['arg2'] = '1';
   // add a new argument
   $template['arguments']['new_arg'] = 'brand new argument';
-  
+
   // add a new template suggestions as the first suggestion
   array_unshift($template['files'], 'mytemplate-new-first-suggestion.php');
   // add a new template suggestion as the last suggestion
   $template['files'][] = 'mytemplate-new-final-suggestion.php';
-  
+
   // return the modified template
   return $template;
 }

@@ -1,3 +1,6 @@
+#qw-edit-query-form textarea {
+  font-family: monospace;
+}
 a.toplevel_page_query-wrangler {
   letter-spacing: -1px;
 }
@@ -34,6 +37,15 @@ a.toplevel_page_query-wrangler {
 }
 #qw-query-action-buttons {
   padding: 4px 14px;
+  background: #efefef;
+  -webkit-border-radius: 8px;
+  -moz-border-radius: 8px;
+  border-radius: 8px;
+}
+#query-actions {
+  text-align: right;
+  line-height: 40px;
+  padding-left: 100px;
 }
 #qw-options-target,
 #query-preview {
@@ -241,9 +253,23 @@ li.qw-filter-item .sort-handle {
 .add-selected-wrapper {
   display: block;
   height: 40px;
-  background: transparent url('images/loading.gif') -40px top no-repeat;  
+  background: transparent url('images/loading.gif') -40px top no-repeat;
 }
 .add-selected-wrapper-active {
-  background: transparent url('images/loading.gif') left center no-repeat;  
+  background: transparent url('images/loading.gif') left center no-repeat;
   padding-left: 28px;
+}
+textarea.qw-meta-value {
+  width: 500px;
+  height: 120px;
+}
+#export-query {
+  width: 94%;
+  height: 600px;
+  font-family: monospace;
+}
+#import-query {
+  width: 94%;
+  height: 300px;
+  font-family: monospace;
 }

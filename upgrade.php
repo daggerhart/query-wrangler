@@ -12,7 +12,7 @@ function qw_upgrade_13_to_132(){
 
   //adjust arguments to filter values
   foreach($rows as $query){
-    $data = unserialize($query->data);
+    $data = qw_unserialize($query->data);
 
     // convert field settings style to style
     if(isset($data['display']['field_settings']['style'])){
@@ -24,7 +24,7 @@ function qw_upgrade_13_to_132(){
     }
 
     $update = array(
-      'data' => serialize($data),
+      'data' => qw_serialize($data),
     );
     $where = array(
       'id' => $query->id,
@@ -46,7 +46,7 @@ function qw_upgrade_12_to_13(){
 
   //adjust arguments to filter values
   foreach($rows as $query){
-    $data = unserialize($query->data);
+    $data = qw_unserialize($query->data);
     $args = $data['args'];
 
     $filter_weight = 0;

@@ -24,6 +24,31 @@ function qw_all_row_styles(){
 }
 
 /*
+ * Sort Options Hook
+ */
+function qw_all_sort_options(){
+  $row_styles = apply_filters('qw_sort_options', array());
+  return $row_styles;
+}
+
+/*
+ * Row Style 'Posts' Styles Hook
+ */
+function qw_all_row_complete_styles(){
+  $row_complete_styles = apply_filters('qw_row_complete_styles', array());
+
+  return $row_complete_styles;
+}
+
+/*
+ * Row Style 'Fields' Stlyes Hook
+ */
+function qw_all_row_fields_styles(){
+  $row_fields_styles = apply_filters('qw_row_fields_styles', array());
+  return $row_fields_styles;
+}
+
+/*
  * filters Hook
  */
 function qw_all_filters(){
@@ -45,14 +70,14 @@ function qw_all_file_styles(){
 function qw_all_post_types(){
   $post_types = apply_filters('qw_post_types', array());
 
-  // Get all verified post types 
+  // Get all verified post types
   $post_types = get_post_types(array('public' => true, '_builtin' => false), 'names', 'and');
   // Add standard types
   $post_types['post'] = 'post';
   $post_types['page'] = 'page';
   // sort types
   ksort($post_types);
-  
+
   return $post_types;
 }
 
