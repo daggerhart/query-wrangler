@@ -89,7 +89,7 @@ function theme($template_name = '', $arguments = array())
 
     // loop through and find an existing suggested template
     $found_path = '';
-    //krumo($template_name);
+    
     foreach($template['files'] as $suggestion)
     {
       // look for an argument in template suggestions
@@ -154,33 +154,8 @@ function tw_templates(){
   $templates = apply_filters('tw_templates', array());
   return $templates;
 }
-/*
- * Some default templates
- *
- * @param $templates array Passed from the filter hook from WP
- *
- * @return array All template arrays filtered so far by Wordpress' filter hook
- */
-function tw_admin_page_wrapper($templates)
-{
-  // useful for plugin admin pages
-  $templates['admin_wrapper'] = array(
-    'files' => array(
-        'templates/admin-wrapper.php',
-        'admin-wrapper.php',
-    ),
-    'default_path' => dirname(__FILE__),
-    'arguments' => array(
-        'title' => 'Admin Page',
-        'content' => 'content goes here.',
-    ),
-  );
 
-  return $templates;
-}
-add_filter('tw_templates', 'tw_admin_page_wrapper');
-// */
-
+/* very simple link function */
 function theme_link($href, $text){
   return "<a href='$href'>$text</a>";
 }

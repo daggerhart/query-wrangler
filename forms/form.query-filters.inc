@@ -12,6 +12,6 @@
   <p class="description"><?php print $filter['description']; ?></p>
 
   <div class="qw-filter-form">
-    <?php print theme($filter['template'], array('filter' => $filter)); ?>
+    <?php print $filter['form']; ?>
   </div>
 </div>

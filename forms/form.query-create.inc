@@ -13,7 +13,7 @@
       </p>
       <input class="qw-create-input" type="text" name="qw-name" value="" />
     </div>
-    
+
     <div class="qw-create">
       <strong>Query Type:</strong>
       <p>
@@ -25,7 +25,7 @@
         <option value="override">Override</option>
       </select>
     </div>
-    
+
     <div class="qw-create">
       <input type="submit" value="Create" class="qw-button" />
     </div>
@@ -46,6 +46,8 @@
       When you create a Page Query, you give that query a path (URI) to display on.
       After creating the query, you can visit that URI on your website to view the results.
       This is a great way to create new, complex pages on your Wordpress site.
+      <br /><br />
+      <strong><em>Pages do not work with the Default permalink structure found <a href="<?php print get_bloginfo('wpurl'); ?>/wp-admin/options-permalink.php">here</a>.</em></strong>
     </p>
   </div>
   <div>

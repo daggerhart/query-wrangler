@@ -37,11 +37,17 @@ function qw_execute_query($query_id, $options_override = array(), $reset_post_da
 /*
  * Get the Query, and set $options to defaults
  *
- * @param int $query_id The unique ID of the query
- * @param array $options_override An array of values to override in the retrieved set
- * @return array Of Query options
+ * @param int
+ *   $query_id - The unique ID of the query
+ * @param array
+ *   $options_override - An array of values to override in the retrieved set
+ * @param array
+ *   $full_override - force the options_override as all options
+ *
+ * @return array
+ *   Query options
  */
-function qw_generate_query_options($query_id, $options_override = array())
+function qw_generate_query_options($query_id, $options_override = array(), $full_override = false)
 {
   global $wpdb, $wp_query;
   $table_name = $wpdb->prefix."query_wrangler";
@@ -53,7 +59,13 @@ function qw_generate_query_options($query_id, $options_override = array())
   $options = qw_unserialize($rows[0]->data);
 
   // override options
-  $options =  array_merge_recursive((array)$options, $options_override);
+  if ($full_override) {
+    // force a full override
+    $options = $options_override;
+  } else {
+    // combine options
+    $options =  array_merge_recursive((array)$options, $options_override);
+  }
 
   // build query_details
   $options['meta'] = array();
@@ -86,17 +98,23 @@ function qw_generate_query_args($options = array(), $options_override = array())
   $args['orderby']        = ($options['args']['orderby']) ? $options['args']['orderby']: 'none';
   $args['order']          = ($options['args']['order']) ? $options['args']['order']: 'ASC';
   $args['paged']          = $options['args']['paged'];
-  //$args['']              = $options['args'][''];
+  $args['post_status']    = $options['args']['post_status'];
 
   // handle filters
   if(is_array($options['args']['filters'])){
+    // loop through all filters
     foreach($options['args']['filters'] as $filter)
     {
-      $filter = array_merge($filters[$filter['type']], $filter);
+      // combine filter details
+      if (isset($filters[$filter['type']])){
+        $filter = array_merge($filters[$filter['type']], $filter);
+      }
 
+      // look for callback, and run it
       if (isset($filter['query_args_callback']) && function_exists($filter['query_args_callback'])){
         $filter['query_args_callback']($args, $filter);
       } else {
+        // else, default to type as WP_Query argument key
         $args[$filter['type']] = $filter[$filter['type']];
       }
     }
@@ -166,18 +184,16 @@ function qw_default_query_data(){
       'posts_per_page'  => 5,
       'offset'          => 0,
       'cat_operator'    => 'cat',
-      'post_status'     => 'published',
+      'post_status'     => 'publish',
       'orderby'         => 'date',
       'order'           => 'ASC',
       'filters'         => array(),
     ),
     'display' => array(
-      'type' => 'posts',
-      'full_settings' => array(
-        'style' => 'complete',
-      ),
-      'field_settings' => array(
-        'style' => 'unformatted',
+      'style' => 'unformatted',
+      'row_style' => 'posts',
+      'post_settings' => array(
+        'size' => 'complete',
       ),
     ),
   );
@@ -275,7 +291,6 @@ function qw_get_term($term, $by = 'id' , $return_type = OBJECT){
   }
   else {
     return false;
-    //return $term;
   }
 }
 
@@ -286,12 +301,19 @@ function qw_get_term($term, $by = 'id' , $return_type = OBJECT){
 function qw_trim(&$value){
   $value = trim($value);
 }
-function qw_handle_html(&$value, $key){
+function qw_handle_html(&$value, $key = ''){
   if(is_string($value)){
-    $value = stripslashes($value);
+    // for some reason stripslashes isn't getting all slashes
+    $value = str_replace("\\", "", stripslashes(stripslashes($value)));
   }
 }
 
+/*
+ * Custom for outputting text/html into a textarea
+ */
+function qw_textarea($value){
+  return esc_textarea(str_replace("\\", "", $value));
+}
 /*
  * Serialize wrapper functions for future changes.
  */
@@ -300,8 +322,15 @@ function qw_serialize($array){
 }
 // fix unserialize problem with quotation marks
 function qw_unserialize($serial_str) {
-    $serial_str= preg_replace('!s:(\d+):"(.*?)";!se', "'s:'.strlen('$2').':\"$2\";'", $serial_str );
-    $serial_str= str_replace("\r", "", $serial_str);
-    //$serial_str= str_replace("\n", "", $serial_str);
-    return unserialize($serial_str);
+  $serial_str= preg_replace('!s:(\d+):"(.*?)";!se', "'s:'.strlen('$2').':\"$2\";'", $serial_str );
+  $serial_str= str_replace("\r", "", $serial_str);
+  //$serial_str= str_replace("\n", "", $serial_str);
+  $array = array();
+  $array = unserialize($serial_str);
+  if(is_array($array)){
+    // stripslashes twice for science
+    $array = array_map('stripslashes_deep', $array);
+    $array = array_map('stripslashes_deep', $array);
+    return $array;
+  }
 }

@@ -1,7 +1,17 @@
 <?php
-
+/*
+ * Providing theme functions for the default filters
+ *
+ * $filter - The current filter with filter type data
+ */
+/*
+ * Post Types
+ * - checkboxes
+ */
 function theme_qw_filter_post_types($filter)
-{ ?>
+{
+  ob_start();
+  ?>
   <div class="qw-checkboxes">
     <?php
       $post_types = qw_all_post_types();
@@ -22,21 +32,17 @@ function theme_qw_filter_post_types($filter)
     ?>
   </div>
   <?php
+  return ob_get_clean();
 }
 
-function theme_qw_filter_post_status($filter)
-{ ?>
-  <select name="<?php print $filter['form_prefix']; ?>[post_status]" class="qw-field-value">
-    <option value="publish" <?php if($filter['values']['post_status'] == "publish") { print 'selected="selected"';} ?>>Published</option>
-    <option value="pending" <?php if($filter['values']['post_status'] == "pending") { print 'selected="selected"';} ?>>Pending</option>
-    <option value="draft" <?php if($filter['values']['post_status'] == "draft") { print 'selected="selected"';} ?>>Draft</option>
-    <option value="future" <?php if($filter['values']['post_status'] == "future") { print 'selected="selected"';} ?>>Future (Scheduled)</option>
-    <option value="trash" <?php if($filter['values']['post_status'] == "trash") { print 'selected="selected"';} ?>>Trashed</option>
-  </select>
-  <?php
-}
+/*
+ * Post Id
+ * - text, select
+ */
 function theme_qw_filter_post_id($filter)
-{ ?>
+{
+  ob_start();
+  ?>
   <p>
     Comma separated list of post ids:<br />
     <input type='text' name="<?php print $filter['form_prefix']; ?>[post_ids]" value='<?php print $filter['values']['post_ids']; ?>' />
@@ -49,18 +55,33 @@ function theme_qw_filter_post_id($filter)
     </select>
   </p>
   <?php
+  return ob_get_clean();
 }
 
+/*
+ * Post Parent
+ * - text
+ */
 function theme_qw_filter_post_parent($filter)
-{ ?>
+{
+  ob_start();
+  ?>
   <input class="qw-field-value"
          type="text"
          name="<?php print $filter['form_prefix']; ?>[post_parent]"
          value="<?php print $filter['values']['post_parent']; ?>" />
   <?php
+  return ob_get_clean();
 }
+
+/*
+ * Categories
+ * - checkboxes, select
+ */
 function theme_qw_filter_categories($filter)
-{ ?>
+{
+  ob_start();
+  ?>
   <div class="qw-checkboxes">
     <?php
       $category_ids = get_all_category_ids();
@@ -89,9 +110,17 @@ function theme_qw_filter_categories($filter)
     <option value="category__not_in" <?php if($filter['values']['cat_operator'] == "category__not_in") {print 'selected="selected"';} ?>>Not in the categories selected</option>
   </select>
   <?php
+  return ob_get_clean();
 }
+
+/*
+ * Tags
+ * - checkboxes, select
+ */
 function theme_qw_filter_tags($filter)
-{ ?>
+{
+  ob_start();
+  ?>
   <div class="qw-checkboxes">
     <?php
       $tags = get_tags(array('hide_empty' => false));
@@ -117,9 +146,17 @@ function theme_qw_filter_tags($filter)
     <option value="tag__not_in">None of the selected tags</option>
   </select>
   <?php
+  return ob_get_clean();
 }
+
+/*
+ * Meta Key / Value Pair
+ * - text, select, text
+ */
 function theme_qw_filter_meta_key_value($filter)
-{ ?>
+{
+  ob_start();
+  ?>
   <p>
     Meta Key<br />
     <input type='text' name="<?php print $filter['form_prefix']; ?>[meta_key]" value='<?php print $filter['values']['meta_key']; ?>' />
@@ -141,9 +178,17 @@ function theme_qw_filter_meta_key_value($filter)
               class="qw-meta-value"><?php print stripcslashes($filter['values']['meta_value']); ?></textarea>
   </p>
   <?php
+  return ob_get_clean();
 }
+
+/*
+ * Meta Key
+ * - text
+ */
 function theme_qw_filter_meta_key($filter)
-{ ?>
+{
+  ob_start();
+  ?>
   <p>
     Meta Key<br />
     <input type='text'
@@ -151,13 +196,22 @@ function theme_qw_filter_meta_key($filter)
            value='<?php print $filter['values']['meta_key']; ?>' />
   </p>
   <?php
+  return ob_get_clean();
 }
+
+/*
+ * Meta Value
+ * - text
+ */
 function theme_qw_filter_meta_value($filter)
-{ ?>
+{
+  ob_start();
+  ?>
   <p>
     Meta Value<br />
     <textarea name="<?php print $filter['form_prefix']; ?>[meta_value]"
               class="qw-meta-value"><?php print stripcslashes($filter['values']['meta_value']); ?></textarea>
   </p>
   <?php
+  return ob_get_clean();
 }

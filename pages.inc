@@ -60,6 +60,16 @@ function qw_get_page_op()
   else {
     $op = 'default';
   }
+
+  // fix incorrectly identifying query pages as categories or tags
+  // depending on permalink structures
+  if($op == 'category' ||
+     $op == 'tag')
+  {
+    if ($wp_query->found_posts == 0){
+      $op = '404';
+    }
+  }
   return $op;
 }
 /*
@@ -73,15 +83,16 @@ add_action('wp', 'qw_query_pages_handler');
  */
 function qw_query_pages_handler()
 {
+  global $wp_query,$wpdb;
+
   // page op is based on WP tags like is_category() && is_404()
   $op = qw_get_page_op();
-
+  
   // we only handle sepcific types of pages and overrides
   if($op == 'category' ||
      $op == 'tag' ||
      $op == '404')
   {
-    global $wp_query,$wpdb;
 
     $qw_table = $wpdb->prefix."query_wrangler";
     $qot_table = $wpdb->prefix."query_override_terms";

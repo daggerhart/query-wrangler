@@ -1,8 +1,18 @@
 <?php
 /*
  * Template Wrangler templates
+ *
+ * @param $templates array Passed from the filter hook from WP
+ *
+ * @return array All template arrays filtered so far by Wordpress' filter hook
  */
 function qw_templates($templates){
+  // preview query
+  $templates['query_preview'] = array(
+    'files' => 'templates/admin-preview.php',
+    'default_path' => QW_PLUGIN_DIR,
+    'arguments' => array('options' => NULL),
+  );
   // edit query template
   $templates['query_edit'] = array(
     'files' => 'forms/form.query-edit.inc',
@@ -74,7 +84,30 @@ function qw_templates($templates){
       'rows' => array(),
     )
   );
+  // useful for plugin admin pages
+  $templates['admin_wrapper'] = array(
+    'files' => array(
+        'templates/admin-wrapper.php',
+        'admin-wrapper.php',
+    ),
+    'default_path' => QW_PLUGIN_DIR,
+    'arguments' => array(
+        'title' => 'Admin Page',
+        'content' => 'content goes here.',
+    ),
+  );
 
+  // filters
+  $filters = qw_all_filters();
+  foreach($filters as $type => $filter){
+    if(isset($filter['template'])){
+      $templates[$filter['template']] = array(
+        'arguments' => array(
+          'filter' => array()
+        )
+      );
+    }
+  }
   return $templates;
 }
 // tw hook
@@ -98,11 +131,14 @@ function theme_query_display_rows_preprocess($template)
 /*
  * Template the entire query
  *
- * @param array $wp_query Wordpress query object
- * @param array $options the query options
+ * @param object
+ *   $wp_query Wordpress query object
+ * @param array
+ *   $options the query options
+ *
  * @return string HTML for themed/templated query
  */
-function qw_template_query($wp_query, $options)
+function qw_template_query(&$wp_query, $options)
 {
   $results_count = count($wp_query->posts);
   $content = '';
@@ -118,32 +154,28 @@ function qw_template_query($wp_query, $options)
     $all_styles = qw_all_styles();
 
     // the content of the widget is the result of the query
-    if($options['display']['type'] == "posts")
+    if($options['display']['row_style'] == "posts")
     {
-      // get style type from display style
-      // @TODO: change to ['style']['post_settings']
-      $style = array();
-      $style['name'] = $options['display']['full_settings']['style'];
-
       // setup row template arguments
       $template_args = array(
-        'template' => 'query-'.$style['name'],
+        'template' => 'query-'.$options['display']['style'],
         'slug' => $options['meta']['slug'],
-        'style' => $style['name'],
-        'rows' => $wp_query,
+        'style' => $options['display']['style'],
+        'rows' => qw_make_posts_rows($wp_query, $options),
       );
     }
-    else if ($options['display']['type'] == "fields")
+    else if ($options['display']['row_style'] == "fields")
     {
       // get style type from display style
       $style = $all_styles[$options['display']['style']];
+
       // setup row template arguments
       $template_args = array(
         'template' => $style['template'],
         'slug' => $options['meta']['slug'],
         'style' => $options['display']['style'],
         // make rows
-        'rows' => qw_make_fields_rows($wp_query, $options['display']),
+        'rows' => qw_make_fields_rows($wp_query, $options),
       );
     }
 
@@ -187,33 +219,62 @@ function qw_template_query($wp_query, $options)
   return theme('query_display_wrapper', $wrapper_args);
 }
 /*
+ *
+ */
+function qw_make_posts_rows(&$wp_query, $options){
+  $rows = array();
+  $i = 0;
+  while($wp_query->have_posts())
+  {
+    $wp_query->the_post();
+    $template_args = array(
+      'template' => 'query-'.$options['display']['post_settings']['size'],
+      'slug' => $options['meta']['slug'],
+      'style' => $options['display']['post_settings']['size'],
+    );
+    $rows[$i]['row_classes'] = qw_row_classes($i);
+    $field_classes = array('query-post-wrapper');
+    $rows[$i]['fields'][$i]['classes'] = implode(" ",$field_classes);
+    $rows[$i]['fields'][$i]['output'] = theme('query_display_rows' , $template_args);
+    $i++;
+  }
+  return $rows;
+}
+/*
+ * Make theme row classes
+ */
+function qw_row_classes($i){
+  $row_classes   = array('query-row');
+  $row_classes[] = ($i%2) ? 'query-row-odd' : 'query-row-even';
+  $row_classes[] = 'query-row-'.$i;
+
+  return implode(" ", $row_classes);
+}
+/*
  * Build array of fields and rows for templating
  *
  * @param object $new_query WP_Query objecte generated
  * @param array $display Query display data
  * @return array Executed query rows
  */
-function qw_make_fields_rows($new_query, $display)
+function qw_make_fields_rows(&$wp_query, $options)
 {
+  $display = $options['display'];
   $all_fields = qw_all_fields();
   $rows = array();
   $tokens = array();
 
   // loop through each post
   $i = 0;
-  while($new_query->have_posts())
+  while($wp_query->have_posts())
   {
-    $new_query->the_post();
+    $wp_query->the_post();
     //
-    $this_post = $new_query->post;
+    $this_post = $wp_query->post;
     $rows[$i] = array();
 
     // make row classes
-    $row_classes   = array('qw-query-row');
-    $row_classes[] = ($i%2) ? 'qw-odd' : 'qw-even';
-    $row_classes[] = 'qw-row-'.$i;
-
-    $rows[$i]['row_classes'] = implode(" ", $row_classes);
+    $rows[$i]['row_classes'] = qw_row_classes($i);
 
     if(is_array($display['field_settings']['fields']))
     {
@@ -224,8 +285,8 @@ function qw_make_fields_rows($new_query, $display)
       foreach($display['field_settings']['fields'] as $field_name => $field_settings)
       {
         // field open
-        $field_classes = array('qw-field');
-        $field_classes[] = 'qw-field-'.$field_settings['name'];
+        $field_classes = array('query-field');
+        $field_classes[] = 'query-field-'.$field_settings['name'];
 
         $rows[$i]['fields'][$field_name]['classes'] = implode(" ",$field_classes);
 
@@ -283,17 +344,6 @@ function qw_make_fields_rows($new_query, $display)
           $rows[$i]['fields'][$field_name]['output'] = '<a class="query-field-link" href="'.get_permalink().'">'.$rows[$i]['fields'][$field_name]['output'].'</a>';
         }
 
-        // get default field label for tables
-        $rows[$i]['fields'][$field_name]['label'] = ($field_settings['has_label']) ? $field_settings['label'] : '';
-
-        // apply labels to full style fields
-        if(isset($field_settings['has_label']) &&
-           $display['type'] != 'full' &&
-           $display['field_settings']['style'] != 'table')
-        {
-          $rows[$i]['fields'][$field_name]['output'] = '<label class="query-label">'.$field_settings['label'].'</label>'.$rows[$i]['fields'][$field_name]['output'];
-        }
-
         // add token for replace
         $tokens['{{'.$field_name.'}}'] = $rows[$i]['fields'][$field_name]['output'];
 
@@ -302,6 +352,17 @@ function qw_make_fields_rows($new_query, $display)
           // replace tokens with results
           $field_settings['custom_output'] = str_replace(array_keys($tokens), array_values($tokens), $field_settings['custom_output']);
           $rows[$i]['fields'][$field_name]['output'] = $field_settings['custom_output'];
+        }
+
+        // get default field label for tables
+        $rows[$i]['fields'][$field_name]['label'] = ($field_settings['has_label']) ? $field_settings['label'] : '';
+
+        // apply labels to full style fields
+        if(isset($field_settings['has_label']) &&
+           $display['type'] != 'full' &&
+           $display['field_settings']['style'] != 'table')
+        {
+          $rows[$i]['fields'][$field_name]['output'] = '<label class="query-label">'.$field_settings['label'].'</label> '.$rows[$i]['fields'][$field_name]['output'];
         }
 
         // apply shortcodes to field output
@@ -352,6 +413,9 @@ function qw_make_pager($pager, &$wp_query)
  */
 function qw_theme_pager_default($pager, &$wp_query)
 {
+  // help figure out the current page
+  $path_array = explode('/page/', $_SERVER['REQUEST_URI']);
+
   $pager_themed = '';
   $pager['next'] = ($pager['next']) ? $pager['next'] : 'Next Page &raquo;';
   $pager['previous'] = ($pager['previous']) ? $pager['previous'] : '&laquo; Previous Page';

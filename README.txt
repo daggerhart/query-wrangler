@@ -9,7 +9,7 @@ Donate link: http://www.widgetwrangler.com/
 Requires at least: 3
 Tested up to: 3.2.1
 Stable tag: trunk
-Version: 1.3.2beta
+Version: 1.4beta
 
 This plugin lets you create new WP queries as pages or widgets. It's basically Drupal Views for Wordpress.
 
@@ -44,12 +44,12 @@ The easiest way is to add it as a custom link in the Menus section of your site.
 
 = How do I use query shortcodes? =
 
-Easy, the code you're lookind for looks like this.   [query id=2] , where the number 2 is the query id.
+Easy, the code you're looking for is like this.   [query id=2] , where the number 2 is the query id.
 
 = What are overrides and how do I use them? =
 
 Overrides allow you to alter the display and information given on category and tag pages.
-For a simple example, add a new query and chose the type `override`.  Choose what you want to display then examine the `Override Settings` options.
+For a simple example, add a new query and chose the type `override`.  Choose how you want the content to display, then examine the `Override Settings` options.
 Select a category or multiple categories to override.   Save the query, then visit that category page.
 
 == Screenshots ==
@@ -57,6 +57,15 @@ Select a category or multiple categories to override.   Save the query, then vis
 1. Query Wrangler edit screen
 
 == Changelog ==
+
+= 1.4beta =
+
+ * Fixed override pagination
+ * UI Improvements
+ * Template hierarchy solidification
+ * Live Preview
+ * Meta Key / Value Filters
+ * Filter Api
 
 = 1.3.2beta =
 
@@ -89,11 +98,11 @@ Select a category or multiple categories to override.   Save the query, then vis
 = 1.1beta =
 
  * Bug with canceling forms.  Changed use of jQuery unserializeForm
- 
+
 = 1.0beta =
 
  * Initial Release
 
 == Upgrade Notice ==
 
-1.3.2beta Fixed some critical bugs, please upgrade.
+1.4beta Bug fixes, api enhancement, UI improvement

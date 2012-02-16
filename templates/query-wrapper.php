@@ -15,7 +15,7 @@
         <?php print $header; ?>
       </div>
     <?php } ?>
-    
+
     <div class="query-content">
       <?php print $content; ?>
       <?php if (isset($pager)) { ?>
@@ -24,8 +24,8 @@
         </div>
       <?php } ?>
     </div>
-    
-    <?php if (isset($footer)) { ?>  
+
+    <?php if (isset($footer)) { ?>
       <div class="query-footer">
         <?php print $footer; ?>
       </div>

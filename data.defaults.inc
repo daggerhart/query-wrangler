@@ -1,5 +1,35 @@
 <?php
 /*
+ * Post statuses as a hook for contributions
+ */
+function qw_default_post_statuses($post_statuses){
+  $post_statuses['publish'] = array(
+    'title' => 'Published',
+  );
+  $post_statuses['pending'] = array(
+    'title' => 'Pending',
+  );
+  $post_statuses['draft'] = array(
+    'title' => 'Draft',
+  );
+  $post_statuses['future'] = array(
+    'title' => 'Future (Scheduled)',
+  );
+  $post_statuses['trash'] = array(
+    'title' => 'Trashed',
+  );
+  $post_statuses['private'] = array(
+    'title' => 'Private',
+  );
+  $post_statuses['any'] = array(
+    'title' => 'Any',
+  );
+  return $post_statuses;
+}
+// add default fields to the hook filter
+add_filter('qw_post_statuses', 'qw_default_post_statuses');
+
+/*
  * All Fields and Settings
  *
  * @return array Available query fields
@@ -7,52 +37,52 @@
 function qw_default_fields($fields)
 {
   $fields['ID'] = array(
-    'label' => 'Post ID',
+    'title' => 'Post ID',
   );
   $fields['post_title'] = array(
-    'label' => 'Post Title',
+    'title' => 'Post Title',
     'callback' => 'get_the_title',
   );
   $fields['post_content'] = array(
-    'label' => 'Post Content',
+    'title' => 'Post Content',
     'callback' => 'get_the_content',
   );
   $fields['post_excerpt'] = array(
-    'label' => 'Post Excerpt',
+    'title' => 'Post Excerpt',
     'callback' => 'get_the_excerpt',
   );
   $fields['post_author'] = array(
-    'label' => 'Post Author',
+    'title' => 'Post Author',
     'callback' => 'get_the_author',
   );
   $fields['post_date'] = array(
-    'label' => 'Post Date',
+    'title' => 'Post Date',
     'callback' => 'get_the_date',
   );
   $fields['post_status'] = array(
-    'label' => 'Post Status',
+    'title' => 'Post Status',
   );
   $fields['post_parent'] = array(
-    'label' => 'Post Parent',
+    'title' => 'Post Parent',
   );
   $fields['post_modified'] = array(
-    'label' => 'Post Modified',
+    'title' => 'Post Modified',
   );
   $fields['guid'] = array(
-    'label' => 'GUID',
+    'title' => 'GUID',
   );
   $fields['post_type'] = array(
-    'label' => 'Post Type',
+    'title' => 'Post Type',
   );
   $fields['comment_count'] = array(
-    'label' => 'Comment Count',
+    'title' => 'Comment Count',
   );
   $fields['permalink'] = array(
-    'label' => 'Permalink',
+    'title' => 'Permalink',
     'callback' => 'get_permalink',
   );
   $fields['image_attachment'] = array(
-    'label' => 'Image Attachment',
+    'title' => 'Image Attachment',
     'callback' => 'qw_theme_image',
     'arguments' => array(
       'post_id' => 'this:ID',
@@ -61,7 +91,7 @@ function qw_default_fields($fields)
     ),
   );
   $fields['file_attachment'] = array(
-    'label' => 'File Attachment',
+    'title' => 'File Attachment',
     'callback' => 'qw_theme_file',
     'arguments' => array(
       'post_id' => 'this:ID',
@@ -80,7 +110,7 @@ function qw_default_fields($fields)
        substr($key,0,3) != 'ww_')
     {
       $fields[$field_key] = array(
-        'label' => 'Custom Field: '.$key,
+        'title' => 'Custom Field: '.$key,
         'callback' => 'get_post_meta',
         'arguments' => array(
           'post_id' => 'this:ID',
@@ -103,26 +133,22 @@ add_filter('qw_fields', 'qw_default_fields');
 function qw_default_styles($styles)
 {
   $styles['unformatted'] = array(
-    'type' => 'fields',
-    'label' => 'Unformatted',
+    'title' => 'Unformatted',
     'template' => 'query-unformatted',
     'default_path' => QW_PLUGIN_DIR, // do not include last slash
   );
   $styles['unordered_list'] = array(
-    'type' => 'fields',
-    'label' => 'Unordered List',
+    'title' => 'Unordered List',
     'template' => 'query-unordered_list',
     'default_path' => QW_PLUGIN_DIR, // do not include last slash
   );
   $styles['ordered_list'] = array(
-    'type' => 'fields',
-    'label' => 'Ordered List',
+    'title' => 'Ordered List',
     'template' => 'query-ordered_list',
     'default_path' => QW_PLUGIN_DIR, // do not include last slash
   );
   $styles['table'] = array(
-    'type' => 'fields',
-    'label' => 'Table',
+    'title' => 'Table',
     'template' => 'query-table',
     'default_path' => QW_PLUGIN_DIR, // do not include last slash
   );
@@ -136,12 +162,10 @@ add_filter('qw_styles', 'qw_default_styles');
  */
 function qw_default_row_styles($row_styles){
   $row_styles['posts'] = array(
-    'type' => 'posts',
-    'label' => 'Posts',
+    'title' => 'Posts',
   );
   $row_styles['fields'] = array(
-    'type' => 'fields',
-    'label' => 'Fields',
+    'title' => 'Fields',
   );
   return $row_styles;
 }
@@ -153,12 +177,10 @@ add_filter('qw_row_styles', 'qw_default_row_styles');
  */
 function qw_default_row_complete_styles($row_complete_styles){
   $row_complete_styles['complete'] = array(
-    'type' => 'complete',
-    'label' => 'Complete Post',
+    'title' => 'Complete Post',
   );
   $row_complete_styles['excerpt'] = array(
-    'type' => 'excerpt',
-    'label' => 'Excerpt',
+    'title' => 'Excerpt',
   );
   return $row_complete_styles;
 }
@@ -170,12 +192,10 @@ add_filter('qw_row_complete_styles', 'qw_default_row_complete_styles');
  */
 function qw_default_row_fields_styles($row_fields_styles){
   $row_fields_styles['posts'] = array(
-    'type' => 'posts',
-    'label' => 'Posts',
+    'title' => 'Posts',
   );
   $row_fields_styles['fields'] = array(
-    'type' => 'fields',
-    'label' => 'Fields',
+    'title' => 'Fields',
   );
   return $row_styles;
 }
@@ -187,44 +207,34 @@ add_filter('qw_row_fields_styles', 'qw_default_row_fields_styles');
  */
 function qw_default_sort_options($sort_options){
   $sort_options['none'] = array(
-    'type' => 'none',
-    'label' => 'Nonde',
+    'title' => 'None',
   );
   $sort_options['ID'] = array(
-    'type' => 'ID',
-    'label' => 'Post ID',
+    'title' => 'Post ID',
   );
   $sort_options['author'] = array(
-    'type' => 'author',
-    'label' => 'Author',
+    'title' => 'Author',
   );
   $sort_options['title'] = array(
-    'type' => 'title',
-    'label' => 'Title',
+    'title' => 'Title',
   );
   $sort_options['date'] = array(
-    'type' => 'date',
-    'label' => 'Date',
+    'title' => 'Date',
   );
   $sort_options['modified'] = array(
-    'type' => 'modified',
-    'label' => 'Last Modified',
+    'title' => 'Last Modified',
   );
   $sort_options['parent'] = array(
-    'type' => 'parent',
-    'label' => 'Parent',
+    'title' => 'Parent',
   );
   $sort_options['rand'] = array(
-    'type' => 'rand',
-    'label' => 'Random',
+    'title' => 'Random',
   );
   $sort_options['comment_count'] = array(
-    'type' => 'comment_count',
-    'label' => 'Comment Count',
+    'title' => 'Comment Count',
   );
   $sort_options['menu_order'] = array(
-    'type' => 'menu_order',
-    'label' => 'Menu Order (for Page post_types)',
+    'title' => 'Menu Order (for Page post_types)',
   );
   return $sort_options;
 }
@@ -258,18 +268,18 @@ add_filter('qw_file_styles', 'qw_default_file_styles');
  */
 function qw_default_pager_types($pagers) {
   $pagers['default'] = array(
-    'label' => 'Default',
+    'title' => 'Default',
     'callback' => 'qw_theme_pager_default'
   );
   $pagers['numbers']	= array(
-    'label' => 'Page Numbers',
+    'title' => 'Page Numbers',
     'callback' => 'qw_theme_pager_numbers'
   );
 
   // WP PageNavi Plugin
   if(function_exists('wp_pagenavi')) {
     $pagers['pagenavi'] = array(
-      'label' => 'PageNavi',
+      'title' => 'PageNavi',
       'callback' => 'wp_pagenavi'
     );
   }

@@ -1,107 +1,101 @@
 <?php
 /*
  * Default Filters
+ *
+ * Template
+
+  $filters['filter_type'] = array(
+    // title shown when selecting a filter
+    'title' => 'Title',
+
+    // help text for the user
+    'description' => 'Describe this filter',
+
+    // which types of queries to allow this filter on
+    // some filters don't make sense on some query types
+    'query_display_types' => array('page','widget','override'),
+
+    // (optional) callback for form
+    // * This or a template must be used
+    // callback function should actually output the form
+    'form_callback' => 'callback_function_form_inner_form',
+
+    // (optional) template
+    // template wrangler theme function or template file
+    'template' => 'my_tw_template_hook',
+
+    // (optional) generate_args callback
+    // determines how form data becomes WP_Query arguments
+    // defaults to form key as WP_Query argument key
+    'query_args_callback' => 'qw_generate_query_args_post_types',
+  );
+
  */
 function qw_default_filters($filters){
 
   $filters['post_types'] = array(
-    'label' => 'Post Type',
-    'type' => 'post_types',
+    'title' => 'Post Type',
     'description' => 'Select which post types should be shown.',
-    // tw theme function or template file
     'template' => 'qw_filter_post_types',
-    // generate_args callback
     'query_args_callback' => 'qw_generate_query_args_post_types',
-  );
-  $filters['post_status'] = array(
-    'label' => 'Post Status',
-    'type' => 'post_status',
-    'description' => 'Select the status of the posts to show.',
-    // tw theme function or template file
-    'template' => 'qw_filter_post_status',
+    'query_display_types' => array('page','widget','override'),
   );
   $filters['post_parent'] = array(
-    'label' => 'Post Parent',
-    'type' => 'post_parent',
+    'title' => 'Post Parent',
     'description' => 'Use only with post type "Page" to show results with the chosen parent ID.',
-    // tw theme function or template file
     'template' => 'qw_filter_post_parent',
+    'query_display_types' => array('page','widget'),
   );
   $filters['post_id'] = array(
-    'label' => 'Post IDs',
-    'type' => 'post_id',
+    'title' => 'Post IDs',
     'description' => 'Provide a list of post_ids to show or not show.',
-    // tw theme function or template file
     'template' => 'qw_filter_post_id',
-    // generate_args callback
     'query_args_callback' => 'qw_generate_query_args_post_id',
+     'query_display_types' => array('page','widget','override'),
   );
   $filters['categories'] = array(
-    'label' => 'Categories',
-    'type' => 'categories',
+    'title' => 'Categories',
     'description' => 'Select which categories to pull posts from, and how to treat those categories.',
-    // tw theme function or template file
     'template' => 'qw_filter_categories',
-    // generate_args callback
     'query_args_callback' => 'qw_generate_query_args_categories',
+    'query_display_types' => array('page','widget'),
   );
   $filters['tags'] = array(
-    'label' => 'Tags',
-    'type' => 'tags',
+    'title' => 'Tags',
     'description' => 'Select which tags to use.',
-    // tw theme function or template file
     'template' => 'qw_filter_tags',
-    // generate_args callback
     'query_args_callback' => 'qw_generate_query_args_tags',
+    'query_display_types' => array('page','widget'),
   );
   $filters['meta_key_value'] = array(
-    'label' => 'Meta Key/Value Compare',
-    'type' => 'meta_key_value',
+    'title' => 'Meta Key/Value Compare',
     'description' => 'Filter for a specific meta_key / meta_value pair.',
-    // tw theme function or template file
     'template' => 'qw_filter_meta_key_value',
-    // generate_args callback
     'query_args_callback' => 'qw_generate_query_args_meta_key_value',
+    'query_display_types' => array('page','widget','override'),
   );
   $filters['meta_key'] = array(
-    'label' => 'Meta Key',
-    'type' => 'meta_key',
+    'title' => 'Meta Key',
     'description' => 'Filter for a specific meta_key.',
-    // tw theme function or template file
     'template' => 'qw_filter_meta_key',
-    // generate_args callback
     'query_args_callback' => 'qw_generate_query_args_meta_key',
+    'query_display_types' => array('page','widget','override'),
   );
   $filters['meta_value'] = array(
-    'label' => 'Meta Value',
-    'type' => 'meta_value',
+    'title' => 'Meta Value',
     'description' => 'Filter for a specific meta_value.',
-    // tw theme function or template file
     'template' => 'qw_filter_meta_value',
-    // generate_args callback
     'query_args_callback' => 'qw_generate_query_args_meta_value',
+    'query_display_types' => array('page','widget','override'),
   );
   return $filters;
 }
 // add default filters to the filter
 add_filter('qw_filters', 'qw_default_filters');
 
-function qw_default_filters_templates($templates){
-  $filters = qw_all_filters();
-  foreach ($filters as $name => $filter){
-    $templates[$filter['template']] = array(
-      'arguments' => array(
-        'filter' => array()
-      )
-    );
-  }
-  return $templates;
-}
-// tw hook
-add_filter('tw_templates', 'qw_default_filters_templates');
-
 /*
  * Filter query_args_callbacks
+ * These functions convert form data into WP_Query arguments
  */
 function qw_generate_query_args_post_types(&$args, $filter){
   $args['post_type'] = $filter['post_types'];

@@ -1,10 +1,34 @@
 <?php
 /*
+ * Post Statuses
+ */
+function qw_all_post_statuses(){
+  $post_statuses = apply_filters('qw_post_statuses', array());
+  return $post_statuses;
+}
+
+/*
  * Fields Hook
  */
 function qw_all_fields(){
   $fields = apply_filters('qw_fields', array());
+  foreach($fields as $type => $field){
+    $fields[$type]['type'] = $type;
+  }
   return $fields;
+}
+
+/*
+ * filters Hook
+ */
+function qw_all_filters(){
+  $filters = apply_filters('qw_filters', array());
+
+  foreach($filters as $type => $filter){
+    // set filter's type as a value
+    $filters[$type]['type'] = $type;
+  }
+  return $filters;
 }
 
 /*
@@ -46,14 +70,6 @@ function qw_all_row_complete_styles(){
 function qw_all_row_fields_styles(){
   $row_fields_styles = apply_filters('qw_row_fields_styles', array());
   return $row_fields_styles;
-}
-
-/*
- * filters Hook
- */
-function qw_all_filters(){
-  $filters = apply_filters('qw_filters', array());
-  return $filters;
 }
 
 /*
