@@ -9,7 +9,7 @@ Donate link: http://www.widgetwrangler.com/
 Requires at least: 3
 Tested up to: 3.2.1
 Stable tag: trunk
-Version: 1.4beta
+Version: 1.4.1beta
 
 This plugin lets you create new WP queries as pages or widgets. It's basically Drupal Views for Wordpress.
 
@@ -58,6 +58,10 @@ Select a category or multiple categories to override.   Save the query, then vis
 
 == Changelog ==
 
+= 1.4.1beta =
+
+ * Template preprocess fix
+
 = 1.4beta =
 
  * Fixed override pagination
@@ -105,4 +109,4 @@ Select a category or multiple categories to override.   Save the query, then vis
 
 == Upgrade Notice ==
 
-1.4beta Bug fixes, api enhancement, UI improvement
+1.4.1beta Bug fixes, api enhancement, UI improvement

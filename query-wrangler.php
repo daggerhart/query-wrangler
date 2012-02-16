@@ -10,7 +10,7 @@ Donate link: http://www.widgetwrangler.com/
 Requires at least: 3
 Tested up to: 3.2.1
 Stable tag: trunk
-Version: 1.4beta
+Version: 1.4.1beta
 */
 // Note: There are 3 places to change the version number; below, above, and in readme.txt
 define('QW_VERSION', 1.4);
