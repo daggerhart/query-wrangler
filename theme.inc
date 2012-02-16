@@ -78,9 +78,9 @@ function qw_templates($templates){
     ),
     'default_path' => QW_PLUGIN_DIR,
     'arguments' => array(
-      'template' => '',
-      'slug' => '',
-      'style' => array(),
+      'template' => 'query-unformatted',
+      'slug' => 'not-found',
+      'style' => 'unformatted',
       'rows' => array(),
     )
   );
@@ -122,9 +122,12 @@ function theme_query_display_rows_preprocess($template)
   {
     // get the specific style
     $all_styles = qw_all_styles();
-    $style = $all_styles[$template['arguments']['style']];
+
     // set this template's default path to the style's default path
-    $template['default_path'] = $style['default_path'];
+    if(isset($all_styles[$template['arguments']['style']])){
+      $style = $all_styles[$template['arguments']['style']];
+      $template['default_path'] = $style['default_path'];
+    }
   }
   return $template;
 }
@@ -171,7 +174,7 @@ function qw_template_query(&$wp_query, $options)
 
       // setup row template arguments
       $template_args = array(
-        'template' => $style['template'],
+        'template' => 'query-'.$options['display']['style'],
         'slug' => $options['meta']['slug'],
         'style' => $options['display']['style'],
         // make rows
