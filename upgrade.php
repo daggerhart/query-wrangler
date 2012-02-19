@@ -1,5 +1,12 @@
 <?php
 /*
+ * Upgrade from 1.4 to 1.5
+ */
+function qw_upgrade_14_to_15(){
+  // create new sort based on  args[orderby], args[order]
+}
+
+/*
  * Upgrade from 1.3.2 to 1.4
  */
 function qw_upgrade_132_to_14(){

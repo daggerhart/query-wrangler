@@ -82,7 +82,8 @@ a.toplevel_page_query-wrangler {
   width: 70%;
 }
 #qw-query-fields-list,
-#qw-query-filters-list {
+#qw-query-filters-list,
+#qw-query-sorts-list {
   border-top: 1px solid #bbb;
   padding: 4px 0px;
 }
@@ -118,14 +119,16 @@ div.qw-query-title {
 }
 div.qw-query-title span.qw-setting-value,
 #qw-query-filters-list span.qw-setting-title,
-#qw-query-fields-list span.qw-setting-title {
+#qw-query-fields-list span.qw-setting-title,
+#qw-query-sorts-list span.qw-setting-title {
   color: blue;
   text-decoration: underline;
   cursor: pointer;
   font-weight: bold;
 }
 #qw-query-filters-list span.qw-setting-value,
-#qw-query-fields-list span.qw-setting-value {
+#qw-query-fields-list span.qw-setting-value,
+#qw-query-sorts-list span.qw-setting-value {
   color: black;
   text-decoration: none;
   font-weight: normal;
@@ -133,7 +136,8 @@ div.qw-query-title span.qw-setting-value,
 
 label.qw-query-checkbox,
 label.qw-field-checkbox,
-label.qw-filter-checkbox {
+label.qw-filter-checkbox,
+label.qw-sort-checkbox {
   display: block;
   margin: 3px 0px;
   padding: 3px;
@@ -150,14 +154,17 @@ label.qw-field-checkbox input {
   height: 100px;
   overflow-y: scroll;
 }
-.qw-query-admin-options{
+.qw-query-admin-column {
   width: 30%;
   float: left;
-  background: #f6f6f6;
-  border: 1px solid #bbb;
   margin-right: 3%;
   margin-top: 6px;
+}
+.qw-query-admin-options{
+  background: #f6f6f6;
+  border: 1px solid #bbb;
   padding-bottom: 4px;
+  margin-bottom: 12px;
 }
 .qw-query-admin-options h4 {
   background: #efefef;
@@ -172,7 +179,8 @@ label.qw-field-checkbox input {
   font-size: 0px;
 }
 ul#qw-fields-sortable li.qw-field-item,
-ul#qw-filters-sortable li.qw-filter-item {
+ul#qw-filters-sortable li.qw-filter-item,
+ul#qw-sorts-sortable li.qw-sort-item {
   line-height: 30px;
   border: 1px solid #bbb;
   border-radius: 4px;
@@ -186,7 +194,8 @@ ul.qw-field-tokens-list li {
   font-weight: bold;
 }
 li.qw-field-item .sort-handle,
-li.qw-filter-item .sort-handle {
+li.qw-filter-item .sort-handle,
+li.qw-sort-item .sort-handle {
   display: block;
   background: transparent url('images/handle2.png') center center no-repeat;
   float: left;
@@ -201,13 +210,15 @@ li.qw-filter-item .sort-handle {
   border: 1px solid #ddd;
 }
 .qw-field-weight,
-.qw-filter-weight {
+.qw-filter-weight,
+.qw-sort-weight {
   display: block;
   float: right;
   margin-top: 4px;
 }
 .qw-field-remove,
-.qw-filter-remove {
+.qw-filter-remove,
+.qw-sort-remove {
   display: block;
   float: right;
   cursor: pointer;
@@ -225,7 +236,8 @@ li.qw-filter-item .sort-handle {
 }
 
 .qw-field-title,
-.qw-sort-filter-name {
+.qw-sort-filter-name,
+.qw-sort-sort-name {
   display: none;
 }
 .qw-options-group {

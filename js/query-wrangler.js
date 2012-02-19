@@ -5,7 +5,7 @@ QueryWrangler.current_form_id = '';
 QueryWrangler.new_form_id = '';
 QueryWrangler.form_backup = '';
 // array of available options for looping
-QueryWrangler.handlers = ['field','filter'];
+QueryWrangler.handlers = ['field','filter','sort'];
 // changes have been made
 QueryWrangler.changes = false;
 
@@ -170,17 +170,19 @@ QueryWrangler.set_setting_title = function(){
  * @param {String} handler - field or filter
  * @param {String} handler_type the field or filter type
  */
-QueryWrangler.get_handler_templates = function(handler, handler_type){
+QueryWrangler.get_handler_templates = function(handler, handler_type, handler_hook){
   var item_count = jQuery('#qw-options-forms input.qw-'+handler+'-type[value='+handler_type+']').length;
   var next_name = (item_count > 0) ? handler_type + "_" + item_count: handler_type;
   var next_weight = jQuery('ul#qw-'+handler+'s-sortable li').length;
 
+console.log('h: '+handler+' - ht: '+handler_type+' - hh: '+handler_hook);
   // prepare post data for form and sortable form
   var post_data_form = {
     'action': 'qw_form_ajax',
     'form': handler+'_form',
     'name': next_name,
     'type': handler_type,
+    'hook_key': handler_hook,
     'query_type': QueryWrangler.query.type
   };
   var post_data_sortable = {
@@ -188,6 +190,7 @@ QueryWrangler.get_handler_templates = function(handler, handler_type){
     'form': handler+'_sortable',
     'name': next_name,
     'type': handler_type,
+    'hook_key': handler_hook,
     'query_type': QueryWrangler.query.type,
     'next_weight': next_weight
   };
@@ -229,15 +232,18 @@ QueryWrangler.add_new_handler = function(handler){
     if(jQuery(this).is(':checked')){
       // handler type
       var handler_type = jQuery(this).val();
+      var handler_hook = jQuery(this).siblings('input.qw-hander-hook_key').val();
       // add a new field
-      var next_name = QueryWrangler.get_handler_templates(handler, handler_type);
+      var next_name = QueryWrangler.get_handler_templates(handler, handler_type, handler_hook);
       // remove check
       jQuery(this).removeAttr('checked');
       var field_title;
       if (handler == 'field'){
-        field_title = QueryWrangler.allFields[handler_type].title;
+        field_title = QueryWrangler.allFields[handler_hook].title;
       } else if (handler == 'filter') {
-        field_title = QueryWrangler.allFilters[handler_type].title
+        field_title = QueryWrangler.allFilters[handler_hook].title;
+      } else if(handler == 'sort') {
+        field_title = QueryWrangler.allSortOptions[handler_hook].title;
       }
       title_array.push('<div class="qw-query-title" title="qw-'+handler+'-'+next_name+'"><span class="qw-setting-title">'+field_title+'</span> : <span class="qw-setting-value">'+next_name+'</span></div>');
     }
@@ -268,11 +274,12 @@ QueryWrangler.sort_handlers = function(form){
   var items = form.find('li.qw-item');
 
   // get handler type
-  if (form.hasClass('qw-sort-filters-values')){
-    handler_type = 'filter';
-  } else if (form.hasClass('qw-sort-fields-values')) {
-    handler_type = 'field';
-  }
+  jQuery.each(QueryWrangler.handlers, function(i,handler){
+    if (form.hasClass('qw-sort-'+handler+'s-values')){
+      handler_type = handler;
+      return;
+    }
+  });
 
   // empty the handler's list of titles
   var target = '#qw-query-'+handler_type+'s-list';
@@ -309,7 +316,7 @@ jQuery(document).ready(function(){
     .delegate('div.qw-query-title span, div.qw-query-add-titles span', 'click', function(){
       // set the title
       var form_title;
-      var show_buttons = true;
+      var show_update_button = true;
 
       // hide forms
       QueryWrangler.hide_forms();
@@ -327,12 +334,13 @@ jQuery(document).ready(function(){
         QueryWrangler.new_form_id = jQuery(this).attr('title');
         // show field name as part of the form title
         form_title = jQuery(this).text();
-        // hide butons on the 'add' title buttons
-        if (QueryWrangler.new_form_id == 'qw-display-add-filters' ||
-            QueryWrangler.new_form_id == 'qw-display-add-fields')
-        {
-          show_buttons = false;
-        }
+        // hide update button on the 'add' title buttons
+        jQuery.each(QueryWrangler.handlers, function(i,handler){
+          if (QueryWrangler.new_form_id == 'qw-display-add-'+handler+'s'){
+            show_update_button = false;
+            return;
+          }
+        });
       }
       // standard titles
       else {
@@ -344,9 +352,11 @@ jQuery(document).ready(function(){
       }
 
       // show buttons
-      if (show_buttons){
+      // TODO: still show cancel button
+      if (show_update_button){
         jQuery('#qw-options-actions').show();
       }
+
       // show form
       jQuery('#'+QueryWrangler.new_form_id).show();
       // backup the form
@@ -362,6 +372,7 @@ jQuery(document).ready(function(){
    * Update button
    */
   jQuery('#qw-options-actions-update').click(function(){
+    var is_handler = false;
     var form = jQuery('#'+QueryWrangler.current_form_id);
     // empty form title & hide form
     QueryWrangler.hide_forms();
@@ -369,9 +380,15 @@ jQuery(document).ready(function(){
     jQuery('#qw-options-actions').hide();
 
     // sortables have special needs
-    if (form.hasClass('qw-sort-fields-values') ||
-        form.hasClass('qw-sort-filters-values'))
-    {
+    jQuery.each(QueryWrangler.handlers, function(i,handler){
+      if (form.hasClass('qw-sort-'+handler+'s-values')){
+        is_handler = true;
+        return;
+      }
+    });
+
+    // sortable handlers
+    if (is_handler){
       QueryWrangler.sort_handlers(form);
     }
     // normal titles

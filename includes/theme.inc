@@ -36,7 +36,7 @@ function qw_templates($templates){
       'query_id' => 0,
     ),
   );
-  // field template
+// field template
   $templates['query_field'] = array(
     'files' => 'forms/form.query-field.inc',
     'default_path' => QW_PLUGIN_DIR,
@@ -46,14 +46,26 @@ function qw_templates($templates){
     'files' => 'forms/form.query-field-sortable.inc',
     'default_path' => QW_PLUGIN_DIR,
   );
-  // filters edit form
+
+// filters edit form
   $templates['query_filter'] = array(
     'files' => 'forms/form.query-filters.inc',
     'default_path' => QW_PLUGIN_DIR,
   );
-  // sortable filters template
+  // filters sortable template
   $templates['query_filter_sortable'] = array(
     'files' => 'forms/form.query-filter-sortable.inc',
+    'default_path' => QW_PLUGIN_DIR,
+  );
+
+// sorts edit form
+  $templates['query_sort'] = array(
+    'files' => 'forms/form.query-sorts.inc',
+    'default_path' => QW_PLUGIN_DIR,
+  );
+  // sorts sortable template
+  $templates['query_sort_sortable'] = array(
+    'files' => 'forms/form.query-sort-sortable.inc',
     'default_path' => QW_PLUGIN_DIR,
   );
 
@@ -100,14 +112,38 @@ function qw_templates($templates){
   // filters
   $filters = qw_all_filters();
   foreach($filters as $type => $filter){
-    if(isset($filter['template'])){
-      $templates[$filter['template']] = array(
+    if(isset($filter['form_template'])){
+      $templates[$filter['form_template']] = array(
         'arguments' => array(
           'filter' => array()
         )
       );
     }
   }
+  // fields
+  $fields = qw_all_fields();
+  foreach($fields as $type => $field){
+    if(isset($field['form_template'])){
+      $templates[$field['form_template']] = array(
+        'arguments' => array(
+          'field' => array()
+        )
+      );
+    }
+  }
+
+  // sorts
+  $sorts = qw_all_sort_options();
+  foreach($sorts as $type => $sort){
+    if(isset($sort['form_template'])){
+      $templates[$sort['form_template']] = array(
+        'arguments' => array(
+          'sort' => array()
+        )
+      );
+    }
+  }
+
   return $templates;
 }
 // tw hook
@@ -297,44 +333,15 @@ function qw_make_fields_rows(&$wp_query, $options)
         $field_defaults = $all_fields[$field_settings['type']];
 
         // look for callback
-        if(isset($field_defaults['callback']))
+        if(isset($field_defaults['output_callback']))
         {
-          // callbacks with arguments
-          if (is_array($field_defaults['arguments']))
-          {
-            $args = array();
-            foreach($field_defaults['arguments'] as $key => $argument_token)
-            {
-              // split the argument into op & value
-              $op = explode(':', $argument_token);
-
-              // see if we have a value
-              if(isset($op[1]))
-              {
-                // post object variable
-                if($op[0] == 'this'){
-                  $args[$key] = $this_post->{$op[1]};
-                }
-
-                // feild setting  variable
-                if($op[0] == 'setting'){
-                  $args[$key] = $field_settings[$op[1]];
-                }
-              }
-              // if not, use the value given in the field definition
-              else
-              {
-                // acts as a default value
-                $args[$key] = $argument_token;
-              }
-            }
-
-            // run the callback function with the arguments list
-            $rows[$i]['fields'][$field_name]['output'] = call_user_func_array($field_defaults['callback'], array_values($args));
+          // callbacks with token arguments
+          if ($field_defaults['output_arguments']){
+            $rows[$i]['fields'][$field_name]['output'].= $field_defaults['output_callback']($this_post, $field_settings);
           }
           // normal callback w/o arguments
           else {
-            $rows[$i]['fields'][$field_name]['output'].= $field_defaults['callback']();
+            $rows[$i]['fields'][$field_name]['output'].= $field_defaults['output_callback']();
           }
         }
         // use field itself
@@ -478,8 +485,11 @@ function qw_theme_pager_numbers($pager, $wp_query)
  * @param int $post_id The post->ID
  * $param int $count Number of files to get
  */
-function qw_theme_file($post_id, $style = 'link', $count = 0){
-  $files = qw_get_post_files($post_id);
+function qw_theme_file($post, $field){
+  $style = ($field['file_display_style']) ? $field['file_display_style'] : 'link';
+  $count = ($field['file_display_count']) ? $field['file_display_count'] : 0;
+
+  $files = qw_get_post_files($post->ID);
   if(is_array($files))
   {
     $output = '';
@@ -537,9 +547,12 @@ function qw_get_post_files($post_id)
  * @param $image_type
  * @param $count;
  */
-function qw_theme_image($post_id, $style, $count = 0)
+function qw_theme_image($post, $field)
 {
-  $images = qw_get_post_images($post_id);
+  $style = $field['image_display_style'];
+  $count = $field['image_display_count'];
+
+  $images = qw_get_post_images($post->ID);
   if(is_array($images)){
     $output = '';
     $i = 0;
@@ -593,4 +606,10 @@ function qw_get_post_images($post_id)
 
 				return $sorted;
 		}
+}
+/*
+ * Post Meta form settings
+ */
+function qw_get_post_meta($post, $field){
+  return get_post_meta($post->ID, $field['meta_key'], true);
 }

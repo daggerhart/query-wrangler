@@ -30,102 +30,6 @@ function qw_default_post_statuses($post_statuses){
 add_filter('qw_post_statuses', 'qw_default_post_statuses');
 
 /*
- * All Fields and Settings
- *
- * @return array Available query fields
- */
-function qw_default_fields($fields)
-{
-  $fields['ID'] = array(
-    'title' => 'Post ID',
-  );
-  $fields['post_title'] = array(
-    'title' => 'Post Title',
-    'callback' => 'get_the_title',
-  );
-  $fields['post_content'] = array(
-    'title' => 'Post Content',
-    'callback' => 'get_the_content',
-  );
-  $fields['post_excerpt'] = array(
-    'title' => 'Post Excerpt',
-    'callback' => 'get_the_excerpt',
-  );
-  $fields['post_author'] = array(
-    'title' => 'Post Author',
-    'callback' => 'get_the_author',
-  );
-  $fields['post_date'] = array(
-    'title' => 'Post Date',
-    'callback' => 'get_the_date',
-  );
-  $fields['post_status'] = array(
-    'title' => 'Post Status',
-  );
-  $fields['post_parent'] = array(
-    'title' => 'Post Parent',
-  );
-  $fields['post_modified'] = array(
-    'title' => 'Post Modified',
-  );
-  $fields['guid'] = array(
-    'title' => 'GUID',
-  );
-  $fields['post_type'] = array(
-    'title' => 'Post Type',
-  );
-  $fields['comment_count'] = array(
-    'title' => 'Comment Count',
-  );
-  $fields['permalink'] = array(
-    'title' => 'Permalink',
-    'callback' => 'get_permalink',
-  );
-  $fields['image_attachment'] = array(
-    'title' => 'Image Attachment',
-    'callback' => 'qw_theme_image',
-    'arguments' => array(
-      'post_id' => 'this:ID',
-      'style' => 'setting:image_display_style',
-      'count' => 'setting:image_display_count',
-    ),
-  );
-  $fields['file_attachment'] = array(
-    'title' => 'File Attachment',
-    'callback' => 'qw_theme_file',
-    'arguments' => array(
-      'post_id' => 'this:ID',
-      'style' => 'setting:file_display_style',
-      'count' => 'setting:file_display_count',
-    ),
-  );
-
-  // add meta keys to field list
-  $meta = qw_get_meta_keys();
-  foreach($meta as $key){
-    $field_key = 'meta_'.str_replace(" ", "_", $key);
-    // ignore WP keys and Widget Wangler keys
-    if(substr($key, 0, 1) != '_' &&
-       substr($key,0,3) != 'ww-' &&
-       substr($key,0,3) != 'ww_')
-    {
-      $fields[$field_key] = array(
-        'title' => 'Custom Field: '.$key,
-        'callback' => 'get_post_meta',
-        'arguments' => array(
-          'post_id' => 'this:ID',
-          'meta_key' => $key,
-          'single' => 1, // true
-        ),
-      );
-    }
-  }
-
-  return $fields;
-}
-// add default fields to the hook filter
-add_filter('qw_fields', 'qw_default_fields');
-/*
  * All Field Styles and settings
  *
  * @return array Field Styles
@@ -204,42 +108,97 @@ add_filter('qw_row_fields_styles', 'qw_default_row_fields_styles');
 
 /*
  * Default Sort Options
+ *
+ * example option
+
+  $sort_options['hook_key'] = array(
+    // the title displayed to the query-wrangler user
+    'title' => 'The Select Option Label',
+
+    // some help text for the user about how this key works
+    'description' => 'A description of how this sort works',
+
+    // (optional) the WP_Query argument's value (essentially 'orderby_value')
+    // defaults to the hook_key
+      // $args[$sort['orderby_key']] = $sort['type'];
+    'type' => 'wp_query_argument_key'
+
+    // (optional) a custom callback function for placing form values into a WP_Query as arguments
+    // defaults to:
+      //  $args[$sort['orderby_key']] = $sort['type'];
+      //  $args[$sort['order_key']] = $sort['order_value'];
+    'query_args_callback' => 'my_sort_option_args_callback',
+
+    // (optional) the WP_Query argument key equivalent to WP_Query's 'orderby'
+    // defaults to: 'orderby'
+    'orderby_key' => 'my_orderby_key',
+
+    // (optional) the WP_Query argument key equivalent to WP_Query's 'order'
+    // defaults to: 'order'
+    'order_key' => 'my_order_key',
+
+    // (optional) order options provided in a select menu
+    // defaults to:  below values
+    'order_options' => array(
+      'ASC' => 'Ascending',
+      'DESC' => 'Descending',
+    ),
+  );
+
  */
 function qw_default_sort_options($sort_options){
-  $sort_options['none'] = array(
-    'title' => 'None',
-  );
-  $sort_options['ID'] = array(
-    'title' => 'Post ID',
-  );
-  $sort_options['author'] = array(
+
+  $sort_options['author_id'] = array(
     'title' => 'Author',
+    'description' => 'The content author ID.',
+    'type' => 'author',
   );
-  $sort_options['title'] = array(
-    'title' => 'Title',
-  );
-  $sort_options['date'] = array(
+  $sort_options['post_date'] = array(
     'title' => 'Date',
+    'description' => 'The posted date of content.',
+    'type' => 'date',
   );
-  $sort_options['modified'] = array(
-    'title' => 'Last Modified',
+  $sort_options['post_ID'] = array(
+    'title' => 'Post ID',
+    'description' => 'The ID of the content.',
+    'type' => 'ID',
   );
-  $sort_options['parent'] = array(
+  $sort_options['post_modified'] = array(
+    'title' => 'Modified Date',
+    'description' => 'Date content was last modified.',
+    'type' => 'modified',
+  );
+  $sort_options['post_parent'] = array(
     'title' => 'Parent',
+    'description' => 'The parent post for content.',
+    'type' => 'parent',
   );
-  $sort_options['rand'] = array(
-    'title' => 'Random',
+  $sort_options['post_title'] = array(
+    'title' => 'Title',
+    'description' => 'The title of the content.',
+    'type' => 'title',
   );
   $sort_options['comment_count'] = array(
     'title' => 'Comment Count',
+    'description' => 'Total number of comments on a piece of content.',
   );
   $sort_options['menu_order'] = array(
     'title' => 'Menu Order (for Page post_types)',
+    'description' => 'Menu Order of a Page.',
+  );
+  $sort_options['none'] = array(
+    'title' => 'None',
+    'description' => 'No sort order.',
+  );
+  $sort_options['rand'] = array(
+    'title' => 'Random',
+    'description' => 'Random order.',
   );
   return $sort_options;
 }
 // add default field styles to the filter
 add_filter('qw_sort_options', 'qw_default_sort_options');
+
 
 /*
  * File Styles
@@ -288,20 +247,3 @@ function qw_default_pager_types($pagers) {
 // add default pager types
 add_filter('qw_pager_types', 'qw_default_pager_types');
 
-
-/*
- * Function for grabbing meta keys
- *
- * @return array All meta keys in WP
- */
-function qw_get_meta_keys() {
-	global $wpdb;
-
-	$keys = $wpdb->get_col( "
-			SELECT meta_key
-			FROM $wpdb->postmeta
-			GROUP BY meta_key
-			ORDER BY meta_key" );
-
-	return $keys;
-}

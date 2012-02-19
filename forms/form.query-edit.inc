@@ -25,232 +25,269 @@ $display = array_map( 'stripslashes_deep', $display );
   <div class="qw-clear-gone"><!-- ie hack -->&nbsp;</div>
 
   <div id="qw-query-admin-options-wrap">
-    <div id="qw-query-args" class="qw-query-admin-options">
-      <h4>Basic settings</h4>
 
-      <div class="qw-query-title" title="qw-page-title">
-        Title:
-        <span class="qw-setting-value">
-          <?php print ($query_page_title) ? $query_page_title : 'None'; ?>
-        </span>
-      </div>
+<!-- left column -->
+    <div class="qw-query-admin-column">
+      <div id="qw-query-args" class="qw-query-admin-options">
+        <h4>Basic settings</h4>
 
-      <div class="qw-query-title" title="qw-display-style">
-        Template Style:
-        <span class="qw-setting-value">
-          <?php print ($styles[$display['style']]['title']) ? $styles[$display['style']]['title']: 'None'; ?>
-        </span>
-      </div>
+        <div class="qw-query-title" title="qw-page-title">
+          Title:
+          <span class="qw-setting-value">
+            <?php print ($query_page_title) ? $query_page_title : 'None'; ?>
+          </span>
+        </div>
 
-      <div class="qw-query-title" title="qw-display-row-style">
-        Row Style:
-        <span class="qw-setting-value">
-          <?php print ($row_styles[$display['row_style']]['title']) ? $row_styles[$display['row_style']]['title']: 'None'; ?>
-        </span>
-      </div>
+        <div class="qw-query-title" title="qw-display-style">
+          Template Style:
+          <span class="qw-setting-value">
+            <?php print ($styles[$display['style']]['title']) ? $styles[$display['style']]['title']: 'None'; ?>
+          </span>
+        </div>
 
-      <div class="qw-query-title" title="qw-display-post-settings">
-        Posts Settings:
-        <span class="qw-setting-value">
-          <?php print ($row_complete_styles[$display['post_settings']['size']]['title']) ? $row_complete_styles[$display['post_settings']['size']]['title'] : 'None'; ?>
-        </span>
-      </div>
+        <div class="qw-query-title" title="qw-display-row-style">
+          Row Style:
+          <span class="qw-setting-value">
+            <?php print ($row_styles[$display['row_style']]['title']) ? $row_styles[$display['row_style']]['title']: 'None'; ?>
+          </span>
+        </div>
 
-      <div class="qw-query-title" title="qw-post-status">
-        Post Status:
-        <span class="qw-setting-value">
-          <?php print $post_statuses[$options['args']['post_status']]['title']; ?>
-        </span>
-      </div>
+        <div class="qw-query-title" title="qw-display-post-settings">
+          Posts Settings:
+          <span class="qw-setting-value">
+            <?php print ($row_complete_styles[$display['post_settings']['size']]['title']) ? $row_complete_styles[$display['post_settings']['size']]['title'] : 'None'; ?>
+          </span>
+        </div>
 
-      <div class="qw-query-title" title="qw-posts-per-page">
-        Posts per page:
-        <span class="qw-setting-value">
-          <?php print $args['posts_per_page']; ?>
-        </span>
-      </div>
+        <div class="qw-query-title" title="qw-post-status">
+          Post Status:
+          <span class="qw-setting-value">
+            <?php print $post_statuses[$options['args']['post_status']]['title']; ?>
+          </span>
+        </div>
 
-      <div class="qw-query-title" title="qw-offset">
-        Offset:
-        <span class="qw-setting-value">
-          <?php print $args['offset']; ?>
-        </span>
-      </div>
+        <div class="qw-query-title" title="qw-posts-per-page">
+          Posts per page:
+          <span class="qw-setting-value">
+            <?php print $args['posts_per_page']; ?>
+          </span>
+        </div>
 
-      <div class="qw-query-title" title="qw-sort-options">
-        Sort Options:
-        <span class="qw-setting-value">
-          <?php print ($sort_options[$args['orderby']]['title']) ? $sort_options[$args['orderby']]['title'] : 'None'; ?>,
-          <?php print ($sort_orders[$args['order']]['title']) ? $sort_orders[$args['order']]['title'] : 'None'; ?>
-        </span>
-      </div>
+        <div class="qw-query-title" title="qw-offset">
+          Offset:
+          <span class="qw-setting-value">
+            <?php print $args['offset']; ?>
+          </span>
+        </div>
 
-      <div class="qw-query-title" title="qw-query-header">
-        Header:
-        <span class="qw-setting-value">
-          <?php print ($display['header']) ? 'In Use' : 'None'; ?>
-        </span>
-      </div>
+        <div class="qw-query-title" title="qw-query-header">
+          Header:
+          <span class="qw-setting-value">
+            <?php print ($display['header']) ? 'In Use' : 'None'; ?>
+          </span>
+        </div>
 
-      <div class="qw-query-title" title="qw-query-footer">
-        Footer:
-        <span class="qw-setting-value">
-          <?php print ($display['footer']) ? 'In Use' : 'None'; ?>
-        </span>
-      </div>
+        <div class="qw-query-title" title="qw-query-footer">
+          Footer:
+          <span class="qw-setting-value">
+            <?php print ($display['footer']) ? 'In Use' : 'None'; ?>
+          </span>
+        </div>
 
-      <div class="qw-query-title" title="qw-query-empty">
-        Empty Text:
-        <span class="qw-setting-value">
-          <?php print ($display['empty']) ? 'In Use' : 'None'; ?>
-        </span>
-      </div>
+        <div class="qw-query-title" title="qw-query-empty">
+          Empty Text:
+          <span class="qw-setting-value">
+            <?php print ($display['empty']) ? 'In Use' : 'None'; ?>
+          </span>
+        </div>
 
-      <div class="qw-query-title" title="qw-wrapper-classes">
-        CSS Classes:
-        <span class="qw-setting-value">
-          <?php print ($display['wrapper-classes']) ? $display['wrapper-classes'] : 'None'; ?>
-        </span>
-      </div>
-    </div> <!-- /qw-query-args -->
+        <div class="qw-query-title" title="qw-wrapper-classes">
+          CSS Classes:
+          <span class="qw-setting-value">
+            <?php print ($display['wrapper-classes']) ? $display['wrapper-classes'] : 'None'; ?>
+          </span>
+        </div>
+      </div> <!-- /qw-query-args -->
 
-    <div id="qw-query-filters" class="qw-query-admin-options">
-      <h4>Filters</h4>
-      <div class="qw-query-add-titles">
-        <span class="qw-query-title" title="qw-display-add-filters">
-          Add Filters
-        </span>
-        <span class="qw-query-title" title="qw-sort-filters">
-          Rearrange Filters
-        </span>
-      </div>
-      <div class="qw-clear-gone"><!-- ie hack -->&nbsp;</div>
+      <?php
+        // use pager on pages and overrides
+        if($query_type == 'page' || $query_type == 'override')
+        { ?>
+          <div class="qw-clear-gone"><!-- ie hack -->&nbsp;</div>
+          <div id="qw-page-settings" class="qw-query-admin-options">
+            <h4>Page Settings</h4>
 
-      <div id="qw-query-filters-list">
-        <?php
-          if(is_array($filters))
-          {
-            // loop through and display
-            foreach($filters as $filter_name => $filter)
-            {
-              $values = array();
-              foreach($filter['values'] as $value){
-                if (is_array($value)){
-                  $values[] = implode(",", $value);
-                } else {
-                  $values[] = $value;
-                }
+            <?php
+              // path for pages only
+              if($query_type == 'page')
+              { ?>
+                <div class="qw-query-title" title="qw-page-path">
+                  Page Path:
+                  <span class="qw-setting-value">
+                    <?php print ($query_page_path) ? $query_page_path : 'None'; ?>
+                  </span>
+                </div>
+                <?php
               }
-              $values = implode(' | ', $values);
-              ?>
-                <div class="qw-query-title" title="qw-filter-<?php print $filter_name; ?>">
-                  <span class="qw-setting-title"><?php print $filter['title']; ?></span>
-                  :
-                  <span class="qw-setting-value"><?php print $values; ?></span>
-                </div>
-              <?php
-            }
-          }
-        ?>
-      </div>
-    </div>
-    <!-- /filters -->
+            ?>
+            <div class="qw-query-title" title="qw-page-template">
+              Page Template:
+              <span class="qw-setting-value">
+                <?php print ($display['page']['template-name']) ? $display['page']['template-name'] : 'Default'; ?>
+              </span>
+            </div>
 
-    <div id="qw-query-fields" class="qw-query-admin-options">
-      <h4>Fields</h4>
-      <div class="qw-query-add-titles">
-        <span class="qw-query-title" title="qw-display-add-fields">
-          Add Fields
-        </span>
-        <span class="qw-query-title" title="qw-sort-fields">
-          Rearrange Fields
-        </span>
-      </div>
-      <div class="qw-clear-gone"><!-- ie hack -->&nbsp;</div>
-
-      <div id="qw-query-fields-list">
-        <?php
-          if(is_array($fields))
-          {
-            // loop through and display
-            foreach($fields as $field)
-            { ?>
-                <div class="qw-query-title" title="qw-field-<?php print $field['name']; ?>">
-                  <span class="qw-setting-title"><?php print $field['title'];  ?></span>
-                  :
-                  <span class="qw-setting-value"><?php print $field['name']; ?></span>
-                </div>
-              <?php
-            }
-          }
-        ?>
-      </div>
-    </div>
-    <!-- /fields -->
-
-    <?php
-      // use pager on pages and overrides
-      if($query_type == 'page' || $query_type == 'override')
-      { ?>
-        <div class="qw-clear-gone"><!-- ie hack -->&nbsp;</div>
-        <div id="qw-page-settings" class="qw-query-admin-options">
-          <h4>Page Settings</h4>
-
+            <div class="qw-query-title" title="qw-page-pager">
+              Pager:
+              <span class="qw-setting-value">
+                <?php print ($pager_types[$display['page']['pager']['type']]['title']) ? $pager_types[$display['page']['pager']['type']]['title'] : 'Default'; ?>
+              </span>
+            </div>
+          </div>
+          <!-- /page settings -->
           <?php
-            // path for pages only
-            if($query_type == 'page')
-            { ?>
-              <div class="qw-query-title" title="qw-page-path">
-                Page Path:
-                <span class="qw-setting-value">
-                  <?php print ($query_page_path) ? $query_page_path : 'None'; ?>
-                </span>
-              </div>
-              <?php
+        }
+      ?>
+    </div>
+    <!-- /column -->
+
+<!-- middle column -->
+    <div class="qw-query-admin-column">
+      <?php
+        if($query_type == 'override')
+        { ?>
+          <!-- override settings -->
+          <div id="qw-override-settings" class="qw-query-admin-options">
+            <h4>Override Settings</h4>
+
+            <div class="qw-query-title" title="qw-override-categories">
+              Categories:
+              <span class="qw-setting-value">
+                <?php print (is_array($options['override']['cats'])) ? implode(",", $options['override']['cats']): 'None'; ?>
+              </span>
+            </div>
+
+            <div class="qw-query-title" title="qw-override-tags">
+              Tags:
+              <span class="qw-setting-value">
+                <?php print (is_array($options['override']['tags'])) ? implode(",", $options['override']['tags']): 'None'; ?>
+              </span>
+            </div>
+          </div>
+          <!-- /override settings -->
+          <?php
+        }
+      ?>
+
+      <div id="qw-query-fields" class="qw-query-admin-options">
+        <h4>Fields</h4>
+        <div class="qw-query-add-titles">
+          <span class="qw-query-title" title="qw-display-add-fields">
+            Add Fields
+          </span>
+          <span class="qw-query-title" title="qw-sort-fields">
+            Rearrange Fields
+          </span>
+        </div>
+        <div class="qw-clear-gone"><!-- ie hack -->&nbsp;</div>
+
+        <div id="qw-query-fields-list">
+          <?php
+            if(is_array($fields))
+            {
+              // loop through and display
+              foreach($fields as $field)
+              { ?>
+                  <div class="qw-query-title" title="qw-field-<?php print $field['name']; ?>">
+                    <span class="qw-setting-title"><?php print $field['title'];  ?></span>
+                    :
+                    <span class="qw-setting-value"><?php print $field['name']; ?></span>
+                  </div>
+                <?php
+              }
             }
           ?>
-          <div class="qw-query-title" title="qw-page-template">
-            Page Template:
-            <span class="qw-setting-value">
-              <?php print ($display['page']['template-name']) ? $display['page']['template-name'] : 'Default'; ?>
-            </span>
-          </div>
-
-          <div class="qw-query-title" title="qw-page-pager">
-            Pager:
-            <span class="qw-setting-value">
-              <?php print ($pager_types[$display['page']['pager']['type']]['title']) ? $pager_types[$display['page']['pager']['type']]['title'] : 'Default'; ?>
-            </span>
-          </div>
         </div>
-        <!-- /page settings -->
+      </div>
+      <!-- /fields -->
+    </div>
+    <!-- /column -->
 
-        <?php
-          if($query_type == 'override')
-          { ?>
-            <!-- override settings -->
-            <div id="qw-override-settings" class="qw-query-admin-options">
-              <h4>Override Settings</h4>
+<!-- right column -->
+    <div class="qw-query-admin-column">
+      <!-- sorts -->
+      <div id="qw-query-sorts" class="qw-query-admin-options">
+        <h4>Sort Options</h4>
+        <div class="qw-query-add-titles">
+          <span class="qw-query-title" title="qw-display-add-sorts">
+            Add Sort Options
+          </span>
+          <span class="qw-query-title" title="qw-sort-sorts">
+            Rearrange Sort Options
+          </span>
+        </div>
+        <div class="qw-clear-gone"><!-- ie hack -->&nbsp;</div>
+        <div id="qw-query-sorts-list">
+          <?php
+            if(is_array($sorts))
+            {
+              // loop through and display
+              foreach($sorts as $sort)
+              { ?>
+                  <div class="qw-query-title" title="qw-sort-<?php print $sort['name']; ?>">
+                    <span class="qw-setting-title"><?php print $sort['title'];  ?></span>
+                    :
+                    <span class="qw-setting-value"><?php print $sort['order_options'][$sort['values']['order_value']]; ?></span>
+                  </div>
+                <?php
+              }
+            }
+          ?>
+        </div>
+      </div>
 
-              <div class="qw-query-title" title="qw-override-categories">
-                Categories:
-                <span class="qw-setting-value">
-                  <?php print (is_array($options['override']['cats'])) ? implode(",", $options['override']['cats']): 'None'; ?>
-                </span>
-              </div>
+      <!-- filters -->
+      <div id="qw-query-filters" class="qw-query-admin-options">
+        <h4>Filters</h4>
+        <div class="qw-query-add-titles">
+          <span class="qw-query-title" title="qw-display-add-filters">
+            Add Filters
+          </span>
+          <span class="qw-query-title" title="qw-sort-filters">
+            Rearrange Filters
+          </span>
+        </div>
+        <div class="qw-clear-gone"><!-- ie hack -->&nbsp;</div>
 
-              <div class="qw-query-title" title="qw-override-tags">
-                Tags:
-                <span class="qw-setting-value">
-                  <?php print (is_array($options['override']['tags'])) ? implode(",", $options['override']['tags']): 'None'; ?>
-                </span>
-              </div>
-            </div>
-            <!-- /override settings -->
-            <?php
-          }
-      }
-    ?>
+        <div id="qw-query-filters-list">
+          <?php
+            if(is_array($filters))
+            {
+              // loop through and display
+              foreach($filters as $filter_name => $filter)
+              {
+                $values = array();
+                foreach($filter['values'] as $value){
+                  if (is_array($value)){
+                    $values[] = implode(",", $value);
+                  } else {
+                    $values[] = $value;
+                  }
+                }
+                $values = implode(' | ', $values);
+                ?>
+                  <div class="qw-query-title" title="qw-filter-<?php print $filter_name; ?>">
+                    <span class="qw-setting-title"><?php print $filter['title']; ?></span>
+                    :
+                    <span class="qw-setting-value"><?php print $values; ?></span>
+                  </div>
+                <?php
+              }
+            }
+          ?>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div class="qw-clear-gone"><!-- ie hack -->&nbsp;</div>
@@ -263,8 +300,8 @@ $display = array_map( 'stripslashes_deep', $display );
 <!-- ------- FORMS --------- -->
       <div id="qw-options-forms">
 
-<!-- Single Values -->
 
+<!-- Basic Settings -->
         <!-- posts per page -->
         <div id="qw-posts-per-page" class="qw-query-content">
           <p>
@@ -274,26 +311,6 @@ $display = array_map( 'stripslashes_deep', $display );
                  name="qw-query-options[args][posts_per_page]"
                  value="<?php print $args['posts_per_page']; ?>" />
         </div>
-
-        <div id="qw-post-status" class="qw-query-content">
-          <p>
-            Select the status of the posts to show.
-            <?php print $options['args']['post_status']; ?>
-          </p>
-          <select name="qw-query-options[args][post_status]" class="qw-field-value">
-            <?php
-              foreach($post_statuses as $type => $post_status)
-              { ?>
-                <option value="<?php print $type; ?>"
-                        <?php if($options['args']['post_status'] == $type) { print 'selected="selected"';} ?>>
-                  <?php print $post_status['title']; ?>
-                </option>
-                <?php
-              }
-            ?>
-           </select>
-        </div>
-
         <!-- offset -->
         <div id="qw-offset" class="qw-query-content">
           <p>
@@ -361,6 +378,26 @@ $display = array_map( 'stripslashes_deep', $display );
           </select>
         </div>
 
+        <!-- Post Status -->
+        <div id="qw-post-status" class="qw-query-content">
+          <p>
+
+          </p>
+          <select id="query-post-status"
+                  name="qw-query-options[args][post_status]">
+            <?php
+              foreach($post_statuses as $key => $post_status)
+              { ?>
+                  <option value="<?php print $key; ?>"
+                          <?php if($args['post_status'] == $key) { print 'selected="selected"';} ?>>
+                    <?php print $post_status['title']; ?>
+                  </option>
+                <?php
+              }
+            ?>
+          </select>
+        </div>
+
         <!-- TODO: display fields settings -->
         <div id="qw-display-fields-settings-TODO" class="qw-query-content">
           <!-- to be done -->
@@ -415,22 +452,8 @@ $display = array_map( 'stripslashes_deep', $display );
                  value="<?php print $query_page_title; ?>" />
         </div>
 
-        <?php // pages only
-          if($query_type == 'page')
-          { ?>
-            <!-- page path -->
-            <div id="qw-page-path" class="qw-query-content">
-              <p>
-                The path or permalink you want this page to use. Avoid using spaces and capitalization for best results.
-              </p>
-              <input size="60"
-                     type="text"
-                     name="qw-query-options[display][page][path]"
-                     value="<?php print $query_page_path; ?>" />
-            </div>
-            <?php
-          }
-
+<!-- Page Settings -->
+        <?php
           // use template & pager on pages and overrides
           if($query_type == "page" || $query_type == "override")
           { ?>
@@ -501,45 +524,231 @@ $display = array_map( 'stripslashes_deep', $display );
             </div>
             <?php
           }
+
+          // pages only
+          if($query_type == 'page')
+          { ?>
+            <!-- page path -->
+            <div id="qw-page-path" class="qw-query-content">
+              <p>
+                The path or permalink you want this page to use. Avoid using spaces and capitalization for best results.
+              </p>
+              <input size="60"
+                     type="text"
+                     name="qw-query-options[display][page][path]"
+                     value="<?php print $query_page_path; ?>" />
+            </div>
+            <?php
+          }
         ?>
 
-<!-- Multiple Values-->
-        <!-- sort options -->
-        <div id="qw-sort-options" class="qw-query-content qw-multiple-values">
-          <p>
-            <strong>Order by: </strong>
-          </p>
-          <p>
-            Select how to sort the queried posts.
-          </p>
-          <select name="qw-query-options[args][orderby]">
+<!-- Edit Existing handlers -->
+        <!-- edit sorts -->
+        <?php
+          if(is_array($sorts))
+          {
+            // loop through existing sorts
+            foreach($sorts as $sort_name => $sort)
+            {
+              $args = array(
+                'sort' => $sort,
+              );
+              print theme('query_sort', $args);
+            }
+          }
+        ?>
+      <!-- /edit sorts -->
+
+      <!-- edit Filters -->
+        <?php
+          if(is_array($filters))
+          {
+            // loop through existing filters
+            foreach($filters as $filter_name => $filter)
+            {
+              $args = array(
+                'filter' => $filter,
+              );
+              print theme('query_filter', $args);
+            }
+          }
+        ?>
+      <!-- /edit filters -->
+
+        <!-- edit fields -->
+        <?php
+          if(is_array($fields))
+          {
+            $tokens = array();
+            // loop through existing fields
+            foreach($fields as $field)
+            {
+              $tokens[$field['name']] = '{{'.$field['name'].'}}';
+              $args = array(
+                'image_sizes' => $image_sizes,
+                'file_styles' => $file_styles,
+                'field' => $field,
+                'options' => $options,
+                'display' => $display,
+                'args'  => $args,
+                'tokens' => $tokens,
+              );
+              print theme('query_field', $args);
+            }
+          }
+        ?>
+        <!-- /edit fields -->
+
+<!-- Add Handlers -->
+        <!-- add sorts -->
+        <div id="qw-display-add-sorts" class="qw-query-content">
+          <div class="qw-checkboxes">
             <?php
-              foreach($sort_options as $type => $sort_option)
-              { ?>
-                <option value="<?php print $type; ?>" <?php if($args['orderby'] == $type) { print 'selected="selected"';} ?>><?php print $sort_option['title']; ?></option>
+              // loop through sorts
+              foreach($all_sorts as $hook_key => $sort)
+              {
+                ?>
+                <label class="qw-sort-checkbox">
+                  <input type="checkbox"
+                         value="<?php print $sort['type']; ?>" />
+                  <input class="qw-hander-hook_key"
+                         type="hidden"
+                         value="<?php print $sort['hook_key']; ?>" />
+                  <?php print $sort['title']; ?>
+                </label>
                 <?php
               }
             ?>
-          </select>
-          <p>
-            <strong>Order:</strong>
-          </p>
-          <p>
-            Select if you want the sorting to be Ascending or Descending.
-          </p>
-          <select name="qw-query-options[args][order]">
-            <option value="ASC"
-                    <?php if($args['order'] == "ASC") { print 'selected="selected"';} ?>>
-              Ascending
-            </option>
-            <option value="DESC"
-                    <?php if($args['order'] == "DESC") { print 'selected="selected"';} ?>>
-              Descending
-            </option>
-          </select>
+          </div>
+          <div class="add-selected-wrapper">
+            <div id="qw-add-selected-sorts" class="qw-button">Add Selected Sort Options</div>
+          </div>
         </div>
 
-<!-- Checkboxes -->
+        <!-- add fields -->
+        <div id="qw-display-add-fields" class="qw-query-content">
+          <div class="qw-checkboxes">
+            <?php
+              // loop through fields
+              foreach($all_fields as $hook_key => $field)
+              {
+                ?>
+                <label class="qw-field-checkbox">
+                  <input type="checkbox"
+                         value="<?php print $field['type']; ?>" />
+                  <input class="qw-hander-hook_key"
+                         type="hidden"
+                         value="<?php print $field['hook_key']; ?>" />
+                  <?php print $field['title']; ?>
+                </label>
+                <?php
+              }
+            ?>
+          </div>
+          <div class="add-selected-wrapper">
+            <div id="qw-add-selected-fields" class="qw-button">Add Selected Fields</div>
+          </div>
+        </div>
+
+        <!-- add filters -->
+        <div id="qw-display-add-filters" class="qw-query-content">
+          <div class="qw-checkboxes">
+            <?php
+              // loop through filters
+              foreach($all_filters as $hook_key => $filter)
+              {
+                // for now, this is how I'll prevent certain filters on overrides
+                if(in_array($query_type, $filter['query_display_types']))
+                { ?>
+                  <label class="qw-filter-checkbox">
+                    <input type="checkbox"
+                           value="<?php print $filter['type']; ?>" />
+                  <input class="qw-hander-hook_key"
+                         type="hidden"
+                         value="<?php print $filter['hook_key']; ?>" />
+                  <?php print $filter['title']; ?>
+                  </label>
+                  <?php
+                }
+              }
+            ?>
+          </div>
+          <div class="add-selected-wrapper">
+            <div id="qw-add-selected-filters" class="qw-button">Add Selected Filters</div>
+          </div>
+        </div>
+
+<!-- Sortables -->
+        <!-- sortable sorts -->
+        <div id="qw-sort-sorts" class="qw-query-content qw-sort-sorts-values">
+          <p>
+            Click and Drag to sort
+          </p>
+          <ul id="qw-sorts-sortable">
+            <?php
+              if(is_array($sorts))
+              {
+                // loop through existing sorts
+                foreach($sorts as $sort_name => $sort)
+                {
+                  $args = array(
+                    'sort' => $sort,
+                    'weight' => $sort['weight'],
+                  );
+                  print theme('query_sort_sortable', $args);
+                }
+              }
+            ?>
+          </ul>
+        </div>
+
+        <!-- sortable fields -->
+        <div id="qw-sort-fields" class="qw-query-content qw-sort-fields-values">
+          <p>
+            Click and Drag to sort
+          </p>
+          <ul id="qw-fields-sortable">
+            <?php
+              if(is_array($fields))
+              {
+                // loop through existing fields
+                foreach($fields as $field_name => $field)
+                {
+                  $args = array(
+                    'field' => $field,
+                    'weight' => $field['weight'],
+                  );
+                  print theme('query_field_sortable', $args);
+                }
+              }
+            ?>
+          </ul>
+        </div>
+
+        <!-- sortable filters -->
+        <div id="qw-sort-filters" class="qw-query-content qw-sort-filters-values">
+          <p>
+            Click and Drag to sort fitlers.
+          </p>
+          <ul id="qw-filters-sortable">
+            <?php
+              if(is_array($filters))
+              {
+                // loop through existing filters
+                foreach($filters as $filter_name => $filter)
+                {
+                  $args = array(
+                    'filter' => $filter,
+                    'weight' => $filter['weight'],
+                  );
+                  print theme('query_filter_sortable', $args);
+                }
+              }
+            ?>
+          </ul>
+        </div>
+
+<!-- Overrides -->
         <?php
           // override queries have different category and tag options
           if($query_type == "override")
@@ -595,142 +804,6 @@ $display = array_map( 'stripslashes_deep', $display );
             <?php
           }
         ?>
-      <!-- edit Filters -->
-        <?php
-          if(is_array($filters))
-          {
-            // loop through existing filters
-            foreach($filters as $filter_name => $filter)
-            {
-              $args = array(
-                'filter' => $filter,
-              );
-              print theme('query_filter', $args);
-            }
-          }
-        ?>
-      <!-- /edit filters -->
-
-      <!-- edit fields -->
-        <?php
-          if(is_array($fields))
-          {
-            $tokens = array();
-            // loop through existing fields
-            foreach($fields as $field)
-            {
-              $tokens[$field['name']] = '{{'.$field['name'].'}}';
-              $args = array(
-                'image_sizes' => $image_sizes,
-                'file_styles' => $file_styles,
-                'field' => $field,
-                'options' => $options,
-                'display' => $display,
-                'args'  => $args,
-                'tokens' => $tokens,
-              );
-              print theme('query_field', $args);
-            }
-          }
-        ?>
-        <!-- /edit fields -->
-
-<!-- Fields -->
-        <!-- add fields -->
-        <div id="qw-display-add-fields" class="qw-query-content">
-          <div class="qw-checkboxes">
-            <?php
-              // loop through fields
-              foreach($all_fields as $field_name => $field)
-              {
-                ?>
-                <label class="qw-field-checkbox">
-                  <input type="checkbox"
-                         value="<?php print $field_name; ?>"
-                         <?php print $field_checked; ?> />
-                  <?php print $field['title']; ?>
-                </label>
-                <?php
-              }
-            ?>
-          </div>
-          <div class="add-selected-wrapper">
-            <div id="qw-add-selected-fields" class="qw-button">Add Selected Fields</div>
-          </div>
-        </div>
-
-        <!-- sortable fields -->
-        <div id="qw-sort-fields" class="qw-query-content qw-sort-fields-values">
-          <p>
-            Click and Drag to sort
-          </p>
-          <ul id="qw-fields-sortable">
-            <?php
-              if(is_array($fields))
-              {
-                // loop through existing fields
-                foreach($fields as $field_name => $field)
-                {
-                  $args = array(
-                    'field' => $field,
-                    'weight' => $field['weight'],
-                  );
-                  print theme('query_field_sortable', $args);
-                }
-              }
-            ?>
-          </ul>
-        </div>
-
-<!-- Filters -->
-        <!-- add filters -->
-        <div id="qw-display-add-filters" class="qw-query-content">
-          <div class="qw-checkboxes">
-            <?php
-              // loop through filters
-              foreach($all_filters as $filter_name => $filter)
-              {
-                // for now, this is how I'll prevent certain filters on overrides
-                if(in_array($query_type, $filter['query_display_types']))
-                { ?>
-                  <label class="qw-filter-checkbox">
-                    <input type="checkbox"
-                           value="<?php print $filter_name; ?>"
-                           <?php print $filter_checked; ?> />
-                    <?php print $filter['title']; ?>
-                  </label>
-                  <?php
-                }
-              }
-            ?>
-          </div>
-          <div class="add-selected-wrapper">
-            <div id="qw-add-selected-filters" class="qw-button">Add Selected Filters</div>
-          </div>
-        </div>
-
-        <!-- sortable filters -->
-        <div id="qw-sort-filters" class="qw-query-content qw-sort-filters-values">
-          <p>
-            Click and Drag to sort fitlers.
-          </p>
-          <ul id="qw-filters-sortable">
-            <?php
-              if(is_array($filters))
-              {
-                // loop through existing filters
-                foreach($filters as $filter_name => $filter)
-                {
-                  $args = array(
-                    'filter' => $filter,
-                    'weight' => $filter['weight'],
-                  );
-                  print theme('query_filter_sortable', $args);
-                }
-              }
-            ?>
-          </ul>
-        </div>
 
         <div class="qw-clear-gone"><!-- ie hack -->&nbsp;</div>
 

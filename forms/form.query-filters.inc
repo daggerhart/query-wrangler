@@ -9,6 +9,10 @@
          type='hidden'
          name='qw-query-options[args][filters][<?php print $filter['name']; ?>][type]'
          value='<?php print $filter['type']; ?>' />
+  <input class='qw-filter-type'
+         type='hidden'
+         name='qw-query-options[args][filters][<?php print $filter['name']; ?>][hook_key]'
+         value='<?php print $filter['hook_key']; ?>' /
   <p class="description"><?php print $filter['description']; ?></p>
 
   <div class="qw-filter-form">

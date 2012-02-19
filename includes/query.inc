@@ -12,7 +12,6 @@ function qw_execute_query($query_id, $options_override = array(), $reset_post_da
   global $wp_query;
   // backup the old query
   $old_query = $wp_query;
-  $wp_query = null;
 
   // get the query options
   $options = qw_generate_query_options($query_id, $options_override);
@@ -22,7 +21,7 @@ function qw_execute_query($query_id, $options_override = array(), $reset_post_da
 
   // set the new query
   $wp_query = new WP_Query($args);
-
+//print "<pre>".print_r($wp_query,1)."</pre>";
   // get the themed content
   $themed = qw_template_query($wp_query, $options);
 
@@ -90,15 +89,38 @@ function qw_generate_query_options($query_id, $options_override = array(), $full
  */
 function qw_generate_query_args($options = array(), $options_override = array())
 {
-  $filters = qw_all_filters();
+  $all_filters = qw_all_filters();
+  $all_sorts = qw_all_sort_options();
 
   // standard arguments
   $args['posts_per_page'] = ($options['args']['posts_per_page']) ? $options['args']['posts_per_page']: 5;
   $args['offset']         = ($options['args']['offset']) ? $options['args']['offset']: 0;
-  $args['orderby']        = ($options['args']['orderby']) ? $options['args']['orderby']: 'none';
-  $args['order']          = ($options['args']['order']) ? $options['args']['order']: 'ASC';
+  //$args['orderby']        = ($options['args']['orderby']) ? $options['args']['orderby']: 'none';
+  //$args['order']          = ($options['args']['order']) ? $options['args']['order']: 'ASC';
   $args['paged']          = $options['args']['paged'];
   $args['post_status']    = $options['args']['post_status'];
+
+  // handle sorts
+  if(is_array($options['args']['sorts'])){
+
+    foreach($options['args']['sorts'] as $sort)
+    {
+      // combine sort details
+      if (isset($all_sorts[$sort['hook_key']])){
+        $sort = array_merge($all_sorts[$sort['hook_key']], $sort);
+      }
+
+      // look for callback, and run it
+      if (isset($sort['query_args_callback']) && function_exists($sort['query_args_callback'])){
+        $sort['query_args_callback']($args, $sort);
+      } else {
+        // else, default to type as WP_Query argument key
+        // arguments passed to query
+        $args[$sort['orderby_key']] = $sort['type'];
+        $args[$sort['order_key']] = $sort['order_value'];
+      }
+    }
+  }
 
   // handle filters
   if(is_array($options['args']['filters'])){
@@ -106,8 +128,8 @@ function qw_generate_query_args($options = array(), $options_override = array())
     foreach($options['args']['filters'] as $filter)
     {
       // combine filter details
-      if (isset($filters[$filter['type']])){
-        $filter = array_merge($filters[$filter['type']], $filter);
+      if (isset($all_filters[$filter['hook_key']])){
+        $filter = array_merge($all_filters[$filter['hook_key']], $filter);
       }
 
       // look for callback, and run it
@@ -119,7 +141,9 @@ function qw_generate_query_args($options = array(), $options_override = array())
       }
     }
   }
-
+//global $wp_query;
+//krumo($args);
+//krumo($wp_query);
   return $args;
 }
 /*
@@ -320,7 +344,9 @@ function qw_textarea($value){
 function qw_serialize($array){
   return serialize($array);
 }
-// fix unserialize problem with quotation marks
+/*
+ * Custom: Fix unserialize problem with quotation marks
+ */
 function qw_unserialize($serial_str) {
   $serial_str= preg_replace('!s:(\d+):"(.*?)";!se', "'s:'.strlen('$2').':\"$2\";'", $serial_str );
   $serial_str= str_replace("\r", "", $serial_str);
@@ -333,4 +359,33 @@ function qw_unserialize($serial_str) {
     $array = array_map('stripslashes_deep', $array);
     return $array;
   }
+}
+/*
+ * Support function for legacy, pre hook_keys discovery
+ */
+function qw_get_hook_key($all, $type) {
+  // look for type
+  foreach ($all as $key => $item){
+    if($key == $item['type']){
+      return $key;
+    }
+  }
+}
+
+
+/*
+ * Function for grabbing meta keys
+ *
+ * @return array All meta keys in WP
+ */
+function qw_get_meta_keys() {
+	global $wpdb;
+
+	$keys = $wpdb->get_col( "
+			SELECT meta_key
+			FROM $wpdb->postmeta
+			GROUP BY meta_key
+			ORDER BY meta_key" );
+
+	return $keys;
 }

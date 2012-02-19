@@ -33,19 +33,24 @@ define('QW_PLUGIN_DIR', dirname(__FILE__));
 define('QW_PLUGIN_URL', plugins_url( '', __FILE__ ));
 
 // include Query Widgets functions
-include_once QW_PLUGIN_DIR.'/query.inc';
+include_once QW_PLUGIN_DIR.'/includes/query.inc';
 // Theme functions
-include_once QW_PLUGIN_DIR.'/theme.inc';
+include_once QW_PLUGIN_DIR.'/includes/theme.inc';
 // Query page handling
-include_once QW_PLUGIN_DIR.'/pages.inc';
+include_once QW_PLUGIN_DIR.'/includes/pages.inc';
 // Wordpress hooks
-include_once QW_PLUGIN_DIR.'/data.hooks.inc';
+include_once QW_PLUGIN_DIR.'/includes/data.hooks.inc';
 // Field and field style definitions
-include_once QW_PLUGIN_DIR.'/data.defaults.inc';
+include_once QW_PLUGIN_DIR.'/includes/data.defaults.inc';
 // Filter definitions and functions
-include_once QW_PLUGIN_DIR.'/data.default_filters.inc';
-// Filters forms
-include_once QW_PLUGIN_DIR.'/forms/filters.inc';
+include_once QW_PLUGIN_DIR.'/includes/data.default_filters.inc';
+// Field definitions and functions
+include_once QW_PLUGIN_DIR.'/includes/data.default_fields.inc';
+// Ajax Forms
+include_once QW_PLUGIN_DIR.'/includes/ajax_forms.inc';
+add_action( 'wp_ajax_nopriv_qw_form_ajax', 'qw_form_ajax' );
+add_action( 'wp_ajax_qw_form_ajax', 'qw_form_ajax' );
+
 // Query Widget
 include_once QW_PLUGIN_DIR.'/widget.query.php';
 
@@ -86,95 +91,6 @@ function qw_check_version()
 add_action('admin_init', 'qw_check_version');
 
 /*
- * Ajax form templates
- */
-function qw_form_ajax(){
-  // field
-  if($_POST['form'] == 'field_form'){
-    $fields = qw_all_fields();
-    $field = $fields[$_POST['type']];
-    $field['name'] = $_POST['name'];
-    // set new form_prefix
-    $field['form_prefix'] = 'qw-query-options[display][field_settings][fields]['.$field['name'].']';
-
-    $args = array(
-      'image_sizes' => get_intermediate_image_sizes(),
-      'file_styles' => qw_all_file_styles(),
-      'field' => $field,
-    );
-    print theme('query_field', $args);
-  }
-  // sortable field
-  else if($_POST['form'] == 'field_sortable'){
-    $fields = qw_all_fields();
-    $field = $fields[$_POST['type']];
-    $field['name'] = $_POST['name'];
-    // set new form_prefix
-    $field['form_prefix'] = 'qw-query-options[display][field_settings][fields]['.$field['name'].']';
-
-    $args = array(
-      'field' => $field,
-      'weight' => $_POST['next_weight'],
-    );
-    print theme('query_field_sortable', $args);
-  }
-  // filter
-  else if($_POST['form'] == 'filter_form')
-  {
-    $all_filters = qw_all_filters();
-    $filter = $all_filters[$_POST['type']];
-    $filter['name'] = $_POST['name'];
-    // set new form_prefix
-    $filter['form_prefix'] = "qw-query-options[args][filters][".$filter['name']."]";
-
-    // filter's form
-    // expect returned output
-    if (function_exists($filter['form_callback'])){
-      $filter['form'] = $filter['form_callback']($filter);
-    }
-    // provide template wrangler support
-    else if (isset($filter['template'])){
-      $filter['form'] = theme($filter['template'], array('filter' => $filter));
-    }
-
-    $args = array(
-      'filter' => $filter,
-      'query_type' => $_POST['query_type'],
-    );
-
-    print theme('query_filter', $args);
-  }
-  // sortable filter
-  else if($_POST['form'] == 'filter_sortable') {
-    $all_filters = qw_all_filters();
-    $filter = $all_filters[$_POST['type']];
-    $filter['name'] = $_POST['name'];
-    // set new form_prefix
-    $filter['form_prefix'] = "qw-query-options[args][filters][".$filter['name']."]";
-
-    $args = array(
-      'filter' => $filter,
-      'weight' => $_POST['next_weight'],
-    );
-    print theme('query_filter_sortable', $args);
-  }
-  // preview
-  else if($_POST['form'] == 'preview') {
-    $decode = urldecode($_POST['options']);
-    $options = array();
-    parse_str($decode, $options);
-    $args = array(
-      'options' => $options['qw-query-options']
-    );
-    print theme('query_preview', $args);
-  }
-
-  exit;
-}
-add_action( 'wp_ajax_nopriv_qw_form_ajax', 'qw_form_ajax' );
-add_action( 'wp_ajax_qw_form_ajax', 'qw_form_ajax' );
-
-/*
  * Javascript for query page
  */
 function qw_admin_js(){
@@ -203,6 +119,7 @@ function qw_admin_js(){
     'allImageSizes' => get_intermediate_image_sizes(),
     'allFileStyles' => qw_all_file_styles(),
     'allFilters'  => qw_all_filters(),
+    'allSortOptions' => qw_all_sort_options(),
   );
 
   // editing a query
@@ -306,44 +223,10 @@ add_action( 'admin_menu', 'qw_menu', 9999);
 /*
  * Simple debugging location
  */
-
+function qw_debug(){
+}
 // */
-/*
- * Export a query into code
- * @param
- *   $query_id - the query's id number
- */
-function qw_query_export($query_id){
-  global $wpdb;
-  $table_name = $wpdb->prefix."query_wrangler";
-  $sql = "SELECT id,name,slug,type,path,data FROM ".$table_name." WHERE id = ".$query_id;
 
-  $row = $wpdb->get_row($sql, ARRAY_A);
-  unset($row['id']);
-  // unserealize the stored data
-  $row['data'] = qw_unserialize($row['data']);
-  $export = var_export($row,1);
-
-  return "\$query = ".$export.";";
-}
-/*
- * Import a query into the database
- *
- */
-function qw_query_import($post){
-  global $wpdb;
-  $table = $wpdb->prefix."query_wrangler";
-
-  eval(stripslashes($post['import-query']));
-
-  if($post['import-name']){
-    $query['name'] = $post['import-name'];
-    $query['slug'] = qw_make_slug($post['import-name']);
-  }
-  $query['data'] = qw_serialize($query['data']);
-  $wpdb->insert($table, $query);
-  return $wpdb->insert_id;
-}
 /*
  * Handle the display of pages and actions
  */
@@ -447,6 +330,8 @@ function qw_preprocess_filters($filters){
       unset($filter_values['type']);
       $filter['weight'] = $filter_values['weight'];
       unset($filter_values['weight']);
+      $filter['hook_key'] = $filter_values['hook_key'];
+      unset($filter_values['hook_key']);
 
       $filter['values'] = $filter_values;
       $filter['name'] = $filter_name;
@@ -459,8 +344,8 @@ function qw_preprocess_filters($filters){
         $filter['form'] = $filter['form_callback']($filter);
       }
       // provide template wrangler support
-      else if (isset($filter['template'])){
-        $filter['form'] = theme($filter['template'], array('filter' => $filter));
+      else if (isset($filter['form_template'])){
+        $filter['form'] = theme($filter['form_template'], array('filter' => $filter));
       }
 
       $filters[$filter_name] = $filter;
@@ -484,16 +369,31 @@ function qw_preprocess_fields($fields){
     foreach($fields as $field_name => $field_values){
       // load field type data
       $field = $all_fields[$field_values['type']];
+
       // move type and weight to top level of array
       $field['type'] = $field_values['type'];
       unset($field_values['type']);
       $field['weight'] = $field_values['weight'];
       unset($field_values['weight']);
+      $field['hook_key'] = $field_values['hook_key'];
+      unset($field_values['hook_key']);
+
       // values are own array
       $field['values'] = $field_values;
       // name and prefix for forms
       $field['name'] = $field_name;
       $field['form_prefix'] = "qw-query-options[display][field_settings][fields][".$field_name."]";
+
+      // field's form
+      // expect returned output
+      if (function_exists($field['form_callback'])){
+        $field['form'] = $field['form_callback']($field);
+      }
+      // provide template wrangler support
+      else if (isset($field['form_template'])){
+        $field['form'] = theme($field['form_template'], array('field' => $field));
+      }
+
       // set new field
       $fields[$field_name] = $field;
     }
@@ -502,6 +402,42 @@ function qw_preprocess_fields($fields){
       uasort($fields,'qw_cmp');
     }
     return $fields;
+  }
+}
+
+/*
+ * Organize an existing filters and give it all the data it needs
+ */
+function qw_preprocess_sorts($sorts){
+  if(is_array($sorts)){
+    $all_sorts = qw_all_sort_options();
+
+    // generate the form name prefixes
+    foreach($sorts as $sort_name => $sort_values){
+      // load sort type data
+      $sort = $all_sorts[$sort_values['hook_key']];
+
+      // move type, hook_key, and weight to top level of array
+      $sort['type'] = $sort_values['type'];
+      unset($sort_values['type']);
+      $sort['weight'] = $sort_values['weight'];
+      unset($sort_values['weight']);
+      $sort['hook_key'] = $sort_values['hook_key'];
+      unset($sort_values['hook_key']);
+
+      // values are own array
+      $sort['values'] = $sort_values;
+      // name and prefix for forms
+      $sort['name'] = $sort_name;
+      $sort['form_prefix'] = "qw-query-options[args][sorts][".$sort_name."]";
+      // set new sort
+      $sorts[$sort_name] = $sort;
+    }
+    // sort sorts according to weight
+    if(is_array($sorts)){
+      uasort($sorts,'qw_cmp');
+    }
+    return $sorts;
   }
 }
 /*
@@ -523,22 +459,14 @@ function qw_edit_query_form()
 
     $all_filters = qw_all_filters();
     $all_fields = qw_all_fields();
+    $all_sorts = qw_all_sort_options();
 
     // existing filters
     $filters = qw_preprocess_filters($options['args']['filters']);
     // existing fields
     $fields = qw_preprocess_fields($options['display']['field_settings']['fields']);
-
-    $sort_orders = array(
-      'ASC' => array(
-        'type' => 'ASC',
-        'title' => 'Ascending',
-      ),
-      'DESC' => array(
-        'type' => 'DESC',
-        'title' => 'Descending',
-      )
-    );
+    // existing sorts
+    $sorts = qw_preprocess_sorts($options['args']['sorts']);
 
     // start building edit page data
     $edit_args = array(
@@ -556,6 +484,10 @@ function qw_edit_query_form()
       'all_fields' => $all_fields,
       // existing fields
       'fields' => $fields,
+      // all sort options
+      'all_sorts' => qw_all_sort_options(),
+      // existing sorts
+      'sorts' => $sorts,
       // post statuses
       'post_statuses' => qw_all_post_statuses(),
       // categories
@@ -571,8 +503,6 @@ function qw_edit_query_form()
       // all qw row styles
       'row_styles' => qw_all_row_styles(),
       'row_complete_styles' => qw_all_row_complete_styles(),
-      'sort_options' => qw_all_sort_options(),
-      'sort_orders' => $sort_orders,
       // all WP post types available for QWing
       'post_types' => $post_types,
       // all Pager Types
@@ -740,7 +670,42 @@ function qw_delete_query($query_id){
   $sql = "DELETE FROM ".$table_name." WHERE id = ".$query_id;
   $wpdb->query($sql);
 }
+/*
+ * Export a query into code
+ * @param
+ *   $query_id - the query's id number
+ */
+function qw_query_export($query_id){
+  global $wpdb;
+  $table_name = $wpdb->prefix."query_wrangler";
+  $sql = "SELECT id,name,slug,type,path,data FROM ".$table_name." WHERE id = ".$query_id;
 
+  $row = $wpdb->get_row($sql, ARRAY_A);
+  unset($row['id']);
+  // unserealize the stored data
+  $row['data'] = qw_unserialize($row['data']);
+  $export = var_export($row,1);
+
+  return "\$query = ".$export.";";
+}
+/*
+ * Import a query into the database
+ *
+ */
+function qw_query_import($post){
+  global $wpdb;
+  $table = $wpdb->prefix."query_wrangler";
+
+  eval(stripslashes($post['import-query']));
+
+  if($post['import-name']){
+    $query['name'] = $post['import-name'];
+    $query['slug'] = qw_make_slug($post['import-name']);
+  }
+  $query['data'] = qw_serialize($query['data']);
+  $wpdb->insert($table, $query);
+  return $wpdb->insert_id;
+}
 /*
  * Shortcode support for all queries
  */

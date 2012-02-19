@@ -9,6 +9,10 @@
          type='hidden'
          name='<?php print $field['form_prefix']; ?>[type]'
          value='<?php print $field['type']; ?>' />
+  <input class='qw-field-type'
+         type='hidden'
+         name='<?php print $field['form_prefix']; ?>[hook_key]'
+         value='<?php print $field['hook_key']; ?>' />
   <input class='qw-field-name'
          type='hidden'
          name='<?php print $field['form_prefix']; ?>[name]'
@@ -64,7 +68,7 @@
                   class="qw-field-textarea"><?php print ($field['values']['custom_output']) ? qw_textarea($field['values']['custom_output']): ''; ?></textarea>
         <div class="qw-field-tokens">
           <p>
-            Available replacement tokens.  These tokens wll be replaced with the processed results of their fields.
+            Available replacement tokens.  These tokens will be replaced with the processed results of their fields.
           </p>
           <ul class="qw-field-tokens-list">
             <?php
@@ -81,59 +85,15 @@
 
     <?php
       /*
-       * Images settings
+       * Form callbacks & templates
        */
-      if($field['type'] == 'image_attachment')
-      { ?>
-        <!-- image display -->
-        <div class="qw-options-group">
-          <strong>Number of items to show:</strong> <br />
-          <input type="text"
-              name='<?php print $field['form_prefix']; ?>[image_display_count]'
-              value="<?php print ($field['values']['image_display_count']) ? $field['values']['image_display_count']: 0;?>" />
-          <br />
-          <strong>Image Display Style:</strong><br />
-          <select name='<?php print $field['form_prefix']; ?>[image_display_style]'>
-            <?php
-              foreach($image_sizes as $key => $size)
-              {
-                $size_selected = ($field['values']['image_display_style'] == $size) ? 'selected="selected"' : '';
-                ?>
-                  <option value="<?php print $size; ?>" <?php print $size_selected; ?>><?php print $size; ?></option>
-                <?php
-              }
-            ?>
-          </select>
-        </div>
-        <?php
-      }
-
-      /*
-       * Files settings
-       */
-      if($field['type'] == 'file_attachment')
-      { ?>
-        <!-- file display -->
-        <div class="qw-options-group">
-          <strong>Number of items to show:</strong> <br />
-          <input type="text"
-              name='<?php print $field['form_prefix']; ?>[file_display_count]'
-              value="<?php print ($field['values']['file_display_count']) ? $field['values']['file_display_count']: 0;?>" />
-          <br />
-          <strong>File Display Style:</strong><br />
-          <select name='<?php print $field['form_prefix']; ?>[file_display_style]'>
-            <?php
-              foreach($file_styles as $key => $file_style_details)
-              {
-                $style_selected = ($field['values']['file_display_style'] == $key) ? 'selected="selected"' : '';
-                ?>
-                  <option value="<?php print $key; ?>" <?php print $style_selected; ?>><?php print $file_style_details['description']; ?></option>
-                <?php
-              }
-            ?>
-          </select>
-        </div>
-        <?php
+      if($field['form_callback']){
+        print $field['form_callback']($field);
+      } else if($field['template']){
+        $args = array(
+          'field' => $field,
+        );
+        print theme($field['template'], $args);
       }
     ?>
   </div>
