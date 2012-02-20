@@ -7,15 +7,22 @@
 <div id="qw-filter-<?php print $filter['name']; ?>" class="qw-query-content qw-checkbox-values">
   <input class='qw-filter-type'
          type='hidden'
-         name='qw-query-options[args][filters][<?php print $filter['name']; ?>][type]'
+         name='<?php print $filter['form_prefix']; ?>[type]'
          value='<?php print $filter['type']; ?>' />
-  <input class='qw-filter-type'
+  <input class='qw-filter-hook_key'
          type='hidden'
-         name='qw-query-options[args][filters][<?php print $filter['name']; ?>][hook_key]'
-         value='<?php print $filter['hook_key']; ?>' /
+         name='<?php print $filter['form_prefix']; ?>[hook_key]'
+         value='<?php print $filter['hook_key']; ?>' />
+  <input class='qw-filter-name'
+         type='hidden'
+         name='<?php print $filter['form_prefix']; ?>[name]'
+         value='<?php print $filter['name']; ?>' />
+
   <p class="description"><?php print $filter['description']; ?></p>
 
-  <div class="qw-filter-form">
-    <?php print $filter['form']; ?>
-  </div>
+  <?php if ($filter['form']) { ?>
+    <div class="qw-filter-form">
+      <?php print $filter['form']; ?>
+    </div>
+  <?php } ?>
 </div>

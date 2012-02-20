@@ -1,27 +1,4 @@
 <?php
-/*
- * Post Statuses
- */
-function qw_all_post_statuses(){
-  $post_statuses = apply_filters('qw_post_statuses', array());
-  return $post_statuses;
-}
-
-/*
- * Styles Hook
- */
-function qw_all_styles(){
-  $styles = apply_filters('qw_styles', array());
-  return $styles;
-}
-
-/*
- * Row Styles Hook
- */
-function qw_all_row_styles(){
-  $row_styles = apply_filters('qw_row_styles', array());
-  return $row_styles;
-}
 
 /*
  * Fields Hook
@@ -95,6 +72,11 @@ function qw_all_sort_options(){
       );
     }
 
+    // default form_callback
+    if(!isset($option['form_callback']) && !isset($option['form_template'])){
+      $sort_options[$type]['form_callback'] = 'qw_form_default_sort_order_options';
+    }
+
     // maintain hook's key
     $sort_options[$type]['hook_key'] = $type;
   }
@@ -107,6 +89,30 @@ function qw_all_sort_options(){
   array_multisort($titles, SORT_ASC, $sort_options);
 
   return $sort_options;
+}
+
+/*
+ * Post Statuses
+ */
+function qw_all_post_statuses(){
+  $post_statuses = apply_filters('qw_post_statuses', array());
+  return $post_statuses;
+}
+
+/*
+ * Styles Hook
+ */
+function qw_all_styles(){
+  $styles = apply_filters('qw_styles', array());
+  return $styles;
+}
+
+/*
+ * Row Styles Hook
+ */
+function qw_all_row_styles(){
+  $row_styles = apply_filters('qw_row_styles', array());
+  return $row_styles;
 }
 
 /*

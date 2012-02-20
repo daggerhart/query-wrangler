@@ -181,6 +181,7 @@ console.log('h: '+handler+' - ht: '+handler_type+' - hh: '+handler_hook);
     'action': 'qw_form_ajax',
     'form': handler+'_form',
     'name': next_name,
+    'handler': handler,
     'type': handler_type,
     'hook_key': handler_hook,
     'query_type': QueryWrangler.query.type
@@ -189,6 +190,7 @@ console.log('h: '+handler+' - ht: '+handler_type+' - hh: '+handler_hook);
     'action': 'qw_form_ajax',
     'form': handler+'_sortable',
     'name': next_name,
+    'handler': handler,
     'type': handler_type,
     'hook_key': handler_hook,
     'query_type': QueryWrangler.query.type,

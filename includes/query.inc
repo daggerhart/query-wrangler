@@ -363,13 +363,24 @@ function qw_unserialize($serial_str) {
 /*
  * Support function for legacy, pre hook_keys discovery
  */
-function qw_get_hook_key($all, $type) {
-  // look for type
-  foreach ($all as $key => $item){
-    if($key == $item['type']){
-      return $key;
+function qw_get_hook_key($all, $single)
+{
+  // see if hook key is set
+  if (isset($single['hook_key'])){
+    $hook_key = $single['hook_key'];
+  }
+  // look for type as key
+  else if (isset($single['type']))
+  {
+    foreach ($all as $key => $item)
+    {
+      if($single['type'] == $key){
+        $hook_key = $key;
+        break;
+      }
     }
   }
+  return $hook_key;
 }
 
 

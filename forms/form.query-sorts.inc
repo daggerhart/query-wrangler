@@ -18,23 +18,11 @@
          name='<?php print $sort['form_prefix']; ?>[name]'
          value='<?php print $sort['name']; ?>' />
 
-  <div class="qw-sort-form">
-    <!-- sort options -->
-    <p><strong>Order by <?php print $sort['title']; ?>: </strong></p>
-    <p class="description"><?php print $sort['description']; ?></p>
+  <p class="description"><?php print $sort['description']; ?></p>
 
-    <p>Select how to order the results.</p>
-    <select name="<?php print $sort['form_prefix']; ?>[order_value]">
-      <?php
-        foreach ($sort['order_options'] as $value => $label)
-        { ?>
-          <option value="<?php print $value; ?>"
-                  <?php if($sort['values']['order_value'] == $value) { print 'selected="selected"';} ?>>
-            <?php print $label; ?>
-          </option>
-          <?php
-        }
-      ?>
-    </select>
-  </div>
+  <?php if ($sort['form']) { ?>
+    <div class="qw-sort-form">
+      <?php print $sort['form']; ?>
+    </div>
+  <?php } ?>
 </div>

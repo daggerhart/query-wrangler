@@ -40,55 +40,55 @@ function qw_default_filters($filters){
   $filters['post_types'] = array(
     'title' => 'Post Type',
     'description' => 'Select which post types should be shown.',
-    'form_template' => 'qw_filter_post_types',
+    'form_callback' => 'qw_filter_post_types',
     'query_args_callback' => 'qw_generate_query_args_post_types',
     'query_display_types' => array('page','widget','override'),
   );
   $filters['post_parent'] = array(
     'title' => 'Post Parent',
     'description' => 'Use only with post type "Page" to show results with the chosen parent ID.',
-    'form_template' => 'qw_filter_post_parent',
+    'form_callback' => 'qw_filter_post_parent',
     'query_display_types' => array('page','widget'),
   );
   $filters['post_id'] = array(
     'title' => 'Post IDs',
     'description' => 'Provide a list of post_ids to show or not show.',
-    'form_template' => 'qw_filter_post_id',
+    'form_callback' => 'qw_filter_post_id',
     'query_args_callback' => 'qw_generate_query_args_post_id',
     'query_display_types' => array('page','widget','override'),
   );
   $filters['categories'] = array(
     'title' => 'Categories',
     'description' => 'Select which categories to pull posts from, and how to treat those categories.',
-    'form_template' => 'qw_filter_categories',
+    'form_callback' => 'qw_filter_categories',
     'query_args_callback' => 'qw_generate_query_args_categories',
     'query_display_types' => array('page','widget'),
   );
   $filters['tags'] = array(
     'title' => 'Tags',
     'description' => 'Select which tags to use.',
-    'form_template' => 'qw_filter_tags',
+    'form_callback' => 'qw_filter_tags',
     'query_args_callback' => 'qw_generate_query_args_tags',
     'query_display_types' => array('page','widget'),
   );
   $filters['meta_key_value'] = array(
     'title' => 'Meta Key/Value Compare',
     'description' => 'Filter for a specific meta_key / meta_value pair.',
-    'form_template' => 'qw_filter_meta_key_value',
+    'form_callback' => 'qw_filter_meta_key_value',
     'query_args_callback' => 'qw_generate_query_args_meta_key_value',
     'query_display_types' => array('page','widget','override'),
   );
   $filters['meta_key'] = array(
     'title' => 'Meta Key',
     'description' => 'Filter for a specific meta_key.',
-    'form_template' => 'qw_filter_meta_key',
+    'form_callback' => 'qw_filter_meta_key',
     'query_args_callback' => 'qw_generate_query_args_meta_key',
     'query_display_types' => array('page','widget','override'),
   );
   $filters['meta_value'] = array(
     'title' => 'Meta Value',
     'description' => 'Filter for a specific meta_value.',
-    'form_template' => 'qw_filter_meta_value',
+    'form_callback' => 'qw_filter_meta_value',
     'query_args_callback' => 'qw_generate_query_args_meta_value',
     'query_display_types' => array('page','widget','override'),
   );
@@ -138,7 +138,7 @@ function qw_generate_query_args_meta_value(&$args, $filter){
  * Post Types
  * - checkboxes
  */
-function theme_qw_filter_post_types($filter)
+function qw_filter_post_types($filter)
 {
   ob_start();
   ?>
@@ -169,7 +169,7 @@ function theme_qw_filter_post_types($filter)
  * Post Id
  * - text, select
  */
-function theme_qw_filter_post_id($filter)
+function qw_filter_post_id($filter)
 {
   ob_start();
   ?>
@@ -192,7 +192,7 @@ function theme_qw_filter_post_id($filter)
  * Post Parent
  * - text
  */
-function theme_qw_filter_post_parent($filter)
+function qw_filter_post_parent($filter)
 {
   ob_start();
   ?>
@@ -208,7 +208,7 @@ function theme_qw_filter_post_parent($filter)
  * Categories
  * - checkboxes, select
  */
-function theme_qw_filter_categories($filter)
+function qw_filter_categories($filter)
 {
   ob_start();
   ?>
@@ -247,7 +247,7 @@ function theme_qw_filter_categories($filter)
  * Tags
  * - checkboxes, select
  */
-function theme_qw_filter_tags($filter)
+function qw_filter_tags($filter)
 {
   ob_start();
   ?>
@@ -283,7 +283,7 @@ function theme_qw_filter_tags($filter)
  * Meta Key / Value Pair
  * - text, select, text
  */
-function theme_qw_filter_meta_key_value($filter)
+function qw_filter_meta_key_value($filter)
 {
   ob_start();
   ?>
@@ -315,7 +315,7 @@ function theme_qw_filter_meta_key_value($filter)
  * Meta Key
  * - text
  */
-function theme_qw_filter_meta_key($filter)
+function qw_filter_meta_key($filter)
 {
   ob_start();
   ?>
@@ -333,7 +333,7 @@ function theme_qw_filter_meta_key($filter)
  * Meta Value
  * - text
  */
-function theme_qw_filter_meta_value($filter)
+function qw_filter_meta_value($filter)
 {
   ob_start();
   ?>

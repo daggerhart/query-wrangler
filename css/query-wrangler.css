@@ -110,7 +110,7 @@ a.toplevel_page_query-wrangler {
   padding: 5px 8px;
   margin: 6px 0px;
   text-decoration: none;
-  background: url("images/white-grad.png") repeat-x scroll left top #F2F2F2;
+  background: url("../images/white-grad.png") repeat-x scroll left top #F2F2F2;
   text-shadow: 0 1px 0 #FFFFFF;
 }
 div.qw-query-title {
@@ -197,7 +197,7 @@ li.qw-field-item .sort-handle,
 li.qw-filter-item .sort-handle,
 li.qw-sort-item .sort-handle {
   display: block;
-  background: transparent url('images/handle2.png') center center no-repeat;
+  background: transparent url('../images/handle2.png') center center no-repeat;
   float: left;
   width: 28px;
   height: 20px;
@@ -262,10 +262,10 @@ li.qw-sort-item .sort-handle {
 .add-selected-wrapper {
   display: block;
   height: 40px;
-  background: transparent url('images/loading.gif') -40px top no-repeat;
+  background: transparent url('../images/loading.gif') -40px top no-repeat;
 }
 .add-selected-wrapper-active {
-  background: transparent url('images/loading.gif') left center no-repeat;
+  background: transparent url('../images/loading.gif') left center no-repeat;
   padding-left: 28px;
 }
 textarea.qw-meta-value {
@@ -288,11 +288,11 @@ textarea.qw-meta-value {
   margin-right: 20px;
 }
 .query-preview-inactive {
-  background: transparent url('images/loading.gif') -40px center no-repeat;
+  background: transparent url('../images/loading.gif') -40px center no-repeat;
 }
 .query-preview-active {
   padding-left: 40px;
-  background: transparent url('images/loading.gif') left center no-repeat;
+  background: transparent url('../images/loading.gif') left center no-repeat;
 }
 #query-preview-controls .qw-button {
   float: right;

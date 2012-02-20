@@ -9,7 +9,7 @@
          type='hidden'
          name='<?php print $field['form_prefix']; ?>[type]'
          value='<?php print $field['type']; ?>' />
-  <input class='qw-field-type'
+  <input class='qw-field-hook_key'
          type='hidden'
          name='<?php print $field['form_prefix']; ?>[hook_key]'
          value='<?php print $field['hook_key']; ?>' />
@@ -17,6 +17,8 @@
          type='hidden'
          name='<?php print $field['form_prefix']; ?>[name]'
          value='<?php print $field['name']; ?>' />
+
+  <p class="description"><?php print $field['description']; ?></p>
 
   <div class='qw-field-options'>
     <!-- exclude display -->
@@ -83,18 +85,10 @@
       </div>
     </div>
 
-    <?php
-      /*
-       * Form callbacks & templates
-       */
-      if($field['form_callback']){
-        print $field['form_callback']($field);
-      } else if($field['template']){
-        $args = array(
-          'field' => $field,
-        );
-        print theme($field['template'], $args);
-      }
-    ?>
+    <?php if ($field['form']) { ?>
+      <div class="qw-field-form">
+        <?php print $field['form']; ?>
+      </div>
+    <?php } ?>
   </div>
 </div>
