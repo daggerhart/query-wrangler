@@ -7,7 +7,7 @@ ob_start();
   // get the query options, force override
   $options = qw_generate_query_options($query_id, $options, true);
 
-  do_action_ref_array('qw_preview', array(&$options));
+  do_action_ref_array('qw_pre_preview', array(&$options));
 
   // get formatted query arguments
   $args = qw_generate_query_args($options);
@@ -33,5 +33,7 @@ $preview = array(
   'display' => $display,
   'wpquery' => $new_query,
 );
+
+do_action_ref_array('qw_post_preview', array(&$preview));
 
 print json_encode($preview);

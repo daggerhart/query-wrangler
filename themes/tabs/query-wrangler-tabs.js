@@ -165,6 +165,8 @@ jQuery(document).ready(function(){
   jQuery('.qw-remove').click(function(){
     jQuery(this).parent().parent().remove();
     QueryWrangler.toggle_empty_lists();
+    QueryWrangler.update_weights();
+    QueryWrangler.theme_accordions();
   });
 
   // tab it all out

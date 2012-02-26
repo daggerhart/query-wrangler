@@ -98,7 +98,7 @@ function qw_default_filters($filters){
 add_filter('qw_filters', 'qw_default_filters');
 
 /*
- * Filter query_args_callbacks
+ * Filter's query_args_callbacks
  * These functions convert form data into WP_Query arguments
  */
 function qw_generate_query_args_post_types(&$args, $filter){
@@ -117,8 +117,22 @@ function qw_generate_query_args_categories(&$args, $filter){
     $args[$filter['cat_operator']] = $filter['cats'];
   }
 }
+/*
+ * Forms and Argument Callbacks
+ *
+ *   $filter: Combined filter data and values saved
+ *   $filter['values']: Saved values for this filter
+ *   $filter['form_prefix']: beginning of a form item's name attribute
+ *
+ * Forms: return form output
+ * Argument Callbacks: return the entire output of the filter
+ *
+ *   $filter: filter values
+ */
 function qw_generate_query_args_tags(&$args, $filter){
- $args[$filter['tag_operator']] = array_keys($filter['tags']);
+  if(is_array($filter['tags'])){
+    $args[$filter['tag_operator']] = array_keys($filter['tags']);
+  }
 }
 function qw_generate_query_args_meta_key_value(&$args, $filter){
   $args['meta_key'] = $filter['meta_key'];
@@ -129,11 +143,6 @@ function qw_generate_query_args_meta_value(&$args, $filter){
   $args['meta_value'] = stripslashes($filter['meta_value']);
 }
 
-/*
- * Providing theme functions for the default filters
- *
- * $filter - The current filter with filter type data
- */
 /*
  * Post Types
  * - checkboxes
@@ -173,13 +182,15 @@ function qw_filter_post_id($filter)
 {
   ob_start();
   ?>
-  <input type='text' name="<?php print $filter['form_prefix']; ?>[post_ids]" value='<?php print $filter['values']['post_ids']; ?>' />
+    <input type='text' name="<?php print $filter['form_prefix']; ?>[post_ids]" value='<?php print $filter['values']['post_ids']; ?>' />
+    <p class="description">How to treat these post IDs.</p>
 
-  <p class="description">How to treat these post IDs.</p>
-  <select name="<?php print $filter['form_prefix']; ?>[compare]">
-    <option value="post__in" <?php if($filter['values']['compare'] == "post__in") { print 'selected="selected"';} ?>>Only these posts</option>
-    <option value="post__not_in" <?php if($filter['values']['compare'] == "post__not_in") { print 'selected="selected"';} ?>>Not these posts</option>
-  </select>
+    <p>
+      <select name="<?php print $filter['form_prefix']; ?>[compare]">
+        <option value="post__in" <?php if($filter['values']['compare'] == "post__in") { print 'selected="selected"';} ?>>Only these posts</option>
+        <option value="post__not_in" <?php if($filter['values']['compare'] == "post__not_in") { print 'selected="selected"';} ?>>Not these posts</option>
+      </select>
+    </p>
   <?php
   return ob_get_clean();
 }
@@ -283,26 +294,25 @@ function qw_filter_meta_key_value($filter)
 {
   ob_start();
   ?>
-  <p>
-    Meta Key<br />
+    <label class="qw-label">Meta Key:</label>
     <input type='text' name="<?php print $filter['form_prefix']; ?>[meta_key]" value='<?php print $filter['values']['meta_key']; ?>' />
-  </p>
-  <p>
-    Compare<br />
-    <select name="<?php print $filter['form_prefix']; ?>[meta_compare]">
-      <option value="="  <?php if($filter['values']['meta_compare'] == "=")  {print 'selected="selected"';} ?>>Is equal to</option>
-      <option value="!=" <?php if($filter['values']['meta_compare'] == "!=") {print 'selected="selected"';} ?>>Is not equal to</option>
-      <option value="<"  <?php if($filter['values']['meta_compare'] == "<")  {print 'selected="selected"';} ?>>Is less than</option>
-      <option value="<=" <?php if($filter['values']['meta_compare'] == "<=") {print 'selected="selected"';} ?>>Is less than or equal to</option>
-      <option value=">"  <?php if($filter['values']['meta_compare'] == ">")  {print 'selected="selected"';} ?>>Is greater than</option>
-      <option value=">=" <?php if($filter['values']['meta_compare'] == ">=") {print 'selected="selected"';} ?>>Is greater than or equal to</option>
-    </select>
-  </p>
-  <p>
-    Meta Value<br />
-    <textarea name="<?php print $filter['form_prefix']; ?>[meta_value]"
-              class="qw-meta-value"><?php print stripcslashes($filter['values']['meta_value']); ?></textarea>
-  </p>
+
+    <p>
+      <label class="qw-label">Compare:</label>
+      <select name="<?php print $filter['form_prefix']; ?>[meta_compare]">
+        <option value="="  <?php if($filter['values']['meta_compare'] == "=")  {print 'selected="selected"';} ?>>Is equal to</option>
+        <option value="!=" <?php if($filter['values']['meta_compare'] == "!=") {print 'selected="selected"';} ?>>Is not equal to</option>
+        <option value="<"  <?php if($filter['values']['meta_compare'] == "<")  {print 'selected="selected"';} ?>>Is less than</option>
+        <option value="<=" <?php if($filter['values']['meta_compare'] == "<=") {print 'selected="selected"';} ?>>Is less than or equal to</option>
+        <option value=">"  <?php if($filter['values']['meta_compare'] == ">")  {print 'selected="selected"';} ?>>Is greater than</option>
+        <option value=">=" <?php if($filter['values']['meta_compare'] == ">=") {print 'selected="selected"';} ?>>Is greater than or equal to</option>
+      </select>
+    </p>
+    <p>
+      <label class="qw-label">Meta Value:</label>
+      <textarea name="<?php print $filter['form_prefix']; ?>[meta_value]"
+                class="qw-meta-value"><?php print stripcslashes($filter['values']['meta_value']); ?></textarea>
+    </p>
   <?php
   return ob_get_clean();
 }
@@ -315,12 +325,9 @@ function qw_filter_meta_key($filter)
 {
   ob_start();
   ?>
-  <p>
-    Meta Key<br />
     <input type='text'
            name="<?php print $filter['form_prefix']; ?>[meta_key]"
            value='<?php print $filter['values']['meta_key']; ?>' />
-  </p>
   <?php
   return ob_get_clean();
 }
@@ -333,11 +340,8 @@ function qw_filter_meta_value($filter)
 {
   ob_start();
   ?>
-  <p>
-    Meta Value<br />
     <textarea name="<?php print $filter['form_prefix']; ?>[meta_value]"
               class="qw-meta-value"><?php print stripcslashes($filter['values']['meta_value']); ?></textarea>
-  </p>
   <?php
   return ob_get_clean();
 }

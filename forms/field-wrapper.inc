@@ -39,6 +39,12 @@
 
     <p class="description"><?php print $field['description']; ?></p>
 
+    <?php if ($field['form']) { ?>
+      <div class="qw-field-form qw-setting">
+        <?php print $field['form']; ?>
+      </div>
+    <?php } ?>
+
     <div class='qw-field-options'>
       <!-- exclude display -->
       <label class='qw-field-checkbox'>
@@ -109,12 +115,6 @@
           </div>
         </div>
       </div>
-
-      <?php if ($field['form']) { ?>
-        <div class="qw-field-form">
-          <?php print $field['form']; ?>
-        </div>
-      <?php } ?>
     </div>
 
   </div>

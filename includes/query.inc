@@ -204,46 +204,6 @@ function qw_get_all_pages()
 }
 
 /*
- * Default values for  new query
- *
- * @return array Default query settings
- */
-function qw_default_query_data(){
-  return array(
-    'args' => array(
-      'posts_per_page'  => 5,
-      'offset'          => 0,
-      'cat_operator'    => 'cat',
-      'post_status'     => 'publish',
-      'orderby'         => 'date',
-      'order'           => 'ASC',
-      'filters'         => array(),
-    ),
-    'display' => array(
-      'style' => 'unformatted',
-      'row_style' => 'posts',
-      'post_settings' => array(
-        'size' => 'complete',
-      ),
-    ),
-  );
-}
-/*
- * Slug creation
- */
-function qw_make_slug($string){
-  $search = array("!","@","#","$","%","^","&","*","(",")","-","+","=","{","}","[","]","\\","|",":",";","'","<",",",">",".","?","/","~","`");
-  return str_replace(" ", "_", strtolower(str_replace($search, "", strip_tags($string))));
-}
-/*
- * usort callback. I likely stole this from somewhere.. like php.net
- */
-function qw_cmp($a,$b) {
-  if ($a['weight'] == $b['weight']) return 0;
-  return ($a['weight'] < $b['weight'])? -1 : 1;
-}
-
-/*
  * Helper function: Get the current page number
  * @param object $wp_query - the query being displayed
  *
@@ -331,19 +291,6 @@ function qw_get_term($term, $by = 'id' , $return_type = OBJECT){
 function qw_trim(&$value){
   $value = trim($value);
 }
-function qw_handle_html(&$value, $key = ''){
-  if(is_string($value)){
-    // for some reason stripslashes isn't getting all slashes
-    $value = str_replace("\\", "", stripslashes(stripslashes($value)));
-  }
-}
-
-/*
- * Custom for outputting text/html into a textarea
- */
-function qw_textarea($value){
-  return esc_textarea(str_replace("\\", "", $value));
-}
 /*
  * Serialize wrapper functions for future changes.
  */
@@ -430,4 +377,11 @@ function qw_get_meta_keys() {
 			ORDER BY meta_key" );
 
 	return $keys;
+}
+/*
+ * usort callback. I likely stole this from somewhere.. like php.net
+ */
+function qw_cmp($a,$b) {
+  if ($a['weight'] == $b['weight']) return 0;
+  return ($a['weight'] < $b['weight'])? -1 : 1;
 }

@@ -131,7 +131,17 @@ function qw_default_fields($fields)
 // add default fields to the hook filter
 add_filter('qw_fields', 'qw_default_fields');
 
-
+/*
+ * Forms and Output Callbacks
+ *
+ * Forms: return form output
+ *   $field: Combined field data and values saved
+ *   $field['values']: Saved values for this field
+ *   $field['form_prefix']: beginning of a form item's name attribute
+ *
+ * Output Callbacks: return the entire output of the field
+ *   $field: field values
+ */
 /*
  * Author output callback
  */
@@ -164,14 +174,8 @@ function qw_field_author($field)
   $link_selected = ($field['values']['link_to_author']) ? 'checked="checked"' : '';
   ob_start();
   ?>
-    <p>
-      <strong>Author Field Settings:</strong>
-      <label class='qw-field-checkbox'>
-        <input type='checkbox'
-               name='<?php print $field['form_prefix']; ?>[link_to_author]'
-               <?php print $link_selected; ?> />
-        Link to author page (list of author posts)
-      </label>
+      <label class="qw-label">Author Field Settings:</label>
+
       <select name="<?php print $field['form_prefix']; ?>[output_type]">
         <?php
           foreach($options as $value => $title)
@@ -184,7 +188,15 @@ function qw_field_author($field)
           }
         ?>
       </select>
-    </p>
+
+      <p>
+        <label class='qw-field-checkbox'>
+          <input type='checkbox'
+                 name='<?php print $field['form_prefix']; ?>[link_to_author]'
+                 <?php print $link_selected; ?> />
+          Link to author page (list of author posts)
+        </label>
+      </p>
   <?php
   return ob_get_clean();
 }
@@ -211,21 +223,19 @@ function qw_field_author_avatar($field)
   $link_selected = ($field['values']['link_to_author']) ? 'checked="checked"' : '';
   ob_start();
   ?>
-    <p>
-      <strong>Avatar Settings:</strong>
-      <label class='qw-field-checkbox'>
-        <input type='checkbox'
-               name='<?php print $field['form_prefix']; ?>[link_to_author]'
-               <?php print $link_selected; ?> />
-        Link to author page (list of author posts)
-      </label>
-      <div>
-        <strong>Avatar Size:</strong> (pixel width)<br />
-        <input type="text"
-               name="<?php print $field['form_prefix']; ?>[size]"
-               value="<?php print $field['values']['size']; ?>" />
-      </div>
-    </p>
+    <label class="qw-label">Avatar Size: </label>
+    <input type="text"
+           name="<?php print $field['form_prefix']; ?>[size]"
+           value="<?php print $field['values']['size']; ?>" />
+    (pixel width)
+  <p>
+    <label class='qw-field-checkbox'>
+      <input type='checkbox'
+             name='<?php print $field['form_prefix']; ?>[link_to_author]'
+             <?php print $link_selected; ?> />
+      Link to author page (list of author posts)
+    </label>
+  </p>
   <?php
   return ob_get_clean();
 }
@@ -239,13 +249,14 @@ function qw_form_image_attachment($field)
   ob_start();
   ?>
     <!-- image display -->
-    <div class="qw-options-group">
-      <strong>Number of items to show:</strong> <br />
-      <input type="text"
-          name='<?php print $field['form_prefix']; ?>[image_display_count]'
-          value="<?php print ($field['values']['image_display_count']) ? $field['values']['image_display_count']: 0;?>" />
-      <br />
-      <strong>Image Display Style:</strong><br />
+    <label class="qw-label">Number of items to show:</label>
+    <input class="qw-text-short"
+           type="text"
+           name='<?php print $field['form_prefix']; ?>[image_display_count]'
+           value="<?php print ($field['values']['image_display_count']) ? $field['values']['image_display_count']: 0;?>" />
+
+    <p>
+      <label class="qw-label">Image Display Style:</label>
       <select name='<?php print $field['form_prefix']; ?>[image_display_style]'>
         <?php
           foreach($image_sizes as $key => $size)
@@ -257,7 +268,7 @@ function qw_form_image_attachment($field)
           }
         ?>
       </select>
-    </div>
+    </p>
   <?php
   return ob_get_clean();
 }
@@ -270,25 +281,26 @@ function qw_form_file_attachment($field)
   ob_start();
   ?>
     <!-- file display -->
-    <div class="qw-options-group">
-      <strong>Number of items to show:</strong> <br />
-      <input type="text"
-          name='<?php print $field['form_prefix']; ?>[file_display_count]'
-          value="<?php print ($field['values']['file_display_count']) ? $field['values']['file_display_count']: 0;?>" />
-      <br />
-      <strong>File Display Style:</strong><br />
-      <select name='<?php print $field['form_prefix']; ?>[file_display_style]'>
-        <?php
-          foreach($file_styles as $key => $file_style_details)
-          {
-            $style_selected = ($field['values']['file_display_style'] == $key) ? 'selected="selected"' : '';
-            ?>
-              <option value="<?php print $key; ?>" <?php print $style_selected; ?>><?php print $file_style_details['description']; ?></option>
-            <?php
-          }
-        ?>
-      </select>
-    </div>
+      <label class="qw-label">Number of items to show:</label>
+      <input class="qw-text-short"
+             type="text"
+             name='<?php print $field['form_prefix']; ?>[file_display_count]'
+             value="<?php print ($field['values']['file_display_count']) ? $field['values']['file_display_count']: 0;?>" />
+
+      <p>
+        <label class="qw-label">File Display Style:</label>
+        <select name='<?php print $field['form_prefix']; ?>[file_display_style]'>
+          <?php
+            foreach($file_styles as $key => $file_style_details)
+            {
+              $style_selected = ($field['values']['file_display_style'] == $key) ? 'selected="selected"' : '';
+              ?>
+                <option value="<?php print $key; ?>" <?php print $style_selected; ?>><?php print $file_style_details['description']; ?></option>
+              <?php
+            }
+          ?>
+        </select>
+      </p>
     <?php
   return ob_get_clean();
 }

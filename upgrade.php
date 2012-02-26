@@ -3,6 +3,10 @@
  * Upgrade from 1.4 to 1.5
  */
 function qw_upgrade_14_to_15(){
+
+  // set the edit theme
+  update_option('qw_edit_theme', 'views');
+
   // get all queries
   global $wpdb;
   $table = $wpdb->prefix."query_wrangler";
@@ -15,24 +19,28 @@ function qw_upgrade_14_to_15(){
     $data = qw_unserialize($query->data);
 
     // create new sort based on  args[orderby], args[order]
-    $orderby = $data['args']['orderby']; unset($data['args']['orderby']);
-    $order = $data['args']['orderby']; unset($data['args']['orderby']);
+    if (isset($data['args']['orderby']) &&
+        isset($data['args']['order']))
+    {
+      $orderby = $data['args']['orderby']; unset($data['args']['orderby']);
+      $order = $data['args']['order']; unset($data['args']['order']);
 
-    $data['args']['sort'] = array();
-    $all_sorts = qw_all_sort_options();
+      $data['args']['sorts'] = array();
+      $all_sorts = qw_all_sort_options();
 
-    // loop and find right of all_sorts to use for data
-    foreach($all_sorts as $hook_key => $sort){
-      if ($orderby == $sort['type']){
-        // set old sorting options as a new sort
-        $data['args']['sort'][$sort['type']] = (
-          'type' => $sort['type'],
-          'hook_key' => $hook_key,
-          'name' => $sort['type'],
-          'weight' => 0,
-          'order_value' => $order,
-        );
-        break;
+      // loop and find right of all_sorts to use for data
+      foreach($all_sorts as $hook_key => $sort){
+        if ($orderby == $sort['type']){
+          // set old sorting options as a new sort
+          $data['args']['sorts'][$sort['type']] = array(
+            'type' => $sort['type'],
+            'hook_key' => $hook_key,
+            'name' => $sort['type'],
+            'weight' => 0,
+            'order_value' => $order,
+          );
+          break;
+        }
       }
     }
 

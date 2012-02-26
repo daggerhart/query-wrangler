@@ -468,12 +468,6 @@ $display = array_map( 'stripslashes_deep', $display );
 <!-- Preview -->
   <div id="query-preview" class="ui-widget ui-widget-content ui-corner-all">
     <div id="query-preview-controls" class="query-preview-inactive">
-      <label>
-        <input id="live-preview"
-               type="checkbox"
-               checked="checked" />
-        Live Preview
-      </label>
       <div id="get-preview" class="qw-button">Preview</div>
     </div>
 

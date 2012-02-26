@@ -1,19 +1,6 @@
 .qw-min-height {
   min-height: 440px !important;
 }
-.qw-hidden {
-  display: none;
-}
-.qw-field-textarea {
-  width: 60%;
-  height: 180px;
-}
-.qw-text-long {
-  width: 60%;
-}
-.qw-text-short {
-  width: 48px;
-}
 .qw-checkboxes {
   border: 1px solid #bbb;
   background: #fff;
