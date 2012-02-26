@@ -213,9 +213,9 @@ function qw_init_edit_theme(){
   $themes = qw_all_edit_themes();
   $current = get_option('qw_edit_theme');
   if(isset($themes[$current])){
-    $theme = $themes[get_option('qw_edit_theme')];
+    $theme = $themes[$current];
   } else {
-    $theme = $themes['tabs'];
+    $theme = $themes[QW_DEFAULT_THEME];
   }
 
   if(function_exists($theme['init_callback'])){
@@ -296,6 +296,7 @@ function qw_edit_json(){
  */
 function qw_check_version()
 {
+
   if ($last_version = get_option('qw_plugin_version')) {
     // compare versions
     if ($last_version < QW_VERSION){

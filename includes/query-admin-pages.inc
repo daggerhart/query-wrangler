@@ -77,8 +77,14 @@ function qw_edit_query_form(){
   $fields  = qw_preprocess_handlers('field', $options['display']['field_settings']['fields']);
   $sorts   = qw_preprocess_handlers('sort', $options['args']['sorts']);
 
+  $theme = get_option('qw_edit_theme');
+  if($theme == ""){
+    $theme = QW_DEFAULT_THEME;
+  }
   // start building edit page data
   $edit_args = array(
+    // editor theme
+    'theme' => $theme,
     // query data
     'query_id' => $query_id,
     'options' => $options,
@@ -122,7 +128,7 @@ function qw_edit_query_form(){
     // content is the query_edit page
     'content' => theme('query_edit', $edit_args)
   );
-
+krumo($edit_args);
   // add view link for pages
   if($row->type == 'page' && isset($row->path)){
     $admin_args['title'].= ' <a class="add-new-h2" target="_blank" href="'.get_bloginfo('wpurl').$row->path.'">View</a>';

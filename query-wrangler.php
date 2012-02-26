@@ -8,6 +8,7 @@ Plugin URI:        http://www.widgetwrangler.com/query-wrangler
 Description:       Query Wrangler provides an intuitive interface for creating complex WP queries as pages or widgets. Based on Drupal Views.
 Author:            Jonathan Daggerhart, Forrest Livengood
 Author URI:        http://www.websmiths.co
+Version:           1.5beta
 
 ******************************************************************
 
@@ -32,6 +33,7 @@ define('QW_PLUGIN_DIR', dirname(__FILE__));
 define('QW_PLUGIN_URL', plugins_url( '', __FILE__ ));
 // Note: There are 3 places to change the version number; below, above, and in readme.txt
 define('QW_VERSION', 1.5);
+define('QW_DEFAULT_THEME', 'views');
 
 // Query Widget
 include_once QW_PLUGIN_DIR.'/widget.query.php';
