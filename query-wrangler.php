@@ -1,29 +1,30 @@
-<?php
-/*
-Contributors: daggerhart, forrest.livengood
-Plugin Name: Query Wrangler
-Plugin URI: http://www.widgetwrangler.com/query-wrangler
-Tags: query, pages, widget, admin, widgets, administration, manage, views
-Author URI: http://www.websmiths.co
-Author: Jonathan Daggerhart, Forrest Livengood
-Donate link: http://www.widgetwrangler.com/
-Requires at least: 3
-Tested up to: 3.3.1
-Stable tag: trunk
-Version: 1.5beta
-*/
+<?php /*
 
-/*  Copyright 2010  Jonathan Daggerhart  (email : jonathan@daggerhart.com)
-  This program is free software; you can redistribute it and/or modify
-  it under the terms of the GNU General Public License, version 2, as
-  published by the Free Software Foundation.
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
-  You should have received a copy of the GNU General Public License
-  along with this program; if not, write to the Free Software
-  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+******************************************************************
+
+Contributors:      daggerhart, forrest.livengood
+Plugin Name:       Query Wrangler
+Plugin URI:        http://www.widgetwrangler.com/query-wrangler
+Description:       Query Wrangler provides an intuitive interface for creating complex WP queries as pages or widgets. Based on Drupal Views.
+Author:            Jonathan Daggerhart, Forrest Livengood
+Author URI:        http://www.websmiths.co
+
+******************************************************************
+
+Copyright 2010  Jonathan Daggerhart  (email : jonathan@daggerhart.com)
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License, version 2, as
+published by the Free Software Foundation.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+
+******************************************************************
+
 */
 
 // some useful definitions

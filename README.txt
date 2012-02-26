@@ -1,15 +1,10 @@
 === Query Wrangler ===
 Contributors: daggerhart, forrest.livengood
-Plugin Name: Query Wrangler
-Plugin URI: http://www.widgetwrangler.com/query-wrangler
-Tags: query, pages, widget, admin, widgets, administration, manage, views
-Author URI: http://www.websmiths.co
-Author: Jonathan Daggerhart, Forrest Livengood
 Donate link: http://www.widgetwrangler.com/
+Tags: query, pages, widget, admin, widgets, administration, manage, views
 Requires at least: 3
 Tested up to: 3.3.1
 Stable tag: trunk
-Version: 1.5beta
 
 Query Wrangler provides an intuitive interface for creating complex WP queries as pages or widgets. Based on Drupal Views.
 
@@ -54,7 +49,8 @@ Select a category or multiple categories to override.   Save the query, then vis
 
 == Screenshots ==
 
-1. Query Wrangler edit screen
+1. Drupal Views Editor Theme
+1. Tabs Editor Theme
 
 == Changelog ==
 
@@ -62,7 +58,7 @@ Select a category or multiple categories to override.   Save the query, then vis
 
  * Major API enhancements
  * New simpler editor theme
- * Lots of bug fixes
+ * Lots of Refactoring
 
 = 1.4.1beta =
 

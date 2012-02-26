@@ -225,6 +225,7 @@ function qw_init_edit_theme(){
 
 // CSS
 function qw_admin_css(){
+  print '<link rel="stylesheet" type="text/css" href="'.QW_PLUGIN_URL.'/css/jquery-ui.css" />';
   print '<link rel="stylesheet" type="text/css" href="'.QW_PLUGIN_URL.'/css/query-wrangler.css" />';
 }
 // admin list page
