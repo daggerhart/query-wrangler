@@ -29,10 +29,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 // some useful definitions
+define('QW_VERSION', 1.5);
 define('QW_PLUGIN_DIR', dirname(__FILE__));
 define('QW_PLUGIN_URL', plugins_url( '', __FILE__ ));
-// Note: There are 3 places to change the version number; below, above, and in readme.txt
-define('QW_VERSION', 1.5);
 define('QW_DEFAULT_THEME', 'views');
 
 // Query Widget
