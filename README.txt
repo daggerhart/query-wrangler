@@ -7,11 +7,11 @@ Author URI: http://www.websmiths.co
 Author: Jonathan Daggerhart, Forrest Livengood
 Donate link: http://www.widgetwrangler.com/
 Requires at least: 3
-Tested up to: 3.2.1
+Tested up to: 3.3.1
 Stable tag: trunk
-Version: 1.4.1beta
+Version: 1.5beta
 
-This plugin lets you create new WP queries as pages or widgets. It's basically Drupal Views for Wordpress.
+Query Wrangler provides an intuitive interface for creating complex WP queries as pages or widgets. Based on Drupal Views.
 
 == Description ==
 
@@ -57,6 +57,12 @@ Select a category or multiple categories to override.   Save the query, then vis
 1. Query Wrangler edit screen
 
 == Changelog ==
+
+= 1.5beta =
+
+ * Major API enhancements
+ * New simpler editor theme
+ * Lots of bug fixes
 
 = 1.4.1beta =
 
@@ -109,4 +115,4 @@ Select a category or multiple categories to override.   Save the query, then vis
 
 == Upgrade Notice ==
 
-1.4.1beta Bug fixes, api enhancement, UI improvement
+1.5beta API enhancements & UI improvement

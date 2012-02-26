@@ -8,7 +8,7 @@ Author URI: http://www.websmiths.co
 Author: Jonathan Daggerhart, Forrest Livengood
 Donate link: http://www.widgetwrangler.com/
 Requires at least: 3
-Tested up to: 3.2.1
+Tested up to: 3.3.1
 Stable tag: trunk
 Version: 1.5beta
 */
