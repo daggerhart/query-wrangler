@@ -1,9 +1,25 @@
 <?php
 /*
+ * Multi-version updates
+ */
+function qw_upgrade_13_to_current(){
+  qw_upgrade_13_to_132();
+}
+function qw_upgrade_132_to_current(){
+  qw_upgrade_132_to_14();
+}
+function qw_upgrade_14_to_current(){
+  qw_upgrade_14_to_15();
+}
+function qu_upgrade_12_to_current(){
+  qw_upgrade_12_to_13();
+}
+
+/*
  * Upgrade from 1.4 to 1.5
  */
-function qw_upgrade_14_to_15(){
-
+function qw_upgrade_14_to_15()
+{
   // set the edit theme
   update_option('qw_edit_theme', 'views');
 
@@ -68,7 +84,8 @@ function qw_upgrade_14_to_15(){
 /*
  * Upgrade from 1.3.2 to 1.4
  */
-function qw_upgrade_132_to_14(){
+function qw_upgrade_132_to_14()
+{
   // get all queries
   global $wpdb;
   $table = $wpdb->prefix."query_wrangler";
@@ -96,10 +113,13 @@ function qw_upgrade_132_to_14(){
     if (empty($data['args']['post_status'])){
       if (isset($data['args']['filters']['post_status']['post_status'])){
         $data['args']['post_status'] = $data['args']['filters']['post_status']['post_status'];
-        unset($data['args']['filters']['post_status']);
       } else {
         $data['args']['post_status'] = 'publish';
       }
+    }
+
+    if (isset($data['args']['filters']['post_status'])){
+      unset($data['args']['filters']['post_status']);
     }
 
     // save query
@@ -118,7 +138,8 @@ function qw_upgrade_132_to_14(){
 /*
  * Upgrade from 1.3 to 1.3.2beta
  */
-function qw_upgrade_13_to_132(){
+function qw_upgrade_13_to_132()
+{
   // get all queries
   global $wpdb;
   $table = $wpdb->prefix."query_wrangler";

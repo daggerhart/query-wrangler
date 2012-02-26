@@ -128,15 +128,12 @@ QueryWrangler.toggle_empty_lists = function()
     var num_items = jQuery(this).children('.qw-sortable-item');
     if(num_items.length > 0)
     {
-      //console.log(jQuery(this).attr('id')+' not empty');
       jQuery(this).children('.qw-empty-list').hide();
     }
     else
     {
-      //console.log(jQuery(this).attr('id')+' empty');
       jQuery(this).children('.qw-empty-list').show();
     }
-        //console.log(num_items.length);
   });
 }
 jQuery(document).ready(function(){

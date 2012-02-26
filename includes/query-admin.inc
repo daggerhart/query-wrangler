@@ -296,17 +296,18 @@ function qw_edit_json(){
  */
 function qw_check_version()
 {
-
   if ($last_version = get_option('qw_plugin_version')) {
-    $last_version = 1.4;
     // compare versions
     if ($last_version < QW_VERSION){
       // include upgrade inc
       include_once QW_PLUGIN_DIR.'/upgrade.php';
       $upgrade_function = 'qw_upgrade_'.qw_make_slug($last_version).'_to_'.qw_make_slug(QW_VERSION);
+      $upgrade_to_current = 'qw_upgrade_'.qw_make_slug($last_version).'_to_current';
 
       if(function_exists($upgrade_function)){
         $upgrade_function();
+      } else if(function_exists($upgrade_to_current)) {
+        $upgrade_to_current();
       }
       update_option('qw_plugin_version', QW_VERSION);
     }

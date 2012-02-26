@@ -134,7 +134,6 @@ QueryWrangler.set_setting_title = function(){
  * Add new handler
  */
 QueryWrangler.add_item = function(dialog){
-  //console.log(dialog);
   var handler = jQuery(dialog).children('input.add-handler-type').val();
   jQuery('#qw-display-add-'+handler+'s input[type=checkbox]')
     .each(function(index,element){
@@ -170,15 +169,12 @@ QueryWrangler.toggle_empty_lists = function(){
     var num_items = jQuery(this).children('.qw-sortable-item');
     if(num_items.length > 0)
     {
-      //console.log(jQuery(this).attr('id')+' not empty');
       jQuery(this).children('.qw-empty-list').hide();
     }
     else
     {
-      //console.log(jQuery(this).attr('id')+' empty');
       jQuery(this).children('.qw-empty-list').show();
     }
-        //console.log(num_items.length);
   });
 }
  /*
@@ -225,7 +221,6 @@ QueryWrangler.button_update = function(dialog){
  */
 QueryWrangler.button_cancel = function(){
   if(QueryWrangler.current_form_id != ''){
-    //console.log(QueryWrangler.current_form_id+' restoring');
     // set backup_form
     jQuery('form#qw-edit-query-form').unserializeForm(QueryWrangler.form_backup);
   }
@@ -238,8 +233,6 @@ QueryWrangler.sortable_list_build = function(element){
   var output = '<ul id="'+QueryWrangler.current_form_id+'-sortable" class="qw-hidden">';
   jQuery('#'+QueryWrangler.current_form_id+'-list div').each(function(i, element){
     html = jQuery(element).wrap('<div>').parent().html();
-    //console.log(html);
-    //console.log(jQuery(html).wrap('div').parent().html());
     output+= '<li class="qw-sortable ui-helper-reset ui-state-default ui-corner-all">'+html+'</li>';
   });
   output+= '</ul>';
@@ -288,7 +281,6 @@ QueryWrangler.sortable_list_update = function(dialog){
     var form_id = jQuery(item).children('.qw-query-title').attr('title');
     // kitchen sink
     jQuery('#'+form_id).find('.qw-weight').val(i).attr('value', i);
-    //console.log(item);
   });
 
   //QueryWrangler.sortable_list_update_weights(list_id);
@@ -297,8 +289,6 @@ QueryWrangler.sortable_list_update_weights = function(list_id){
   jQuery(QueryWrangler.handlers).each(function(i, handler){
     jQuery("#existing-"+handler+"s .qw-"+handler)
       .each(function(i){
-        //console.log(i+" - "+handler);
-        //console.log(this);
         jQuery(this).find(".qw-weight").attr('value', i);
         jQuery(this).find(".qw-weight").val(i);
     });
