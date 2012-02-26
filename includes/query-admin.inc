@@ -298,6 +298,7 @@ function qw_check_version()
 {
 
   if ($last_version = get_option('qw_plugin_version')) {
+    $last_version = 1.4;
     // compare versions
     if ($last_version < QW_VERSION){
       // include upgrade inc

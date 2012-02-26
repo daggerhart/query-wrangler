@@ -45,11 +45,13 @@ function qw_upgrade_14_to_15(){
     }
 
     $path = $query->path;
-    
+
     // remove page path slashes
     if (substr($path, 0, 1) == "/"){
       $path = ltrim($path, '/');
     }
+    // update old page path
+    $data['display']['page']['path'] = $path;
 
     // save query
     $update = array(
