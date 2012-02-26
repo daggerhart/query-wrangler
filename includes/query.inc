@@ -13,15 +13,22 @@ function qw_execute_query($query_id, $options_override = array(), $reset_post_da
   // backup the old query
   $old_query = $wp_query;
 
+
   // get the query options
   $options = qw_generate_query_options($query_id, $options_override);
 
   // get formatted query arguments
   $args = qw_generate_query_args($options);
 
+// pre_query hook
+  do_action_ref_array('qw_pre_query', array(&$args));
+
   // set the new query
   $wp_query = new WP_Query($args);
-//print "<pre>".print_r($wp_query,1)."</pre>";
+
+// pre_render hook
+  do_action_ref_array('qw_pre_render', array(&$options));
+
   // get the themed content
   $themed = qw_template_query($wp_query, $options);
 
@@ -105,9 +112,10 @@ function qw_generate_query_args($options = array(), $options_override = array())
 
     foreach($options['args']['sorts'] as $sort)
     {
+      $hook_key = qw_get_hook_key($all_sorts, $sort);
       // combine sort details
-      if (isset($all_sorts[$sort['hook_key']])){
-        $sort = array_merge($all_sorts[$sort['hook_key']], $sort);
+      if (isset($all_sorts[$hook_key])){
+        $sort = array_merge($all_sorts[$hook_key], $sort);
       }
 
       // look for callback, and run it
@@ -127,9 +135,10 @@ function qw_generate_query_args($options = array(), $options_override = array())
     // loop through all filters
     foreach($options['args']['filters'] as $filter)
     {
+      $hook_key = qw_get_hook_key($all_filters, $filter);
       // combine filter details
-      if (isset($all_filters[$filter['hook_key']])){
-        $filter = array_merge($all_filters[$filter['hook_key']], $filter);
+      if (isset($all_filters[$hook_key])){
+        $filter = array_merge($all_filters[$hook_key], $filter);
       }
 
       // look for callback, and run it
@@ -141,9 +150,6 @@ function qw_generate_query_args($options = array(), $options_override = array())
       }
     }
   }
-//global $wp_query;
-//krumo($args);
-//krumo($wp_query);
   return $args;
 }
 /*
@@ -366,15 +372,19 @@ function qw_unserialize($serial_str) {
 function qw_get_hook_key($all, $single)
 {
   // see if hook key is set
-  if (isset($single['hook_key'])){
+  if (!empty($single['hook_key'])){
     $hook_key = $single['hook_key'];
   }
   // look for type as key
-  else if (isset($single['type']))
+  else if (!empty($single['type']))
   {
     foreach ($all as $key => $item)
     {
-      if($single['type'] == $key){
+      if($single['type'] == $all[$key]['type']){
+        $hook_key = $all[$key]['hook_key'];
+        break;
+      }
+      else if($single['type'] == $key){
         $hook_key = $key;
         break;
       }
@@ -383,7 +393,28 @@ function qw_get_hook_key($all, $single)
   return $hook_key;
 }
 
-
+/*
+ * Generate form prefixes for handlers
+ *
+ * @param string
+ *    $type = sort, field, filter
+ */
+function qw_make_form_prefix($type, $name){
+  $output = "qw-query-options";
+  switch($type){
+    case 'sort':
+      $output.= "[args][sorts]";
+      break;
+    case 'field':
+      $output.= "[display][field_settings][fields]";
+      break;
+    case 'filter':
+      $output.= "[args][filters]";
+      break;
+  }
+  $output.= "[".$name."]";
+  return $output;
+}
 /*
  * Function for grabbing meta keys
  *

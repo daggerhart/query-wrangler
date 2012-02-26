@@ -6,28 +6,24 @@
 
 <div id="qw-create">
   <form action='admin.php?page=query-wrangler&action=create&noheader=true' method='post'>
-    <div class="qw-create">
-      <strong>Query Name:</strong>
-      <p>
-        Query name is a way for you, the admin, to identify the query easily.
-      </p>
+    <div class="qw-setting">
+      <label class="qw-label">Query Name:</label>
       <input class="qw-create-input" type="text" name="qw-name" value="" />
+      <p class="description">Query name is a way for you, the admin, to identify the query easily.</p>
     </div>
 
-    <div class="qw-create">
-      <strong>Query Type:</strong>
-      <p>
-        Query type determines how the query works within Wordpress.  View desriptions on the right.
-      </p>
+    <div class="qw-setting">
+      <label class="qw-label">Query Type:</label>
       <select name="qw-type" class="qw-create-select">
         <option value="widget">Widget</option>
         <option value="page">Page</option>
         <option value="override">Override</option>
       </select>
+      <p class="description">Query type determines how the query works within Wordpress.  View desriptions on the right.</p>
     </div>
 
     <div class="qw-create">
-      <input type="submit" value="Create" class="qw-button" />
+      <input type="submit" value="Create" class="button-primary" />
     </div>
   </form>
 </div>

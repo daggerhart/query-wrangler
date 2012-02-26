@@ -2,16 +2,24 @@
 global $wp_query;
 $temp = $wp_query;
 $wp_query = NULL;
-// get the query options, force override
-$options = qw_generate_query_options($query_id, $options, true);
-// get formatted query arguments
-$args = qw_generate_query_args($options);
-// set the new query
-$wp_query = new WP_Query($args);
-// get the themed content
-$preview = qw_template_query($wp_query, $options);
+
+ob_start();
+  // get the query options, force override
+  $options = qw_generate_query_options($query_id, $options, true);
+
+  do_action_ref_array('qw_preview', array(&$options));
+
+  // get formatted query arguments
+  $args = qw_generate_query_args($options);
+  // set the new query
+  $wp_query = new WP_Query($args);
+
+  // get the themed content
+  print qw_template_query($wp_query, $options);
+$preview = ob_get_clean();
+
 // args
-$args = "<pre>".var_export($args, true)."</pre>";
+$args = "<pre>".print_r($args, true)."</pre>";
 
 // display
 $display = "<pre>".htmlentities(print_r($options['display'], true))."</pre>";

@@ -10,10 +10,10 @@ Donate link: http://www.widgetwrangler.com/
 Requires at least: 3
 Tested up to: 3.2.1
 Stable tag: trunk
-Version: 1.4.1beta
+Version: 1.5beta
 */
 // Note: There are 3 places to change the version number; below, above, and in readme.txt
-define('QW_VERSION', 1.4);
+define('QW_VERSION', 1.5);
 
 /*  Copyright 2010  Jonathan Daggerhart  (email : jonathan@daggerhart.com)
   This program is free software; you can redistribute it and/or modify
@@ -47,6 +47,9 @@ include_once QW_PLUGIN_DIR.'/includes/hooks.inc';
 // Field and field style definitions
 include_once QW_PLUGIN_DIR.'/includes/data.defaults.inc';
 
+// Basic Settings definitions and functions
+include_once QW_PLUGIN_DIR.'/includes/data.default_basics.inc';
+
 // Filter definitions and functions
 include_once QW_PLUGIN_DIR.'/includes/data.default_filters.inc';
 
@@ -55,6 +58,9 @@ include_once QW_PLUGIN_DIR.'/includes/data.default_fields.inc';
 
 // Sort definitions and functions
 include_once QW_PLUGIN_DIR.'/includes/data.default_sorts.inc';
+
+// Edit Themes definitions and functions
+include_once QW_PLUGIN_DIR.'/includes/data.default_edit_themes.inc';
 
 // Query Widget
 include_once QW_PLUGIN_DIR.'/widget.query.php';
@@ -69,32 +75,76 @@ if(!function_exists('theme')){
   include_once QW_PLUGIN_DIR.'/template-wrangler.inc';
 }
 
-/*
- * Add css to admin interface
- */
+// Add js
+if($_GET['page'] == 'query-wrangler'){
+  add_action('admin_init', 'qw_init_edit_theme');
+  add_action('admin_enqueue_scripts', 'qw_admin_js');
+}
 function qw_admin_css(){
-	print '<link rel="stylesheet" type="text/css" href="'.QW_PLUGIN_URL.'/css/query-wrangler.css" />';
+  print '<link rel="stylesheet" type="text/css" href="'.QW_PLUGIN_URL.'/css/query-wrangler.css" />';
 }
 add_action('admin_head', 'qw_admin_css');
+
+function qw_admin_js(){
+  wp_enqueue_script('qw-admin-js',
+                  plugins_url('/js/query-wrangler.js', __FILE__),
+                  array('jquery-ui-core'),
+                  QW_VERSION);
+  // jquery unserialize form
+  wp_enqueue_script('qw-unserialize-form',
+                  plugins_url('/js/jquery.unserialize-form.js', __FILE__),
+                  array(),
+                  false);
+  $data = qw_edit_json();
+  wp_localize_script( 'qw-admin-js',
+                      'QueryWrangler',
+                      array(
+                        'l10n_print_after' => 'QueryWrangler = ' . $data. ';'
+                      )
+                    );
+}
+
+function qw_init_edit_theme(){
+  $themes = qw_all_edit_themes();
+  $current = get_option('qw_edit_theme');
+  if(isset($themes[$current])){
+    $theme = $themes[get_option('qw_edit_theme')];
+  } else {
+    $theme = $themes['views'];
+  }
+
+  if(function_exists($theme['init_callback'])){
+    $theme['init_callback']();
+  }
+}
+
+/*
+ * All my hook_menu implementations
+ */
+function qw_menu()
+{
+  global $menu;
+  // get the first available menu placement around 30, trivial, I know
+  $menu_placement = 1000;
+  for($i=30;$i<100;$i++){
+    if(!isset($menu[$i])){ $menu_placement = $i; break; }
+  }
+  // http://codex.wordpress.org/Function_Reference/add_menu_page
+  $list_page    = add_menu_page( 'Query Wrangler', 'Query Wrangler', 'manage_options', 'query-wrangler', 'qw_page_handler', '', $menu_placement);
+  // http://codex.wordpress.org/Function_Reference/add_submenu_page
+  $create_page  = add_submenu_page( 'query-wrangler', 'Create New Query', 'Add New', 'manage_options', 'qw-create', 'qw_create_query');
+  $import_page  = add_submenu_page( 'query-wrangler', 'Import', 'Import', 'manage_options', 'qw-import', 'qw_import_page');
+  $settings_page= add_submenu_page( 'query-wrangler', 'Settings', 'Settings', 'manage_options', 'qw-settings', 'qw_settings_page');
+  //$debug_page  = add_submenu_page( 'query-wrangler', 'Debug', 'Debug', 'manage_options', 'qw-debug', 'qw_debug');
+}
+// add menu very last so we don't get replaced by another menu item
+add_action( 'admin_menu', 'qw_menu', 9999);
+
 /*
  * Json data for query edit page
  */
-function qw_admin_js(){
-  // my js script
-  wp_enqueue_script('qw-admin-js',
-                  plugins_url('/js/query-wrangler.js', __FILE__ ),
-                  array('jquery-ui-core', 'jquery-ui-sortable'),
-                  false,
-                  true);
-  // jquery unserialize form
-  wp_enqueue_script('qw-unserialize-form',
-                  plugins_url('/js/jquery.unserialize-form.js', __FILE__ ),
-                  array('jquery-ui-core', 'jquery-ui-sortable'),
-                  false,
-                  true);
-  // declare the URL to the file that handles the AJAX request (wp-admin/admin-ajax.php)
-
-  // @TODO: make LOTS of things available as js objects.  almost everything
+// @TODO: make LOTS of things available as js objects.  almost everything
+function qw_edit_json(){
   $data = array(
     'ajaxForm' => admin_url( 'admin-ajax.php' ),
     'allFields' => qw_all_fields(),
@@ -126,75 +176,8 @@ function qw_admin_js(){
 
     $data = array_merge($data, $additional_data);
   }
-
-  wp_localize_script( 'qw-admin-js',
-                      'QueryWrangler',
-                      array(
-                        'l10n_print_after' => 'QueryWrangler = ' . json_encode( $data ) . ';'
-                      )
-                    );
+  return json_encode( $data ) ;
 }
-// Add js
-if($_GET['page'] == 'query-wrangler'){
-  add_action('admin_enqueue_scripts', 'qw_admin_js');
-}
-
-/*
- * Checking current version of plugin to handle upgrades
- */
-function qw_check_version()
-{
-  if ($last_version = get_option('qw_plugin_version')) {
-    // compare versions
-    if ($last_version < QW_VERSION){
-      // include upgrade inc
-      include_once QW_PLUGIN_DIR.'/upgrade.php';
-      $upgrade_function = 'qw_upgrade_'.qw_make_slug($last_version).'_to_'.qw_make_slug(QW_VERSION);
-
-      if(function_exists($upgrade_function)){
-        $upgrade_function();
-      }
-      update_option('qw_plugin_version', QW_VERSION);
-    }
-  }
-  else {
-    // first upgrade
-    include QW_PLUGIN_DIR.'/upgrade.php';
-    qw_upgrade_12_to_13();
-    // set our version numer
-    update_option('qw_plugin_version', QW_VERSION);
-  }
-}
-add_action('admin_init', 'qw_check_version');
-
-/*
- * All my hook_menu implementations
- */
-function qw_menu()
-{
-  global $menu;
-  // get the first available menu placement around 30, trivial, I know
-  $menu_placement = 1000;
-  for($i=30;$i<100;$i++){
-    if(!isset($menu[$i])){ $menu_placement = $i; break; }
-  }
-  // http://codex.wordpress.org/Function_Reference/add_menu_page
-  $list_page    = add_menu_page( 'Query Wrangler', 'Query Wrangler', 'manage_options', 'query-wrangler', 'qw_page_handler', '', $menu_placement);
-  // http://codex.wordpress.org/Function_Reference/add_submenu_page
-  $create_page  = add_submenu_page( 'query-wrangler', 'Create New Query', 'Add New', 'manage_options', 'qw-create', 'qw_create_query');
-  $import_page  = add_submenu_page( 'query-wrangler', 'Import', 'Import', 'manage_options', 'qw-import', 'qw_import_page');
-  //$debug_page  = add_submenu_page( 'query-wrangler', 'Debug', 'Debug', 'manage_options', 'qw-debug', 'qw_debug');
-}
-// add menu very last so we don't get replaced by another menu item
-add_action( 'admin_menu', 'qw_menu', 9999);
-
-/*
- * Simple debugging location
- */
-function qw_debug(){
-}
-// */
-
 /*
  * Handle the display of pages and actions
  */
@@ -228,6 +211,12 @@ function qw_page_handler(){
         // forward to edit page
         wp_redirect(get_bloginfo('wpurl').'/wp-admin/admin.php?page=query-wrangler&edit='.$new_query_id);
         break;
+
+      case 'save_settings':
+        qw_save_settings($_POST);
+        // forward to edit page
+        wp_redirect(get_bloginfo('wpurl').'/wp-admin/admin.php?page=qw-settings');
+        break;
     }
   }
 
@@ -245,10 +234,31 @@ function qw_page_handler(){
   }
   // else we need a list of queries
   else {
-    include QW_PLUGIN_DIR.'/forms/form.query-list.inc';
+    include QW_PLUGIN_DIR.'/forms/query-list.inc';
     qw_list_queries_form();
   }
 }
+
+/*
+ * Settings!
+ */
+function qw_save_settings($post){
+  update_option('qw_edit_theme', $post['qw-theme']);
+}
+function qw_settings_page()
+{
+  $settings_args = array(
+    'theme' => get_option('qw_edit_theme'),
+    'edit_themes' => qw_all_edit_themes(),
+  );
+  $args = array(
+    'title' => 'Query Wrangler Settings',
+    'content' => theme('query_settings', $settings_args)
+  );
+
+  print theme('admin_wrapper', $args);
+}
+
 /*
  * Create Query Page
  */
@@ -259,28 +269,6 @@ function qw_create_query() {
   );
 
   print theme('admin_wrapper', $args);
-}
-/*
- * Generate form prefixes for handlers
- *
- * @param string
- *    $type = sort, field, filter
- */
-function qw_make_form_prefix($type, $name){
-  $output = "qw-query-options";
-  switch($type){
-    case 'sort':
-      $output.= "[args][sorts]";
-      break;
-    case 'field':
-      $output.= "[display][field_settings][fields]";
-      break;
-    case 'filter':
-      $output.= "[args][filters]";
-      break;
-  }
-  $output.= "[".$name."]";
-  return $output;
 }
 
 /*
@@ -308,8 +296,10 @@ function qw_preprocess_handlers($type, $handlers){
     // generate the form name prefixes
     foreach($handlers as $name => $values)
     {
+
       // load sort type data
       $hook_key = qw_get_hook_key($all, $values);
+
       $this_handler = $all[$hook_key];
 
       // move type, hook_key, and weight to top level of array
@@ -338,6 +328,7 @@ function qw_preprocess_handlers($type, $handlers){
     if(is_array($handlers)){
       uasort($handlers,'qw_cmp');
     }
+
     return $handlers;
   }
 }
@@ -455,7 +446,6 @@ function qw_insert_new_query($post){
  * @param $_POST data
  */
 function qw_update_query($post){
-
   global $wpdb;
   $table_name = $wpdb->prefix."query_wrangler";
 
@@ -490,7 +480,12 @@ function qw_update_query($post){
     }
   }
 
-  $new_data = qw_serialize($post['qw-query-options']);
+  $options = $post['qw-query-options'];
+
+  // hook for presave
+  do_action_ref_array('qw_pre_save', array(&$options));
+
+  $new_data = qw_serialize($options);
   $query_id = $post['query-id'];
 
   // update for pages
@@ -498,9 +493,9 @@ function qw_update_query($post){
     $page_path = ($post['qw-query-options']['display']['page']['path']) ? $post['qw-query-options']['display']['page']['path'] : '';
 
     // handle opening slash
-    // we check against REQUEST_URI, so it's easier with the slash
-    if(substr($page_path, 0, 1) != '/'){
-      $page_path = '/'.$page_path;
+    // checking against $wp_query->query['pagename'], so, no slash
+    if(substr($page_path, 0, 1) == '/'){
+      $page_path = ltrim($page_path, '/');
     }
 
     $sql = "UPDATE ".$table_name." SET data = '".$new_data."', path = '".$page_path."' WHERE id = ".$query_id;
@@ -639,6 +634,35 @@ function qw_single_query_shortcode($atts) {
   return $themed;
 }
 add_shortcode('query','qw_single_query_shortcode');
+
+
+/*
+ * Checking current version of plugin to handle upgrades
+ */
+function qw_check_version()
+{
+  if ($last_version = get_option('qw_plugin_version')) {
+    // compare versions
+    if ($last_version < QW_VERSION){
+      // include upgrade inc
+      include_once QW_PLUGIN_DIR.'/upgrade.php';
+      $upgrade_function = 'qw_upgrade_'.qw_make_slug($last_version).'_to_'.qw_make_slug(QW_VERSION);
+
+      if(function_exists($upgrade_function)){
+        $upgrade_function();
+      }
+      update_option('qw_plugin_version', QW_VERSION);
+    }
+  }
+  else {
+    // first upgrade
+    include QW_PLUGIN_DIR.'/upgrade.php';
+    qw_upgrade_12_to_13();
+    // set our version numer
+    update_option('qw_plugin_version', QW_VERSION);
+  }
+}
+add_action('admin_init', 'qw_check_version');
 
 /*===================================== DB TABLES =========================================*/
 /*

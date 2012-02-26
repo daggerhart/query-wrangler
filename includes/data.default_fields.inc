@@ -47,7 +47,16 @@ function qw_default_fields($fields)
   $fields['post_author'] = array(
     'title' => 'Post Author',
     'description' => 'Information relating to the author of a post.',
-    'output_callback' => 'get_the_author',
+    'form_callback' => 'qw_field_author',
+    'output_callback' => 'qw_get_the_author',
+    'output_arguments' => true,
+  );
+  $fields['post_author_avatar'] = array(
+    'title' => 'Post Author Avatar',
+    'description' => 'Avatar for the author of a post.',
+    'form_callback' => 'qw_field_author_avatar',
+    'output_callback' => 'qw_get_avatar',
+    'output_arguments' => true,
   );
   $fields['post_date'] = array(
     'title' => 'Post Date',
@@ -86,14 +95,14 @@ function qw_default_fields($fields)
   $fields['image_attachment'] = array(
     'title' => 'Image Attachment',
     'description' => 'Image files that are attached to a post.',
-    'output_callback' => 'qw_theme_image',
+    'output_callback' => 'qw_theme_image', // in theme.inc
     'output_arguments' => true,
     'form_callback' => 'qw_form_image_attachment',
   );
   $fields['file_attachment'] = array(
     'title' => 'File Attachment',
     'description' => 'Files that are attached to a post.',
-    'output_callback' => 'qw_theme_file',
+    'output_callback' => 'qw_theme_file', // in theme.inc
     'output_arguments' => true,
     'form_callback' => 'qw_form_file_attachment',
   );
@@ -109,6 +118,7 @@ function qw_default_fields($fields)
     {
       $fields[$field_key] = array(
         'title' => 'Custom Field: '.$key,
+        'description' => 'WP Custom Field data with key: '.$key,
         'output_callback' => 'qw_get_post_meta',
         'output_arguments' => true,
         'meta_key' => $key,
@@ -120,6 +130,105 @@ function qw_default_fields($fields)
 }
 // add default fields to the hook filter
 add_filter('qw_fields', 'qw_default_fields');
+
+
+/*
+ * Author output callback
+ */
+function qw_get_the_author($post, $field){
+  switch($field['output_type']){
+    case 'ID':
+      $author = $post->post_author;
+      break;
+
+    case 'name':
+    default:
+      $author = get_the_author();
+      break;
+  }
+
+  if(isset($field['link_to_author'])){
+    $author = '<a href="'.get_author_posts_url($post->post_author).'">'.$author.'</a>';
+  }
+  return $author;
+}
+/*
+ * Author form callback
+ */
+function qw_field_author($field)
+{
+  $options = array(
+    'name' => 'Author Name',
+    'ID' => 'Author ID',
+  );
+  $link_selected = ($field['values']['link_to_author']) ? 'checked="checked"' : '';
+  ob_start();
+  ?>
+    <p>
+      <strong>Author Field Settings:</strong>
+      <label class='qw-field-checkbox'>
+        <input type='checkbox'
+               name='<?php print $field['form_prefix']; ?>[link_to_author]'
+               <?php print $link_selected; ?> />
+        Link to author page (list of author posts)
+      </label>
+      <select name="<?php print $field['form_prefix']; ?>[output_type]">
+        <?php
+          foreach($options as $value => $title)
+          { ?>
+            <option value="<?php print $value; ?>"
+                    <?php print ($field['values']['output_type'] == $value) ? 'selected="selected"' : ''; ?>>
+              <?php print $title; ?>
+            </option>
+            <?php
+          }
+        ?>
+      </select>
+    </p>
+  <?php
+  return ob_get_clean();
+}
+/*
+ * Avatar output callback
+ *
+ * get_avatar( $id_or_email, $size, $default, $alt );
+ */
+function qw_get_avatar($post, $field){
+  if(isset($field['link_to_author'])){
+    $output = '<a href="'.get_author_posts_url($post->post_author).'">'.get_avatar($post->post_author, $field['size']).'</a>';
+  }
+  else {
+    $output = get_avatar($post->post_author, $field['values']['size']);
+  }
+  return $output;
+}
+/*
+ * Avatar form callback
+ */
+function qw_field_author_avatar($field)
+{
+  $image_sizes = get_intermediate_image_sizes();
+  $link_selected = ($field['values']['link_to_author']) ? 'checked="checked"' : '';
+  ob_start();
+  ?>
+    <p>
+      <strong>Avatar Settings:</strong>
+      <label class='qw-field-checkbox'>
+        <input type='checkbox'
+               name='<?php print $field['form_prefix']; ?>[link_to_author]'
+               <?php print $link_selected; ?> />
+        Link to author page (list of author posts)
+      </label>
+      <div>
+        <strong>Avatar Size:</strong> (pixel width)<br />
+        <input type="text"
+               name="<?php print $field['form_prefix']; ?>[size]"
+               value="<?php print $field['values']['size']; ?>" />
+      </div>
+    </p>
+  <?php
+  return ob_get_clean();
+}
 
 /*
  * Image attachment settings

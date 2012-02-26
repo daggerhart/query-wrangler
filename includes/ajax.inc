@@ -4,11 +4,24 @@
  */
 function qw_form_ajax()
 {
-  $handler = $_POST['handler'];
-  $item = array();
-
   switch ($_POST['form'])
   {
+    /*
+     * Preview, special case
+     */
+    case 'preview':
+      $decode = urldecode($_POST['options']);
+      $options = array();
+      parse_str($decode, $options);
+      $options['qw-query-options']['args']['paged'] = 1;
+      $args = array(
+        'options' => $options['qw-query-options'],
+        'query_id' => $_POST['query_id'],
+      );
+      print theme('query_preview', $args);
+      exit;
+      break;
+
     case 'sort_form':
       $template = 'query_sort';
       $all = qw_all_sort_options();
@@ -38,26 +51,14 @@ function qw_form_ajax()
       $template = 'query_filter_sortable';
       $all = qw_all_filters();
       break;
-
-    /*
-     * Preview, special case
-     */
-    case 'preview':
-      $decode = urldecode($_POST['options']);
-      $options = array();
-      parse_str($decode, $options);
-      $options['qw-query-options']['args']['paged'] = 1;
-      $args = array(
-        'options' => $options['qw-query-options']
-      );
-      print theme('query_preview', $args);
-      exit;
-      break;
   }
 
   /*
    * Generate handler item forms and data
    */
+  $handler = $_POST['handler'];
+  $item = array();
+
   $hook_key = qw_get_hook_key($all, $_POST);
   $item = $all[$hook_key];
   $item['name'] = $_POST['name'];

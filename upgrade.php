@@ -3,7 +3,54 @@
  * Upgrade from 1.4 to 1.5
  */
 function qw_upgrade_14_to_15(){
-  // create new sort based on  args[orderby], args[order]
+  // get all queries
+  global $wpdb;
+  $table = $wpdb->prefix."query_wrangler";
+  $sql = "SELECT * FROM ".$table;
+
+  $rows = $wpdb->get_results($sql);
+
+  // loop through queries
+  foreach($rows as $query){
+    $data = qw_unserialize($query->data);
+
+    // create new sort based on  args[orderby], args[order]
+    $orderby = $data['args']['orderby']; unset($data['args']['orderby']);
+    $order = $data['args']['orderby']; unset($data['args']['orderby']);
+
+    $data['args']['sort'] = array();
+    $all_sorts = qw_all_sort_options();
+
+    // loop and find right of all_sorts to use for data
+    foreach($all_sorts as $hook_key => $sort){
+      if ($orderby == $sort['type']){
+        // set old sorting options as a new sort
+        $data['args']['sort'][$sort['type']] = (
+          'type' => $sort['type'],
+          'hook_key' => $hook_key,
+          'name' => $sort['type'],
+          'weight' => 0,
+          'order_value' => $order,
+        );
+        break;
+      }
+    }
+
+    // remove page path slashes
+    if (substr($query->path, 0, 1) == "/"){
+      $path = ltrim($query->path, '/');
+    }
+
+    // save query
+    $update = array(
+      'path' => $path,
+      'data' => qw_serialize($data),
+    );
+    $where = array(
+      'id' => $query->id,
+    );
+    $wpdb->update($table, $update, $where);
+  }
 }
 
 /*
@@ -52,6 +99,9 @@ function qw_upgrade_132_to_14(){
     );
     $wpdb->update($table, $update, $where);
   }
+
+  // continue upgrade chain
+  qw_upgrade_14_to_15();
 }
 /*
  * Upgrade from 1.3 to 1.3.2beta

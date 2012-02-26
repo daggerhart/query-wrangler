@@ -15,22 +15,30 @@ function qw_templates($templates){
   );
   // edit query template
   $templates['query_edit'] = array(
-    'files' => 'forms/form.query-edit.inc',
+    'files' => 'themes/[theme]/query-edit-[theme].inc',
     'default_path' => QW_PLUGIN_DIR,
+    'arguments' => array(
+      'theme' => get_option('qw_edit_theme'),
+    ),
   );
   // create query template
   $templates['query_create'] = array(
-    'files' => 'forms/form.query-create.inc',
+    'files' => 'forms/query-create.inc',
     'default_path' => QW_PLUGIN_DIR,
   );
   // import query template
   $templates['query_import'] = array(
-    'files' => 'forms/form.query-import.inc',
+    'files' => 'forms/query-import.inc',
+    'default_path' => QW_PLUGIN_DIR,
+  );
+  // import query template
+  $templates['query_settings'] = array(
+    'files' => 'forms/query-settings.inc',
     'default_path' => QW_PLUGIN_DIR,
   );
   // export query template
   $templates['query_export'] = array(
-    'files' => 'forms/form.query-export.inc',
+    'files' => 'forms/query-export.inc',
     'default_path' => QW_PLUGIN_DIR,
     'arguments' => array(
       'query_id' => 0,
@@ -38,34 +46,34 @@ function qw_templates($templates){
   );
 // field template
   $templates['query_field'] = array(
-    'files' => 'forms/form.query-field.inc',
+    'files' => 'forms/field-wrapper.inc',
     'default_path' => QW_PLUGIN_DIR,
   );
   // sortable fields template
   $templates['query_field_sortable'] = array(
-    'files' => 'forms/form.query-field-sortable.inc',
+    'files' => 'forms/field-sortable.inc',
     'default_path' => QW_PLUGIN_DIR,
   );
 
 // filters edit form
   $templates['query_filter'] = array(
-    'files' => 'forms/form.query-filters.inc',
+    'files' => 'forms/filter-wrapper.inc',
     'default_path' => QW_PLUGIN_DIR,
   );
   // filters sortable template
   $templates['query_filter_sortable'] = array(
-    'files' => 'forms/form.query-filter-sortable.inc',
+    'files' => 'forms/filter-sortable.inc',
     'default_path' => QW_PLUGIN_DIR,
   );
 
 // sorts edit form
   $templates['query_sort'] = array(
-    'files' => 'forms/form.query-sorts.inc',
+    'files' => 'forms/sort-wrapper.inc',
     'default_path' => QW_PLUGIN_DIR,
   );
   // sorts sortable template
   $templates['query_sort_sortable'] = array(
-    'files' => 'forms/form.query-sort-sortable.inc',
+    'files' => 'forms/sort-sortable.inc',
     'default_path' => QW_PLUGIN_DIR,
   );
 
@@ -164,6 +172,10 @@ function theme_query_display_rows_preprocess($template)
       $style = $all_styles[$template['arguments']['style']];
       $template['default_path'] = $style['default_path'];
     }
+
+    //if(isset($all_styles[$template['preprocess_callback']])){
+    //  $template['preprocess_callback'] = $all_styles[$template['preprocess_callback']];
+    //}
   }
   return $template;
 }
@@ -192,30 +204,24 @@ function qw_template_query(&$wp_query, $options)
   {
     $all_styles = qw_all_styles();
 
-    // the content of the widget is the result of the query
-    if($options['display']['row_style'] == "posts")
-    {
-      // setup row template arguments
-      $template_args = array(
-        'template' => 'query-'.$options['display']['style'],
-        'slug' => $options['meta']['slug'],
-        'style' => $options['display']['style'],
-        'rows' => qw_make_posts_rows($wp_query, $options),
-      );
-    }
-    else if ($options['display']['row_style'] == "fields")
-    {
-      // get style type from display style
-      $style = $all_styles[$options['display']['style']];
+    $style = $all_styles[$options['display']['style']];
 
-      // setup row template arguments
-      $template_args = array(
-        'template' => 'query-'.$options['display']['style'],
-        'slug' => $options['meta']['slug'],
-        'style' => $options['display']['style'],
-        // make rows
-        'rows' => qw_make_fields_rows($wp_query, $options),
+     // setup row template arguments
+     $template_args = array(
+       'template' => 'query-'.$style['hook_key'],
+       'slug' => $options['meta']['slug'],
+       'style' => $style['hook_key'],
+       'style_settings' => $options['display'][$style['settings_key']],
+       'options' => $options,
       );
+
+    // the content of the widget is the result of the query
+    if($options['display']['row_style'] == "posts") {
+      $template_args['rows'] = qw_make_posts_rows($wp_query, $options);
+    }
+      // setup row template arguments
+    else if ($options['display']['row_style'] == "fields"){
+      $template_args['rows'] = qw_make_fields_rows($wp_query, $options);
     }
 
     // template the query rows

@@ -27,7 +27,7 @@ function qw_default_post_statuses($post_statuses){
   return $post_statuses;
 }
 // add default fields to the hook filter
-add_filter('qw_post_statuses', 'qw_default_post_statuses');
+add_filter('qw_post_statuses', 'qw_default_post_statuses', 0);
 
 /*
  * All Field Styles and settings
@@ -60,13 +60,15 @@ function qw_default_styles($styles)
   return $styles;
 }
 // add default field styles to the filter
-add_filter('qw_styles', 'qw_default_styles');
+add_filter('qw_styles', 'qw_default_styles', 0);
+
 /*
  * Default Row Styles
  */
 function qw_default_row_styles($row_styles){
   $row_styles['posts'] = array(
     'title' => 'Posts',
+    'settings_callback' => 'qw_row_style_posts_settings',
   );
   $row_styles['fields'] = array(
     'title' => 'Fields',
@@ -74,7 +76,27 @@ function qw_default_row_styles($row_styles){
   return $row_styles;
 }
 // add default field styles to the filter
-add_filter('qw_row_styles', 'qw_default_row_styles');
+add_filter('qw_row_styles', 'qw_default_row_styles', 0);
+
+function qw_row_style_posts_settings()
+{
+  ob_start();
+  ?>
+    <p class="description">Select the amount of the post to be shown.</p>
+    <select name="qw-query-options[display][post_settings][size]">
+      <option value="complete"
+              <?php if($display['post_settings']['size'] == "complete") { print 'selected="selected"';} ?>>
+        Complete Post
+      </option>
+      <option value="excerpt"
+              <?php if($display['post_settings']['size'] == "excerpt") { print 'selected="selected"';} ?>>
+        Excerpt
+      </option>
+    </select>
+  <?php
+  return ob_get_clean();
+}
+
 
 /*
  * Default Row 'Posts' Styles
@@ -89,7 +111,7 @@ function qw_default_row_complete_styles($row_complete_styles){
   return $row_complete_styles;
 }
 // add default field styles to the filter
-add_filter('qw_row_complete_styles', 'qw_default_row_complete_styles');
+add_filter('qw_row_complete_styles', 'qw_default_row_complete_styles', 0);
 
 /*
  * Default Row 'Fields' Styles
@@ -104,7 +126,7 @@ function qw_default_row_fields_styles($row_fields_styles){
   return $row_styles;
 }
 // add default field styles to the filter
-add_filter('qw_row_fields_styles', 'qw_default_row_fields_styles');
+add_filter('qw_row_fields_styles', 'qw_default_row_fields_styles', 0);
 
 /*
  * File Styles
@@ -126,7 +148,7 @@ function qw_default_file_styles($file_styles)
   return $file_styles;
 }
 // add default file styles to the filter
-add_filter('qw_file_styles', 'qw_default_file_styles');
+add_filter('qw_file_styles', 'qw_default_file_styles', 0);
 
 /*
  * Setup pager types
@@ -151,4 +173,4 @@ function qw_default_pager_types($pagers) {
   return $pagers;
 }
 // add default pager types
-add_filter('qw_pager_types', 'qw_default_pager_types');
+add_filter('qw_pager_types', 'qw_default_pager_types', 0);

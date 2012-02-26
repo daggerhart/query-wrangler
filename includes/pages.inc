@@ -19,7 +19,6 @@ function qw_remove_page_from_query_string($query_string)
 
   return $query_string;
 }
-// I will kill you if you remove this. I died two days for this line
 add_filter('request', 'qw_remove_page_from_query_string');
 
 // http://codex.wordpress.org/Conditional_Tags
@@ -100,11 +99,8 @@ function qw_query_pages_handler()
     // We'll need to override query options
     $options_override = array();
 
-    // Look at the requested uri w/o paginiation involved
-    $dirty_path = explode('/page/', $_SERVER['REQUEST_URI']);
-
     // Clean the result for DB
-    $path = $wpdb->escape($dirty_path[0]);
+    $path = $wpdb->escape($wp_query->query['pagename']);
 
     // fix the query paging
     if($paged = qw_get_page_number($wp_query)){

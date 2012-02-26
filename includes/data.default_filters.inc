@@ -173,17 +173,13 @@ function qw_filter_post_id($filter)
 {
   ob_start();
   ?>
-  <p>
-    Comma separated list of post ids:<br />
-    <input type='text' name="<?php print $filter['form_prefix']; ?>[post_ids]" value='<?php print $filter['values']['post_ids']; ?>' />
-  </p>
-  <p>
-    Compare: <br />
-    <select name="<?php print $filter['form_prefix']; ?>[compare]">
-      <option value="post__in" <?php if($filter['values']['compare'] == "post__in") { print 'selected="selected"';} ?>>Only these posts</option>
-      <option value="post__not_in" <?php if($filter['values']['compare'] == "post__not_in") { print 'selected="selected"';} ?>>Not these posts</option>
-    </select>
-  </p>
+  <input type='text' name="<?php print $filter['form_prefix']; ?>[post_ids]" value='<?php print $filter['values']['post_ids']; ?>' />
+
+  <p class="description">How to treat these post IDs.</p>
+  <select name="<?php print $filter['form_prefix']; ?>[compare]">
+    <option value="post__in" <?php if($filter['values']['compare'] == "post__in") { print 'selected="selected"';} ?>>Only these posts</option>
+    <option value="post__not_in" <?php if($filter['values']['compare'] == "post__not_in") { print 'selected="selected"';} ?>>Not these posts</option>
+  </select>
   <?php
   return ob_get_clean();
 }

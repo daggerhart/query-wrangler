@@ -1,5 +1,23 @@
 <?php
+/*
+ * Editor themes
+ */
+function qw_all_edit_themes(){
+  $themes = apply_filters('qw_edit_themes', array());
+  return $themes;
+}
+/*
+ * Basic Settings
+ */
+function qw_all_basic_settings(){
+  $basics = apply_filters('qw_basics', array());
 
+  foreach($basics as $hook_key => $basic){
+    $basics[$hook_key]['form_prefix'] = 'qw-query-options['.$basic['option_type'].']';
+    $basics[$hook_key]['hook_key'] = $hook_key;
+  }
+  return $basics;
+}
 /*
  * Fields Hook
  */
@@ -80,7 +98,7 @@ function qw_all_sort_options(){
     // maintain hook's key
     $sort_options[$type]['hook_key'] = $type;
   }
-
+  
   // sort them by title
   $titles = array();
   foreach ($sort_options as $key => $sort) {
@@ -104,6 +122,15 @@ function qw_all_post_statuses(){
  */
 function qw_all_styles(){
   $styles = apply_filters('qw_styles', array());
+
+  foreach($styles as $hook_key => $style){
+    $styles[$hook_key]['hook_key'] = $hook_key;
+    $styles[$hook_key]['form_prefix'] = 'qw-query-options[display]['.$hook_key.'_settings]';
+
+    if(!isset($style['settings_key'])){
+      $styles[$hook_key]['settings_key'] = $hook_key.'_settings';
+    }
+  }
   return $styles;
 }
 

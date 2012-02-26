@@ -65,7 +65,7 @@ function qw_default_sort_options($sort_options){
     'type' => 'ID',
   );
   $sort_options['post_modified'] = array(
-    'title' => 'Modified Date',
+    'title' => 'Date Modified',
     'description' => 'Date content was last modified.',
     'type' => 'modified',
   );
@@ -108,10 +108,7 @@ function qw_form_default_sort_order_options($sort)
   ob_start();
   ?>
     <!-- sort options -->
-    <p><strong>Order by <?php print $sort['title']; ?>: </strong></p>
-    <p class="description"><?php print $sort['description']; ?></p>
-
-    <p>Select how to order the results.</p>
+    <label class="qw-label">Order by <?php print $sort['title']; ?>:</label>
     <select name="<?php print $sort['form_prefix']; ?>[order_value]">
       <?php
         foreach ($sort['order_options'] as $value => $label)
@@ -124,6 +121,7 @@ function qw_form_default_sort_order_options($sort)
         }
       ?>
     </select>
+    <p class="description">Select how to order the results.</p>
   <?php
   return ob_get_clean();
 }
