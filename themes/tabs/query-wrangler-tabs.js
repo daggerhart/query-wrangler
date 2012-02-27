@@ -142,7 +142,7 @@ jQuery(document).ready(function(){
   QueryWrangler.toggle_empty_lists();
   QueryWrangler.update_weights();
 
-  jQuery('.qw-query-title').click(function(){
+  jQuery('#qw-query-admin-options-wrap').delegate('.qw-query-title', 'click', function(){
     var id = jQuery(this).attr('title');
     var dialog_title = jQuery(this).text();
 
@@ -159,7 +159,7 @@ jQuery(document).ready(function(){
     });
   });
 
-  jQuery('.qw-remove').click(function(){
+  jQuery('#qw-query-admin-options-wrap').delegate('.qw-remove', 'click', function(){
     jQuery(this).parent().parent().remove();
     QueryWrangler.toggle_empty_lists();
     QueryWrangler.update_weights();

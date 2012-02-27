@@ -250,7 +250,7 @@ function qw_form_image_attachment($field)
   ?>
     <!-- image display -->
     <label class="qw-label">Number of items to show:</label>
-    <input class="qw-text-short"
+    <input class="qw-text-short qw-title-ignore"
            type="text"
            name='<?php print $field['form_prefix']; ?>[image_display_count]'
            value="<?php print ($field['values']['image_display_count']) ? $field['values']['image_display_count']: 0;?>" />
@@ -282,7 +282,7 @@ function qw_form_file_attachment($field)
   ?>
     <!-- file display -->
       <label class="qw-label">Number of items to show:</label>
-      <input class="qw-text-short"
+      <input class="qw-text-short qw-title-ignore"
              type="text"
              name='<?php print $field['form_prefix']; ?>[file_display_count]'
              value="<?php print ($field['values']['file_display_count']) ? $field['values']['file_display_count']: 0;?>" />

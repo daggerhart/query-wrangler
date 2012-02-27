@@ -83,7 +83,8 @@ function qw_row_style_posts_settings()
   ob_start();
   ?>
     <p class="description">Select the amount of the post to be shown.</p>
-    <select name="qw-query-options[display][post_settings][size]">
+    <select class="qw-title-ignore"
+            name="qw-query-options[display][post_settings][size]">
       <option value="complete"
               <?php if($display['post_settings']['size'] == "complete") { print 'selected="selected"';} ?>>
         Complete Post

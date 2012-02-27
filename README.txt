@@ -16,9 +16,13 @@ Query Wrangler's interface is highly intuitive way to create queries and will be
 
 This plugin will bring extreme flexibility to WordPress users with its ability to create custom queries using the WP_Query class with a user interface.
 
+Additional Plugins
+
+* [Query Slideshow](http://wordpress.org/extend/plugins/query-slideshow/ "Query Slideshow") - Turn your queries into slideshows using jquery.cycle
+
 Some examples of how you would use this plugin include:
 
-* Create a list of pages or posts with a specific category or tag
+* Create a list of pages or posts within a specific category or tag
 * Create an image gallery
 * Modify the way your category pages look
 * Create a category list widget with custom sorting
@@ -54,7 +58,7 @@ Select a category or multiple categories to override.   Save the query, then vis
 
 == Changelog ==
 
-= 1.5beta =
+= 1.5rc1 =
 
  * Major API enhancements
  * New simpler editor theme
@@ -111,4 +115,4 @@ Select a category or multiple categories to override.   Save the query, then vis
 
 == Upgrade Notice ==
 
-1.5beta API enhancements & UI improvement
+1.5rc1 API enhancements & UI improvement

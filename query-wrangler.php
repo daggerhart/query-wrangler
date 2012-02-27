@@ -1,4 +1,5 @@
-<?php /*
+<?php
+/*
 
 ******************************************************************
 
@@ -8,7 +9,7 @@ Plugin URI:        http://www.widgetwrangler.com/query-wrangler
 Description:       Query Wrangler provides an intuitive interface for creating complex WP queries as pages or widgets. Based on Drupal Views.
 Author:            Jonathan Daggerhart, Forrest Livengood
 Author URI:        http://www.websmiths.co
-Version:           1.5beta
+Version:           1.5rc1
 
 ******************************************************************
 
@@ -82,6 +83,7 @@ function qw_init(){
         add_action( 'admin_enqueue_scripts', 'qw_admin_js' );
       }
 
+      // list page
       if(empty($_GET['edit'])){
         add_action( 'admin_enqueue_scripts', 'qw_admin_list_js' );
       }
@@ -117,7 +119,6 @@ function qw_menu()
 }
 // add menu very last so we don't get replaced by another menu item
 add_action( 'admin_menu', 'qw_menu', 9999);
-
 
 /*
  * Shortcode support for all queries

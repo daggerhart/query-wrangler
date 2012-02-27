@@ -76,7 +76,7 @@ QueryWrangler.set_setting_title = function(){
   //gather all info
   var form = jQuery('#'+QueryWrangler.current_form_id);
   var settings = jQuery('div[title='+QueryWrangler.current_form_id+']');
-  var fields = form.find('input[type=text],input[type=checkbox],select,textarea,input[type=hidden]').not('.qw-weight');
+  var fields = form.find('input[type=text],input[type=checkbox],select,textarea,input[type=hidden]').not('.qw-weight').not('.qw-title-ignore');
   var new_title = [];
   var title_target = settings.children('.qw-setting-value');
 
@@ -203,8 +203,7 @@ QueryWrangler.button_update = function(dialog){
   }
   // clear the current form id
   QueryWrangler.current_form_id = '';
-  // display style settings
-  QueryWrangler.style_settings_toggle();
+
   // preview
   if(jQuery('#live-preview').is(':checked')){
     QueryWrangler.get_preview();
@@ -245,6 +244,7 @@ QueryWrangler.sortable_list_build = function(element){
       modal: true,
       width: '60%',
       height: 440,
+      title: jQuery(element).text(),
       close: function() {
         QueryWrangler.sortable_list_destroy(this);
       },
@@ -313,41 +313,40 @@ jQuery(document).ready(function(){
     QueryWrangler.sortable_list_build(this);
   });
 
-  jQuery('#qw-query-admin-options-wrap')
-    .delegate('.qw-query-title', 'click', function(){
-      // backup the form
-      QueryWrangler.form_backup = jQuery('form#qw-edit-query-form').serialize();
+  jQuery('#qw-query-admin-options-wrap').delegate('.qw-query-title', 'click', function(){
+    // backup the form
+    QueryWrangler.form_backup = jQuery('form#qw-edit-query-form').serialize();
 
-      QueryWrangler.current_form_id = jQuery(this).attr('title');
-      var dialog_title = jQuery(this).text().split(':');
+    QueryWrangler.current_form_id = jQuery(this).attr('title');
+    var dialog_title = jQuery(this).text().split(':');
 
-      jQuery('#'+QueryWrangler.current_form_id).dialog({
-        modal: true,
-        width: '60%',
-        height: 440,
-        title: dialog_title[0],
-        resizable: false,
-        close: function() {
+    jQuery('#'+QueryWrangler.current_form_id).dialog({
+      modal: true,
+      width: '60%',
+      height: 440,
+      title: dialog_title[0],
+      resizable: false,
+      close: function() {
+        QueryWrangler.restore_form(this);
+        QueryWrangler.button_cancel();
+      },
+      buttons: [{
+        text: 'Update',
+        click: function() {
+          QueryWrangler.restore_form(this);
+          QueryWrangler.button_update(this);
+        }
+      },{
+        text: 'Cancel',
+        click: function() {
           QueryWrangler.restore_form(this);
           QueryWrangler.button_cancel();
-        },
-        buttons: [{
-          text: 'Update',
-          click: function() {
-            QueryWrangler.restore_form(this);
-            QueryWrangler.button_update(this);
-          }
-        },{
-          text: 'Cancel',
-          click: function() {
-            QueryWrangler.restore_form(this);
-            QueryWrangler.button_cancel();
-          }
-        }]
-      });
+        }
+      }]
+    });
   });
 
-  jQuery('.qw-remove').click(function(){
+  jQuery('body.wp-admin').delegate('.qw-remove', 'click', function(){
     var title = jQuery(this).closest('.ui-dialog-content').attr('id');
     // remove dialog
     jQuery(this).closest('.ui-dialog').remove();
