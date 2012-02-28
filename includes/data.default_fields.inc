@@ -143,6 +143,12 @@ add_filter('qw_fields', 'qw_default_fields');
  *   $field: field values
  */
 /*
+ * Post Meta form settings
+ */
+function qw_get_post_meta($post, $field){
+  return get_post_meta($post->ID, $field['meta_key'], true);
+}
+/*
  * Author output callback
  */
 function qw_get_the_author($post, $field){

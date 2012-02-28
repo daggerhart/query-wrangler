@@ -338,12 +338,15 @@ function qw_make_fields_rows(&$wp_query, $options)
         // get field details from all fields list
         $field_defaults = $all_fields[$field_settings['type']];
 
+        // merge default data with values
+        $field = array_merge($field_defaults, $field_settings);
+
         // look for callback
         if(isset($field_defaults['output_callback']))
         {
           // callbacks with token arguments
           if ($field_defaults['output_arguments']){
-            $rows[$i]['fields'][$field_name]['output'].= $field_defaults['output_callback']($this_post, $field_settings);
+            $rows[$i]['fields'][$field_name]['output'].= $field_defaults['output_callback']($this_post, $field);
           }
           // normal callback w/o arguments
           else {
@@ -612,10 +615,4 @@ function qw_get_post_images($post_id)
 
 				return $sorted;
 		}
-}
-/*
- * Post Meta form settings
- */
-function qw_get_post_meta($post, $field){
-  return get_post_meta($post->ID, $field['meta_key'], true);
 }
