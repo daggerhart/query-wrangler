@@ -128,10 +128,10 @@ function qw_edit_query_form(){
     // content is the query_edit page
     'content' => theme('query_edit', $edit_args)
   );
-  
+
   // add view link for pages
   if($row->type == 'page' && isset($row->path)){
-    $admin_args['title'].= ' <a class="add-new-h2" target="_blank" href="'.get_bloginfo('wpurl').$row->path.'">View</a>';
+    $admin_args['title'].= ' <a class="add-new-h2" target="_blank" href="'.get_bloginfo('wpurl').'/'.$row->path.'">View</a>';
   }
 
   // include the edit form

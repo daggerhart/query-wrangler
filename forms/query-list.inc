@@ -132,7 +132,7 @@ class Query_Wrangler_List_Table extends WP_List_Table
         );
         // pages
         if($item['type'] == 'page'){
-          $actions['view'] = '<a href="'.get_bloginfo('wpurl').$item['path'].'">View</a>';
+          $actions['view'] = '<a href="'.get_bloginfo('wpurl').'/'.$item['path'].'">View</a>';
         }
 
         //Return the title contents
