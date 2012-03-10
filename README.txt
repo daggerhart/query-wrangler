@@ -58,7 +58,7 @@ Select a category or multiple categories to override.   Save the query, then vis
 
 == Changelog ==
 
-= 1.5rc1 =
+= 1.5rc2 =
 
  * Fix: meta field returning array
  * Fix: page links missing starting slash
