@@ -71,6 +71,22 @@ function qw_get_page_op()
   }
   return $op;
 }
+
+/*
+ * Handle the qw path for pages
+ */
+function qw_get_path(){
+  global $wpdb;
+
+  // Look at the requested uri w/o paginiation involved
+  $dirty_path = explode('/page/', $_SERVER['REQUEST_URI']);
+
+  // Clean the result for DB
+  $path = $wpdb->escape(ltrim($dirty_path[0],'/'));
+
+  return $path;
+}
+
 /*
  * Query pages
  */
@@ -99,8 +115,8 @@ function qw_query_pages_handler()
     // We'll need to override query options
     $options_override = array();
 
-    // Clean the result for DB
-    $path = $wpdb->escape($wp_query->query['pagename']);
+    // get current page query-like path
+    $path = qw_get_path();
 
     // fix the query paging
     if($paged = qw_get_page_number($wp_query)){

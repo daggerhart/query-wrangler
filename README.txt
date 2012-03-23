@@ -58,6 +58,10 @@ Select a category or multiple categories to override.   Save the query, then vis
 
 == Changelog ==
 
+= 1.5rc3 =
+
+ * Fix: bug in looking for a query page's path
+
 = 1.5rc2 =
 
  * Fix: meta field returning array
@@ -120,4 +124,4 @@ Select a category or multiple categories to override.   Save the query, then vis
 
 == Upgrade Notice ==
 
-1.5rc2 bug fixes
+1.5rc3 Fixed major bug with query page paths not working correctly.
