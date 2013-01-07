@@ -44,12 +44,8 @@ function qw_edit_theme_tabs_css(){
 function qw_edit_theme_tabs_js(){
   wp_enqueue_script('qw-admin-theme-tabs',
                   plugins_url('/themes/tabs/query-wrangler-tabs.js', dirname(__FILE__)),
-                  array('jquery-ui-core',
-                        'jquery-ui-sortable',
-                        'jquery-ui-tabs',
-                        'jquery-ui-accordion',
-                        'jquery-ui-dialog'),
-                  QW_VERSION);
+                  array(),
+                  QW_VERSION, true);
 }
 
 /*
@@ -70,10 +66,6 @@ function qw_edit_theme_views_js(){
   // my js script
   wp_enqueue_script('qw-edit-theme-views',
                   plugins_url('/themes/views/query-wrangler-views.js', dirname(__FILE__) ),
-                  array('jquery-ui-core',
-                        'jquery-ui-sortable',
-                        'jquery-ui-tabs',
-                        'jquery-ui-accordion',
-                        'jquery-ui-dialog'),
-                  QW_VERSION);
+                  array(),
+                  QW_VERSION, true);
 }

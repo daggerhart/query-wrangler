@@ -90,7 +90,7 @@ QueryWrangler.add_item = function(){
       }
   });
   QueryWrangler.theme_accordions();
-  jQuery(this).dialog('close');
+  //jQuery(this).dialog('close');
 }
 
 QueryWrangler.theme_accordions = function(){

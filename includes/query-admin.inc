@@ -203,7 +203,7 @@ function qw_make_slug($string){
  * Custom for outputting text/html into a textarea
  */
 function qw_textarea($value){
-  return esc_textarea(str_replace("\\", "", $value));
+  return stripcslashes(esc_textarea(str_replace("\\", "", $value)));
 }
 
 /*
@@ -233,19 +233,39 @@ function qw_admin_list_js(){
   wp_enqueue_script('qw-admin-list-js',
                   plugins_url('/js/query-wrangler-list.js', dirname(__FILE__)),
                   array(),
-                  QW_VERSION);
+                  QW_VERSION, true);
 }
 // Base JS
 function qw_admin_js(){
-  wp_enqueue_script('qw-admin-js',
-                  plugins_url('/js/query-wrangler.js', dirname(__FILE__)),
-                  array('jquery-ui-core'),
-                  QW_VERSION);
+  //// remove whatever wordpress is doing
+  //wp_deregister_script('jquery');
+  //wp_deregister_script('jquery-ui-core');
+  //wp_deregister_script('jquery-ui-dialog');
+  //wp_deregister_script('jquery-ui-accordion');
+  //wp_deregister_script('jquery-ui-draggable');
+  //wp_deregister_script('jquery-ui-droppable');
+  //
+  //// add a more controlled source
+  //wp_register_script('jquery', ("http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"), false, '1.7.2');
+  //wp_enqueue_script('jquery');
+  //wp_register_script('jquery-ui-core', ("http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.24/jquery-ui.min.js"), false, '1.8.24');
+  //wp_enqueue_script('jquery-ui-core');
+  
+  
   // jquery unserialize form
   wp_enqueue_script('qw-unserialize-form',
                   plugins_url('/js/jquery.unserialize-form.js', dirname(__FILE__)),
                   array(),
-                  QW_VERSION);
+                  QW_VERSION, true);
+  wp_enqueue_script('jquery-ui-core', false, array('jquery'));
+  wp_enqueue_script('jquery-ui-accordion');
+  wp_enqueue_script('jquery-ui-dialog');
+  wp_enqueue_script('jquery-ui-sortable');
+  wp_enqueue_script('qw-admin-js',
+                  plugins_url('/js/query-wrangler.js', dirname(__FILE__)),
+                  array('jquery-ui-core'),
+                  QW_VERSION, true);
+  
   $data = qw_edit_json();
   wp_localize_script( 'qw-admin-js',
                       'QueryWrangler',

@@ -58,6 +58,26 @@ Select a category or multiple categories to override.   Save the query, then vis
 
 == Changelog ==
 
+= 1.5rc8 =
+
+ * Fix: Fixing sortable jquery ui issue.  QW UI working w/ WP 3.5
+ 
+= 1.5rc7 =
+
+ * Fix: No longer relying on external jquery sources, working to fix views ui
+ 
+= 1.5rc6 =
+
+ * Fix: WP update broke jquery and jquery ui. now relying on external sources
+ 
+= 1.5rc5 =
+
+ * Fix: bug, javascript sometimes enqueuing in wrong order (Google Libraries)
+
+= 1.5rc4 =
+
+ * Fix: bug, custom label and rewrite output fields not showing up.
+
 = 1.5rc3 =
 
  * Fix: bug in looking for a query page's path
@@ -124,4 +144,4 @@ Select a category or multiple categories to override.   Save the query, then vis
 
 == Upgrade Notice ==
 
-1.5rc3 Fixed major bug with query page paths not working correctly.
+1.5rc8 Fixing sortable

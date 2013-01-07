@@ -120,8 +120,7 @@ ul.qw-field-tokens-list li {
 .qw-sort-filter-name,
 .qw-sort-sort-name,
 .qw-hidden,
-.qw-item-form .qw-setting-header,
-.qw-field-options-hidden {
+.qw-item-form .qw-setting-header {
   display: none;
 }
 

@@ -88,7 +88,9 @@ QueryWrangler.set_setting_title = function(){
   // loop through the fields
   jQuery.each(fields, function(i, field){
     // select
-    if (jQuery(field).is('select')){
+    if (jQuery(field).is('select') &&
+        jQuery(field).val() != '!=')
+    {
       new_title.push( jQuery(field).children('option[value='+jQuery(field).val()+']').text() );
     }
     // text field
@@ -148,19 +150,23 @@ QueryWrangler.add_item = function(dialog){
       }
   });
   QueryWrangler.theme_accordions();
-  jQuery(dialog).dialog('close');
+  //jQuery(dialog).dialog('close');
 }
 
 QueryWrangler.theme_accordions = function(){
-  jQuery('#display-style-settings, #row-style-settings, .qw-sortable-list')
-    .accordion('destroy');
+  //console.log(jQuery('#display-style-settings, #row-style-settings, .qw-sortable-list'));
+  if (jQuery('#display-style-settings, #row-style-settings, .qw-sortable-list').hasClass('is-accordion')){
+    jQuery('#display-style-settings, #row-style-settings, .qw-sortable-list')
+      .removeClass('is-accordion')
+      .accordion('destroy');
+  }
   jQuery('#display-style-settings, #row-style-settings, .qw-sortable-list')
     .accordion({
       header: '> div > .qw-setting-header',
       collapsible: true,
       active: false,
       autoHeight: false
-  });
+  }).addClass('is-accordion');
 }
 
 QueryWrangler.toggle_empty_lists = function(){
@@ -213,18 +219,18 @@ QueryWrangler.button_update = function(dialog){
     QueryWrangler.changes = true;
     jQuery('.qw-changes').show();
   }
-  jQuery(this).dialog('close');
+  //jQuery(dialog).dialog('close');
 }
 /*
  * Cancel button
  */
-QueryWrangler.button_cancel = function(){
+QueryWrangler.button_cancel = function(dialog){
   if(QueryWrangler.current_form_id != ''){
     // set backup_form
     jQuery('form#qw-edit-query-form').unserializeForm(QueryWrangler.form_backup);
   }
 
-  jQuery(this).dialog('close');
+  //jQuery(dialog).dialog('close');
 }
 QueryWrangler.sortable_list_build = function(element){
   QueryWrangler.current_form_id = jQuery(element).closest('.qw-query-admin-options').attr('id');
@@ -328,7 +334,7 @@ jQuery(document).ready(function(){
       resizable: false,
       close: function() {
         QueryWrangler.restore_form(this);
-        QueryWrangler.button_cancel();
+        QueryWrangler.button_cancel(this);
       },
       buttons: [{
         text: 'Update',
@@ -340,10 +346,10 @@ jQuery(document).ready(function(){
         text: 'Cancel',
         click: function() {
           QueryWrangler.restore_form(this);
-          QueryWrangler.button_cancel();
+          QueryWrangler.button_cancel(this);
         }
       }]
-    });
+    }).dialog('open');
   });
 
   jQuery('body.wp-admin').delegate('.qw-remove', 'click', function(){
