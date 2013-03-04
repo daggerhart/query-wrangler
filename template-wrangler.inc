@@ -55,6 +55,8 @@ function theme($template_name = '', $arguments = array())
       $template = call_user_func($preprocess, $template);
     }
 
+    $arguments = $template['arguments'];
+
     // if no default_path, set to function execution path
     if(!isset($template['default_path']))
     {
@@ -112,11 +114,12 @@ function theme($template_name = '', $arguments = array())
       }
 
       // easier to read this way
-      $theme_path = TEMPLATEPATH.'/'.$suggestion;
+      $theme_path = locate_template($suggestion);
       $default_path = rtrim($template['default_path']).'/'.$suggestion;
 
+      
       // look in the theme folder
-      if(file_exists($theme_path)){
+      if(!empty($theme_path)){
         $found_path = $theme_path;
         break;
       }
