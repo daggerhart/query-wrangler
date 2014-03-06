@@ -65,8 +65,10 @@ function qw_form_ajax()
   $item['form_prefix'] = qw_make_form_prefix($handler, $item['name']);
 
   // handler item's form
-  if (function_exists($item['form_callback'])){
-    $item['form'] = $item['form_callback']($item);
+  if (isset($item['form_callback']) && function_exists($item['form_callback'])){
+    ob_start();
+      $item['form_callback']($item);
+    $item['form'] = ob_get_clean();
   }
   // provide template wrangler support
   else if (isset($item['form_template'])){

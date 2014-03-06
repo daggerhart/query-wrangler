@@ -3,6 +3,7 @@
  * Handle the display of pages and actions
  */
 function qw_page_handler(){
+  $redirect = false;
   // handle actions
   if(isset($_GET['action']))
   {
@@ -50,12 +51,12 @@ function qw_page_handler(){
     qw_edit_query_form();
   }
   // export a query
-  else if ($_GET['export'] && is_numeric($_GET['export'])){
+  else if (isset($_GET['export']) && is_numeric($_GET['export'])){
     qw_export_page();
   }
   // else we need a list of queries
   else {
-    include QW_PLUGIN_DIR.'/forms/query-list.inc';
+    include QW_PLUGIN_DIR.'/admin/page-query-list.inc';
     qw_list_queries_form();
   }
 }
@@ -67,15 +68,13 @@ function qw_edit_query_form(){
   global $wpdb;
   $table_name = $wpdb->prefix."query_wrangler";
   $query_id = $_GET['edit'];
-  $sql = "SELECT name,type,data,path FROM ".$table_name." WHERE id = ".$query_id." LIMIT 1";
+  $sql = "SELECT name,slug,type,data,path FROM ".$table_name." WHERE id = ".$query_id." LIMIT 1";
   $row = $wpdb->get_row($sql);
 
   $options = qw_unserialize($row->data);
 
   // preprocess existing handlers
-  $filters = qw_preprocess_handlers('filter', $options['args']['filters']);
-  $fields  = qw_preprocess_handlers('field', $options['display']['field_settings']['fields']);
-  $sorts   = qw_preprocess_handlers('sort', $options['args']['sorts']);
+  $handlers = qw_preprocess_handlers($options);
 
   $theme = get_option('qw_edit_theme');
   if($theme == ""){
@@ -86,30 +85,31 @@ function qw_edit_query_form(){
     // editor theme
     'theme' => $theme,
     // query data
-    'query_id' => $query_id,
-    'options' => $options,
-    'args'    => $options['args'],
-    'display' => $options['display'],
+    'query_id'  => $query_id,
+    'options'   => $options,
+    'args'      => $options['args'],
+    'display'   => array_map('stripslashes_deep',$options['display']),
     'query_name' => $row->name,
     'query_type' => $row->type,
-    'query_page_title' => $options['display']['title'],
-    'filters' => $filters,
-    'fields' => $fields,
-    'sorts' => $sorts,
+    'query_page_title' => isset($options['display']['title']) ? $options['display']['title'] : '',
+    'basics'    => qw_all_basic_settings(),
+    'filters'   => $handlers['filter']['items'],
+    'fields'    => $handlers['field']['items'],
+    'sorts'     => $handlers['sort']['items'],
 
     // all datas
     'post_statuses' => qw_all_post_statuses(),
-    'styles' => qw_all_styles(),
-    'row_styles' => qw_all_row_styles(),
+    'styles'        => qw_all_styles(),
+    'row_styles'    => qw_all_row_styles(),
     'row_complete_styles' => qw_all_row_complete_styles(),
-    'page_templates' => get_page_templates(),
-    'post_types' => qw_all_post_types(),
-    'pager_types' => qw_all_pager_types(),
-    'category_ids' => get_all_category_ids(),
-    'tags' => get_tags(array('hide_empty' => false)),
-    'all_filters' => qw_all_filters(),
-    'all_fields' => qw_all_fields(),
-    'all_sorts' => qw_all_sort_options(),
+    'page_templates'=> get_page_templates(),
+    'post_types'    => qw_all_post_types(),
+    'pager_types'   => qw_all_pager_types(),
+    'category_ids'  => get_all_category_ids(),
+    'tags'          => get_tags(array('hide_empty' => false)),
+    'all_filters'   => qw_all_filters(),
+    'all_fields'    => qw_all_fields(),
+    'all_sorts'     => qw_all_sort_options(),
   );
 
   // Page Queries
@@ -124,7 +124,7 @@ function qw_edit_query_form(){
 
   // admin wrapper arguments
   $admin_args = array(
-    'title' => 'Edit query <em>'.$edit_args['query_name'].'</em>',
+    'title' => 'Edit query <em>'.$edit_args['query_name'].'</em> <sup>'.$row->slug.'</sup>',
     // content is the query_edit page
     'content' => theme('query_edit', $edit_args)
   );
@@ -143,12 +143,14 @@ function qw_edit_query_form(){
  */
 function qw_save_settings($post){
   update_option('qw_edit_theme', $post['qw-theme']);
+  update_option('qw_widget_theme_compat', $post['qw-widget-theme-compat']);
 }
 function qw_settings_page()
 {
   $settings_args = array(
     'theme' => get_option('qw_edit_theme'),
     'edit_themes' => qw_all_edit_themes(),
+    'widget_theme_compat' => get_option('qw_widget_theme_compat'),
   );
   $args = array(
     'title' => 'Query Wrangler Settings',

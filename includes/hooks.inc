@@ -1,5 +1,21 @@
 <?php
 /*
+ * All Handlers
+ *
+ * Handlers are groups of items that can be added and removed from a query
+ * eg: filters, sorts, fields
+ */
+function qw_all_handlers(){
+  $handlers = apply_filters('qw_handlers', array());
+  foreach ($handlers as $hook_key => $handler) {
+    $handlers[$hook_key]['hook_key'] = $hook_key;
+    // adjust form prefix
+    $handlers[$hook_key]['form_prefix'] = 'qw-query-options'.$handlers[$hook_key]['form_prefix'];
+    $handlers[$hook_key]['all_items'] = $handler['all_callback']();
+  }
+  return $handlers;
+}
+/*
  * Editor themes
  */
 function qw_all_edit_themes(){
@@ -11,7 +27,7 @@ function qw_all_edit_themes(){
  */
 function qw_all_basic_settings(){
   $basics = apply_filters('qw_basics', array());
-
+  
   foreach($basics as $hook_key => $basic){
     $basics[$hook_key]['form_prefix'] = 'qw-query-options['.$basic['option_type'].']';
     $basics[$hook_key]['hook_key'] = $hook_key;

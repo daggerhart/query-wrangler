@@ -35,14 +35,31 @@ class Query_Wrangler_Widget extends WP_Widget {
     // Create the widget. 
     $this->WP_Widget( 'query-wrangler-widget', __('QW Widget', 'querywranglerwidget'), $widget_ops, $control_ops );
   }
+  
   /**
    * How to display the widget on the screen.
    */
   function widget( $args, $instance )
   {
     extract( $args );
-    print qw_execute_query($instance['qw-widget']);
+    $output = '';
+    $options = qw_generate_query_options($instance['qw-widget']);
+		$widget_content = qw_execute_query($instance['qw-widget']);
+    
+    if (!get_option('qw_widget_theme_compat')){
+      $output = $widget_content;
+    }
+    else {
+      $output = $before_widget;
+      // title
+			if ($options['display']['title']) {
+        $output.= $before_title . $options['display']['title'] . $after_title;
+      }
+      $output.= $widget_content.$after_widget;
+    }
+    print $output;
   }
+  
 	/**
 	 * Update the widget settings.
 	 */

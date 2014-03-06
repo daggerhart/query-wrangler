@@ -1,146 +1,270 @@
 <?php
 /*
- * Template Wrangler
+ * Template Wrangler 2.1 (previously 2.0)
  *
+ * version = 2.1
+ * version_safe = 2_1
+ * 
  * Functions
  * theme() - template some arguments
  *
+ * Changes:  2.1
+ *    - changed do_action_ref_array into apply_filters for
+ *        tw_pre_process_template
+ *        tw_pre_render_template
+ * 
  */
 
+// ensure we only load this test once
+// if ever there are 2 of the same version in separate plugins,
+// 		we won't define the same function twice
+if (!function_exists('tw_test_include_2_1')){
+	
+ /*
+  * Test function has unique function name
+  *
+  * Cases
+  *   - no previous version
+  *   - this version is less than another version
+  *   - this version is greater than another version
+  *   - this version is equal to another version
+  */
+function tw_test_include_2_1() {
+	$this_version = 2.1;
+	
+	// option key
+	$last_version = (float) get_option('templatewrangler_version', false);
+	$function_loaded = (function_exists('theme'));
+	$load_this_version = false;
+	
+  if (!$last_version || ($this_version > $last_version)) {
+    // - no previous version
+    // or
+    // - this version is greater than another version 
+    // make ours the new option
+    update_option('templatewrangler_version', $this_version);
+    
+    // if function hasn't loaded, use this version
+    if(!$function_loaded){
+      $load_this_version = true;
+    }
+    // else do nothing, function is already loaded
+  }
+  else if ($this_version == $last_version){
+    // - this version is equal to another version
+    // go ahead and load the first one that hits
+		if (!$function_loaded) {
+      $load_this_version = true;
+    }
+  }
+  //else if ($this_version < $last_version){
+      // - this version is less than another version
+      // do nothing
+  //}
+  
+	// else, this version is old and $load_this_version remains false
+	return $load_this_version;
+}
+
+} // end conditional test function
+
+// test unique version 
+if (tw_test_include_2_1()) {
+  
 /*
  * Main Templating function
  *
  * @param string $template_name The array key given when defining a new template
- * @param array  $arguments Array of variables to pass using key -> value pairs.  In the template file the key will be the variable name, eg $key
+ * @param array $arguments Array of variables to pass using key -> value pairs. In the template file the key will be the variable name, eg $key
  *
  * @return string Template HTML
  */
 function theme($template_name = '', $arguments = array())
 {
+	// we need an array
   if(is_null($arguments)){
     $arguments = array();
   }
-
+  
   // get all the hooks
-  $templates = tw_templates();
+  $tw_templates = tw_templates();
 
   // make sure given templates key exists
-  if(is_array($templates[$template_name]))
+  if(isset($tw_templates[$template_name]) && is_array($tw_templates[$template_name]))
   {
     // template we're using
-    $template = $templates[$template_name];
-
-    // get theme folder name
-    $theme_folder = explode("/", TEMPLATEPATH);
-    $theme_folder = array_pop($theme_folder);
-
+    $tw_template = $tw_templates[$template_name];
+    $tw_template['name'] = $template_name;
+		
     // if not arguments array given, make empty array for future actions
-    if(!is_array($template['arguments'])){
-      $template['arguments'] = array();
+    if(!isset($tw_template['arguments']) || !is_array($tw_template['arguments'])){
+      $tw_template['arguments'] = array();
     }
 
     // merge passed arguments into array overriding defaults
-    $arguments = array_merge($template['arguments'], $arguments);
     // update the template arguments for preprocess functions
-    $template['arguments'] = $arguments;
-
-    // if there is a theme based preprocess function, run it on the arguments
-    if(function_exists($theme_folder.'_'.$template_name.'_preprocess')){
-      $preprocess = $theme_folder.'_'.$template_name.'_preprocess';
-      $template = call_user_func($preprocess, $template);
-    }
-    // else if there is a default preprocess function, run it on the arguments
-    else if(function_exists('theme_'.$template_name.'_preprocess')){
-      $preprocess = 'theme_'.$template_name.'_preprocess';
-      $template = call_user_func($preprocess, $template);
-    }
-
-    // if no default_path, set to function execution path
-    if(!isset($template['default_path']))
-    {
-      // get function caller backtrace
-      $bt = debug_backtrace();
-      $caller = array_shift($bt);
-
-      // set the function caller's file
-      // @TODO: instead, find a way to set the default path to where the hook was set
-      $template['default_path'] = dirname($caller['file']);
-    }
-
-    // if no templates were given, look for theme functions
-    if(!isset($template['files']))
-    {
-      // look for theme folder name name based function
-      if(function_exists($theme_folder.'_'.$template_name)){
-        // function found, execute it and return the results
-        return call_user_func_array($theme_folder.'_'.$template_name, $arguments);
-      }
-      // see if a function using the template name exists
-      else if(function_exists('theme_'.$template_name)){
-        // function found, execute it and return the results
-        return call_user_func_array('theme_'.$template_name, $arguments);
-      }
-    }
-    // else if given templates is not an array, make it one
-    else if(!is_array($template['files']))
-    {
-      $template['files'] = array($template['files']);
-    }
-
-    // loop through and find an existing suggested template
-    $found_path = '';
+    $tw_template['arguments'] = array_merge($tw_template['arguments'], $arguments);
     
-    foreach($template['files'] as $suggestion)
-    {
-      // look for an argument in template suggestions
-      if (preg_match('/\[.*\]/',$suggestion))
-      {
-        // we have arguments, lets build the possibilities
-        $search = array();
-        $replace = array();
-        foreach($arguments as $key => $value)
-        {
-          // only apply to strings and numerics
-          if(is_string($arguments[$key]) || is_numeric($arguments[$key])){
-            $search[] = '['.$key.']';
-            $replace[] = $value;
-          }
-        }
+    // allow other plugins to alter the template before processing
+    $tw_template = apply_filters('tw_pre_process_template', $tw_template);
+    
+		// theme functions return now if found
+    if ($theme = tw_process_template($tw_template)){
+			return $theme;
+		}
+    tw_find_template($tw_template);
 
-        // do the replacement
-        $suggestion = str_replace($search, $replace, $suggestion);
-      }
-
-      // easier to read this way
-      $theme_path = TEMPLATEPATH.'/'.$suggestion;
-      $default_path = rtrim($template['default_path']).'/'.$suggestion;
-
-      // look in the theme folder
-      if(file_exists($theme_path)){
-        $found_path = $theme_path;
-        break;
-      }
-      // look for file in default path
-      else if(file_exists($default_path)){
-        $found_path = $default_path;
-        break;
-      }
+    // for other means of processing or information
+    if (isset($tw_template['arguments']['tw_action']) && $tw_template['arguments']['tw_action'] == 'find_only'){
+      return $tw_template;
     }
 
     // proceed if file found
-    if($found_path != '')
+    if(isset($tw_template['found_path']) && $tw_template['found_path'] != '')
     {
+      // allow late modifications
+      apply_filters('tw_pre_render_template', $tw_template);
+
       // start output buffer
       ob_start();
 
         // turn arguments into variables
-        extract($arguments);
+        extract($tw_template['arguments']);
 
         // include the file
-        include $found_path;
+        include $tw_template['found_path'];
 
       // return output buffer
-      return ob_get_clean();
+      $theme = ob_get_clean();
+      return $theme;
+    }
+  }
+}
+
+/*
+ * Look for non-wordpress preprocess functions
+ */
+function tw_process_template(&$template){
+  // get theme folder name
+  $theme_folder = explode("/", STYLESHEETPATH);
+  $theme_folder = array_pop($theme_folder);
+
+  // if no default_path, set to function execution path
+  if(!isset($template['default_path']))
+  {
+    // get function caller backtrace
+    $bt = debug_backtrace();
+    $caller = array_shift($bt);
+
+    // set the function caller's file
+    // @TODO: instead, find a way to set the default path to where the hook was set
+    $template['default_path'] = dirname($caller['file']);
+  }
+  
+  // allow for including files
+  if (isset($template['includes']) && is_array($template['includes'])){
+    foreach ($template['includes'] as $include_file_location){
+      @include_once $include_file_location;
+    }
+  }
+  
+  // if there is a theme based preprocess function, run it on the arguments
+  if(function_exists($theme_folder.'_'.$template['name'].'_preprocess')){
+    $preprocess = $theme_folder.'_'.$template['name'].'_preprocess';
+    $template = call_user_func($preprocess, $template);
+  }
+  // else if there is a default preprocess function, run it on the arguments
+  else if(function_exists('theme_'.$template['name'].'_preprocess')){
+    $preprocess = 'theme_'.$template['name'].'_preprocess';
+    $template = call_user_func($preprocess, $template);
+  }
+  
+  // if no templates were given, look for theme functions
+  if(!isset($template['files']))
+  {
+    // look for theme folder name name based function
+    if(function_exists($theme_folder.'_'.$template['name'])){
+      // function found, execute it and return the results
+      return call_user_func_array($theme_folder.'_'.$template['name'], $template['arguments']);
+    }
+    // see if a function using the template name exists
+    else if(function_exists('theme_'.$template['name'])){
+      // function found, execute it and return the results
+      return call_user_func_array('theme_'.$template['name'], $template['arguments']);
+    }
+  }
+  // help clean up
+  // else if given templates is not an array, make it one
+  else if(!is_array($template['files']))
+  {
+    $template['files'] = array($template['files']);
+  }
+}
+
+/*
+ * Gather suggestions and look for existing file
+ */
+function tw_find_template(&$template){
+	
+  // loop through and find suggested templates
+  $found_path = '';
+  foreach($template['files'] as $suggestion)
+  {
+    $replace_count = 0;
+    $tokens_count = 0;
+    
+    // look for an argument in template suggestions
+    if (preg_match('/\[.*\]/',$suggestion))
+    {
+      $tokens_count = substr_count($suggestion, '[');
+      // we have arguments, lets build the possibilities
+      $search = array();
+      $replace = array();
+      foreach($template['arguments'] as $key => $value)
+      {
+        // only apply to strings and numerics
+        if(is_string($template['arguments'][$key]) || is_numeric($template['arguments'][$key])){
+          if (trim($template['arguments'][$key])){
+            $search[] = '['.$key.']';
+            $replace[] = $value;
+          }
+        }
+      }
+
+      // do the replacement
+      $suggestion = str_replace($search, $replace, $suggestion, $replace_count);
+    }
+    
+    // only accept a suggestion if all tokens were replaced
+    if ($tokens_count == 0 || ($replace_count > 0 && $tokens_count == $replace_count)){
+      $template['suggestions'][] = $suggestion;
+    }
+  }
+
+  // loop through suggestions and find existing template in theme path first
+  foreach($template['suggestions'] as $suggestion){
+    // easier to read this way
+    $theme_path = locate_template($suggestion, false, false);
+
+    // look in the theme folder
+    if(file_exists($theme_path)){
+      $template['found_path'] = $theme_path;
+      $template['found_suggestion'] = $suggestion;
+      break;
+    }
+  }
+
+  if (!isset($template['found_path'])){
+    // loop through suggestions and find existing template in default path
+    foreach($template['suggestions'] as $suggestion){
+      $default_path = rtrim($template['default_path']).'/'.$suggestion;
+
+      // look for file in default path
+      if(file_exists($default_path)){
+        $template['found_path'] = $default_path;
+        $template['found_suggestion'] = $suggestion;
+        break;
+      }
     }
   }
 }
@@ -155,29 +279,14 @@ function tw_templates(){
   return $templates;
 }
 
-/* very simple link function */
+// Very simple link theming function
 function theme_link($href, $text){
   return "<a href='$href'>$text</a>";
 }
 
-/*
- * Example template architecture
- *
- * @param $templates array Passed from the filter hook from WP
- *        $templates['function_name'] = array(
- *          'files' => array(
- *            'first-template-to-look-for.php',
- *            'second-template-to-look-for.php'
- *            ),
- *          'default_path' => '/folder/location/of/default/template',
- *          'arguments' => array(
- *            'argument-1' => 'argument-1's default value',
- *            'argument-2' => 'argument-2's default value',
- *          )
- *        )
- *
- *  @return array All template arrays filtered so far by Wordpress' filter hook
- */
+} // end version test
+
+
 /*
  * EXAMPLES
  *
@@ -217,7 +326,7 @@ function example_template($templates)
   // theme function example
   // since no template files are specified, it will attempt to run a function named theme_link()
   // it will look first for a funtion name THEME_FOLDER_NAME_link()
-  // example:  if your active theme is in a folder name my_theme, it will look for my_theme_link()
+  // example: if your active theme is in a folder name my_theme, it will look for my_theme_link()
   $templates['link'] = array(
     'default_path' => dirname(__FILE__),
     'arguments' => array(
@@ -248,8 +357,5 @@ function example_template_preprocess($template)
   return $template;
 }
 
-// example theme function
-function theme_link($href, $text){
-  return "<a href='$href'>$text</a>";
-}
 */
+

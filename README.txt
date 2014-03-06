@@ -3,7 +3,7 @@ Contributors: daggerhart, forrest.livengood
 Donate link: http://www.widgetwrangler.com/
 Tags: query, pages, widget, admin, widgets, administration, manage, views
 Requires at least: 3
-Tested up to: 3.3.1
+Tested up to: 3.7.1
 Stable tag: trunk
 
 Query Wrangler provides an intuitive interface for creating complex WP queries as pages or widgets. Based on Drupal Views.
@@ -15,6 +15,8 @@ This plugin lets you create new WP queries as pages or widgets.  It also allows 
 Query Wrangler's interface is highly intuitive way to create queries and will be second nature for any Drupal Views user.
 
 This plugin will bring extreme flexibility to WordPress users with its ability to create custom queries using the WP_Query class with a user interface.
+
+WARNING - Do not rely heavily on query pages unless you must.  They will be removed in future versions in favor of placing shortcodes on real WP Pages.
 
 Additional Plugins
 
@@ -43,7 +45,7 @@ The easiest way is to add it as a custom link in the Menus section of your site.
 
 = How do I use query shortcodes? =
 
-Easy, the code you're looking for is like this.   [query id=2] , where the number 2 is the query id.
+Easy, the code you're looking for is like this.   [query id=2] , where the number 2 is the query id. This can be found on the Query Wrangler page eside each query.
 
 = What are overrides and how do I use them? =
 
@@ -54,9 +56,70 @@ Select a category or multiple categories to override.   Save the query, then vis
 == Screenshots ==
 
 1. Drupal Views Editor Theme
-1. Tabs Editor Theme
 
 == Changelog ==
+
+= 1.5rc20 =
+
+* Updating template wrangler to use apply_filters instead of do_action_ref_array
+
+= 1.5rc19 =
+
+* Feature: New author filter
+
+= 1.5rc18 =
+
+* Fix: Pagination bug when using Page numbers.
+
+= 1.5rc17 =
+
+* Fix: post_parent filter
+
+= 1.5rc16 =
+
+* Feature: New taxonomies filter
+* Feature: Featured Image setting for "Image Attachment" field
+* Fix: Making js better
+* Fix: New handler item weight bug
+* Fix: New field tokens bug
+* Remove: tabs editor
+* Refactoring a lot
+
+= 1.5rc15 =
+
+* Compatibility issues with Widget Wrangler
+* Feature: Template suggestions in preview.
+
+= 1.5rc14 =
+
+* Fix: Child theme page templating
+* Fix: Comment disabling works on pages with shortcodes
+* Feature/Fix: Theme compatibility for widgets - enable in QW settings.
+
+= 1.5rc13 =
+
+* Fix: Shortcode & Widget paging - but can't have 2 independent pagers on 1 page yet.
+* Fix: Unserialize bug - http://wordpress.org/support/topic/bug-that-wipes-all-settings-of-query-after-excluding-fields-from-display?replies=2
+* Fix: 3.7 problem - according to - http://wordpress.org/support/topic/update-has-broken-site#post-4868397
+* Fix: Row style settings form bug 
+* More complete default query according to WP_Query defaults
+* Feature: PHP WP_Query in preview
+
+= 1.5rc12 =
+ 
+ * New page routing with hook parse_request
+
+= 1.5rc11 =
+ 
+ * Chasing WP 3.7 related bugs
+
+= 1.5rc10 =
+
+ * UI fixes and improvements.
+ 
+= 1.5rc9 =
+
+ * Fix: Wordpress 3.7 update redirecting from custom pages
 
 = 1.5rc8 =
 
@@ -144,4 +207,4 @@ Select a category or multiple categories to override.   Save the query, then vis
 
 == Upgrade Notice ==
 
-1.5rc8 Fixing sortable
+1.5rc20  Improvements to template wrangler for custom template suggestions

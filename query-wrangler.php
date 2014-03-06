@@ -9,7 +9,7 @@ Plugin URI:        http://www.widgetwrangler.com/query-wrangler
 Description:       Query Wrangler provides an intuitive interface for creating complex WP queries as pages or widgets. Based on Drupal Views.
 Author:            Jonathan Daggerhart, Forrest Livengood
 Author URI:        http://www.websmiths.co
-Version:           1.5rc8
+Version:           1.5rc20
 
 ******************************************************************
 
@@ -48,15 +48,53 @@ function qw_init_frontend(){
   }
   // Wordpress hooks
   include_once QW_PLUGIN_DIR.'/includes/hooks.inc';
-  include_once QW_PLUGIN_DIR.'/includes/data.defaults.inc';
-  include_once QW_PLUGIN_DIR.'/includes/data.default_basics.inc';
-  include_once QW_PLUGIN_DIR.'/includes/data.default_filters.inc';
-  include_once QW_PLUGIN_DIR.'/includes/data.default_fields.inc';
-  include_once QW_PLUGIN_DIR.'/includes/data.default_sorts.inc';
+  
+  include_once QW_PLUGIN_DIR.'/includes/handlers.inc';
+  
+  //include_once QW_PLUGIN_DIR.'/includes/data.defaults.inc';
+  
+  //include_once QW_PLUGIN_DIR.'/includes/data.default_basics.inc';
+  include_once QW_PLUGIN_DIR.'/includes/basics/display_title.inc';
+  include_once QW_PLUGIN_DIR.'/includes/basics/template_styles.inc';
+  include_once QW_PLUGIN_DIR.'/includes/basics/row_styles.inc';
+  include_once QW_PLUGIN_DIR.'/includes/basics/posts_per_page.inc';
+  include_once QW_PLUGIN_DIR.'/includes/basics/post_status.inc';
+  include_once QW_PLUGIN_DIR.'/includes/basics/offset.inc';
+  include_once QW_PLUGIN_DIR.'/includes/basics/header.inc';
+  include_once QW_PLUGIN_DIR.'/includes/basics/footer.inc';
+  include_once QW_PLUGIN_DIR.'/includes/basics/empty.inc';
+  include_once QW_PLUGIN_DIR.'/includes/basics/wrapper_settings.inc';
+  include_once QW_PLUGIN_DIR.'/includes/basics/page_path.inc';
+  include_once QW_PLUGIN_DIR.'/includes/basics/page_template.inc';
+  include_once QW_PLUGIN_DIR.'/includes/basics/pager.inc';
+  
+  include_once QW_PLUGIN_DIR.'/includes/fields/default_fields.inc';
+  include_once QW_PLUGIN_DIR.'/includes/fields/post_author.inc';
+  include_once QW_PLUGIN_DIR.'/includes/fields/post_author_avatar.inc';
+  include_once QW_PLUGIN_DIR.'/includes/fields/file_attachment.inc';
+  include_once QW_PLUGIN_DIR.'/includes/fields/image_attachment.inc';
+  include_once QW_PLUGIN_DIR.'/includes/fields/meta_value.inc';
+  
+  //include_once QW_PLUGIN_DIR.'/includes/data.default_filters.inc';
+  include_once QW_PLUGIN_DIR.'/includes/filters/author.inc';
+  include_once QW_PLUGIN_DIR.'/includes/filters/post_types.inc';
+  include_once QW_PLUGIN_DIR.'/includes/filters/post_id.inc';
+  include_once QW_PLUGIN_DIR.'/includes/filters/meta_key.inc';
+  include_once QW_PLUGIN_DIR.'/includes/filters/meta_key_value.inc';
+  include_once QW_PLUGIN_DIR.'/includes/filters/meta_value.inc';
+  include_once QW_PLUGIN_DIR.'/includes/filters/tags.inc';
+  include_once QW_PLUGIN_DIR.'/includes/filters/categories.inc';
+  include_once QW_PLUGIN_DIR.'/includes/filters/post_parent.inc';
+  include_once QW_PLUGIN_DIR.'/includes/filters/taxonomies.inc';
+  include_once QW_PLUGIN_DIR.'/includes/filters/taxonomy_relation.inc';
+  
+  include_once QW_PLUGIN_DIR.'/includes/sorts/default_sorts.inc';
+  
   // Necessary functions to show a query
   include_once QW_PLUGIN_DIR.'/includes/query.inc';
   include_once QW_PLUGIN_DIR.'/includes/theme.inc';
   include_once QW_PLUGIN_DIR.'/includes/pages.inc';
+  
 }
 function qw_init(){
   qw_init_frontend();
@@ -67,13 +105,13 @@ function qw_init(){
     include_once QW_PLUGIN_DIR.'/includes/query-admin.inc';
     include_once QW_PLUGIN_DIR.'/includes/query-admin-pages.inc';
     include_once QW_PLUGIN_DIR.'/includes/ajax.inc';
-    include_once QW_PLUGIN_DIR.'/includes/data.default_edit_themes.inc';
+    include_once QW_PLUGIN_DIR.'/includes/default_editors.inc';
 
     add_action( 'wp_ajax_nopriv_qw_form_ajax', 'qw_form_ajax' );
     add_action( 'wp_ajax_qw_form_ajax', 'qw_form_ajax' );
 
     // js
-    if($_GET['page'] == 'query-wrangler')
+    if(isset($_GET['page']) && $_GET['page'] == 'query-wrangler')
     {
       // edit page & not on export page
       if(!empty($_GET['edit']) &&
@@ -98,6 +136,8 @@ if (!is_admin()){
 add_action('admin_init', 'qw_init', 900);
 add_action('admin_init', 'qw_check_version', 901); // in query-admin.php
 add_action('admin_head', 'qw_admin_css'); // in query-admin.php
+// add menu very last so we don't get replaced by another menu item
+add_action( 'admin_menu', 'qw_menu', 9999);
 
 /*
  * All my hook_menu implementations
@@ -118,29 +158,18 @@ function qw_menu()
   $settings_page= add_submenu_page( 'query-wrangler', 'Settings', 'Settings', 'manage_options', 'qw-settings', 'qw_settings_page');
   //$debug_page  = add_submenu_page( 'query-wrangler', 'Debug', 'Debug', 'manage_options', 'qw-debug', 'qw_debug');
 }
-// add menu very last so we don't get replaced by another menu item
-add_action( 'admin_menu', 'qw_menu', 9999);
 
 /*
  * Shortcode support for all queries
  */
 function qw_single_query_shortcode($atts) {
-  $short_array = shortcode_atts(array('id' => ''), $atts);
+  $short_array = shortcode_atts(array('id' => '', 'slug' => ''), $atts);
   extract($short_array);
-
-  // get the query options
-  $options = qw_generate_query_options($id);
-
-  // get formatted query arguments
-  $args = qw_generate_query_args($options);
-
-  // set the new query
-  $wp_query = new WP_Query($args);
-
-  // get the themed content
-  $themed = qw_template_query($wp_query, $options);
-  // reset because worpress hates programmers
-  wp_reset_postdata();
+  
+  if (!$id && $slug){
+    $id = qw_get_query_by_slug($slug);
+  }
+  $themed = qw_execute_query($id);
   return $themed;
 }
 add_shortcode('query','qw_single_query_shortcode');
@@ -180,3 +209,8 @@ function qw_query_override_terms_table(){
   dbDelta($sql);
 }
 register_activation_hook(__FILE__,'qw_query_override_terms_table');
+/*/
+function _d($v){
+  print '<hr/><pre>'.print_r($v,1).'</pre>';
+}
+// */

@@ -11,7 +11,7 @@ function qw_insert_new_query($post){
 
   $values = array(
     'name' => $post['qw-name'],
-    'slug' => qw_make_slug($post['qw-name']),
+    'slug' => sanitize_title($post['qw-name']),
     'type' => $post['qw-type'],
     'path' => ($post['page-path']) ? urlencode($post['page-path']) : NULL,
     'data' => qw_serialize(qw_default_query_data()),
@@ -173,23 +173,53 @@ function qw_query_import($post){
  * @return array Default query settings
  */
 function qw_default_query_data(){
-  return array(
-    'args' => array(
-      'posts_per_page'  => 5,
-      'offset'          => 0,
-      'cat_operator'    => 'cat',
-      'post_status'     => 'publish',
-      'filters'         => array(),
-      'sorts'           => array(),
-    ),
-    'display' => array(
-      'style' => 'unformatted',
-      'row_style' => 'posts',
-      'post_settings' => array(
-        'size' => 'complete',
+  return array (
+      'display' => array (
+        'title' => '',
+        'style' => 'unformatted',
+        'row_style' => 'posts',
+        'post_settings' => array (
+          'size' => 'complete',
+        ),
+        'header' => '',
+        'footer' => '',
+        'empty' => '',
+        'wrapper-classes' => '',
+        'page' => array (
+          'pager' => array (
+            'type' => 'default',
+            'previous' => '',
+            'next' => '',
+          ),
+        ),
       ),
-    ),
-  );
+      'args' => array (
+        'posts_per_page' => '5',
+        'offset' => 0,
+        'post_status' => 'publish',
+        'filters' => array (
+          'post_types' => array (
+            'type' => 'post_types',
+            'hook_key' => 'post_types',
+            'name' => 'post_types',
+            'weight' => '0',
+            'post_types' => 
+            array (
+              'post' => 'post',
+            ),
+          ),
+        ),
+        'sorts' => array (
+          'date' => array (
+            'type' => 'date',
+            'hook_key' => 'post_date',
+            'name' => 'date',
+            'weight' => '0',
+            'order_value' => 'DESC',
+          ),
+        ),
+      ),
+    );  
 }
 /*
  * Slug creation
@@ -225,36 +255,21 @@ function qw_init_edit_theme(){
 
 // CSS
 function qw_admin_css(){
-  print '<link rel="stylesheet" type="text/css" href="'.QW_PLUGIN_URL.'/css/jquery-ui.css" />';
-  print '<link rel="stylesheet" type="text/css" href="'.QW_PLUGIN_URL.'/css/query-wrangler.css" />';
+  print '<link rel="stylesheet" type="text/css" href="'.QW_PLUGIN_URL.'/admin/css/jquery-ui.css" />';
+  print '<link rel="stylesheet" type="text/css" href="'.QW_PLUGIN_URL.'/admin/css/query-wrangler.css" />';
 }
 // admin list page
 function qw_admin_list_js(){
   wp_enqueue_script('qw-admin-list-js',
-                  plugins_url('/js/query-wrangler-list.js', dirname(__FILE__)),
+                  plugins_url('/admin/js/query-wrangler-list.js', dirname(__FILE__)),
                   array(),
                   QW_VERSION, true);
 }
 // Base JS
 function qw_admin_js(){
-  //// remove whatever wordpress is doing
-  //wp_deregister_script('jquery');
-  //wp_deregister_script('jquery-ui-core');
-  //wp_deregister_script('jquery-ui-dialog');
-  //wp_deregister_script('jquery-ui-accordion');
-  //wp_deregister_script('jquery-ui-draggable');
-  //wp_deregister_script('jquery-ui-droppable');
-  //
-  //// add a more controlled source
-  //wp_register_script('jquery', ("http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"), false, '1.7.2');
-  //wp_enqueue_script('jquery');
-  //wp_register_script('jquery-ui-core', ("http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.24/jquery-ui.min.js"), false, '1.8.24');
-  //wp_enqueue_script('jquery-ui-core');
-  
-  
   // jquery unserialize form
   wp_enqueue_script('qw-unserialize-form',
-                  plugins_url('/js/jquery.unserialize-form.js', dirname(__FILE__)),
+                  plugins_url('/admin/js/jquery.unserialize-form.js', dirname(__FILE__)),
                   array(),
                   QW_VERSION, true);
   wp_enqueue_script('jquery-ui-core', false, array('jquery'));
@@ -262,7 +277,7 @@ function qw_admin_js(){
   wp_enqueue_script('jquery-ui-dialog');
   wp_enqueue_script('jquery-ui-sortable');
   wp_enqueue_script('qw-admin-js',
-                  plugins_url('/js/query-wrangler.js', dirname(__FILE__)),
+                  plugins_url('/admin/js/query-wrangler.js', dirname(__FILE__)),
                   array('jquery-ui-core'),
                   QW_VERSION, true);
   
@@ -281,7 +296,7 @@ function qw_edit_json(){
     'allFields' => qw_all_fields(),
     'allStyles' => qw_all_styles(),
     'allRowStyles' => qw_all_row_styles(),
-    'allPostTypes' => qw_all_post_types,
+    'allPostTypes' => qw_all_post_types(),
     'allPagerTypes' => qw_all_pager_types(),
     'allImageSizes' => get_intermediate_image_sizes(),
     'allFileStyles' => qw_all_file_styles(),
@@ -345,7 +360,7 @@ function qw_check_version()
  *
  * @param $type
  *   handler-type = 'filter', 'field', 'sort'
- */
+ *
 function qw_preprocess_handlers($type, $handlers){
   if(is_array($handlers))
   {
@@ -401,3 +416,4 @@ function qw_preprocess_handlers($type, $handlers){
     return $handlers;
   }
 }
+// */
