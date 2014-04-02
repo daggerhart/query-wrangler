@@ -6,17 +6,15 @@ Requires at least: 3
 Tested up to: 3.7.1
 Stable tag: trunk
 
-Query Wrangler provides an intuitive interface for creating complex WP queries as pages or widgets. Based on Drupal Views.
+Query Wrangler provides an intuitive interface for creating complex WP queries as shortcodes and widgets. UI based on Drupal Views.
 
 == Description ==
 
-This plugin lets you create new WP queries as pages or widgets.  It also allows you to override the way category and tag pages display.
+This plugin lets you create new WP queries widgets and use shortcodes for queries on your pages.  It also allows you to override the way category and tag pages display.
 
 Query Wrangler's interface is highly intuitive way to create queries and will be second nature for any Drupal Views user.
 
 This plugin will bring extreme flexibility to WordPress users with its ability to create custom queries using the WP_Query class with a user interface.
-
-WARNING - Do not rely heavily on query pages unless you must.  They will be removed in future versions in favor of placing shortcodes on real WP Pages.
 
 Additional Plugins
 
@@ -39,13 +37,13 @@ Some examples of how you would use this plugin include:
 
 == Frequently Asked Questions ==
 
-= How do I add Query Pages to my menu? =
-
-The easiest way is to add it as a custom link in the Menus section of your site.
-
 = How do I use query shortcodes? =
 
 Easy, the code you're looking for is like this.   [query id=2] , where the number 2 is the query id. This can be found on the Query Wrangler page eside each query.
+
+* By slug: [query slug="my-query"]
+* Customize WP_Query arguments: [query id=2" args="posts_per_page=1&post_type=page"]
+
 
 = What are overrides and how do I use them? =
 
@@ -53,11 +51,32 @@ Overrides allow you to alter the display and information given on category and t
 For a simple example, add a new query and chose the type `override`.  Choose how you want the content to display, then examine the `Override Settings` options.
 Select a category or multiple categories to override.   Save the query, then visit that category page.
 
+
 == Screenshots ==
 
 1. Drupal Views Editor Theme
 
 == Changelog ==
+
+= 1.5.23 =
+
+* New: Shortcode arguments.  eg, [query id=1 args="posts_per_page=1&post_type=page"]
+* New: Support for "Advanced Custom Fields" fields as settings for meta_values
+* New: Support for "Custom Content Type Manager" fields as settings for meta_values
+
+= 1.5rc22 =
+
+* Bug fix: Empty request_uri causing issues.
+
+= 1.5rc21 =
+
+* New: Field - Featured Image
+* New: Exposed filter - Post IDs
+* New: Exposed filter - Post Parent
+* New: Exposed filter - Post Types
+* New: Exposed filter - Taxonomies
+* New: Setting - Live Preview default
+* Fix: Image field style setting
 
 = 1.5rc20 =
 
@@ -207,4 +226,4 @@ Select a category or multiple categories to override.   Save the query, then vis
 
 == Upgrade Notice ==
 
-1.5rc20  Improvements to template wrangler for custom template suggestions
+1.5.23 Features: Shortcode arguments, field support for "Advanced Custom Fields" and "Custom Content Type Manager" plugins.

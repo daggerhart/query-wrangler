@@ -18,9 +18,9 @@ function qw_filter_taxonomies($filters){
         'query_args_callback' => 'qw_filter_taxonomies_args',
         'query_display_types' => array('page','widget'),
         // exposed
-        //'exposed_form' => 'qw_filter_taxonomies_exposed_form',
-        //'exposed_process' => 'qw_filter_taxonomies_exposed_process',
-        //'exposed_settings_form_callback' => 'qw_filter_taxonomies_exposed_settings_form',
+        'exposed_form' => 'qw_filter_taxonomies_exposed_form',
+        'exposed_process' => 'qw_filter_taxonomies_exposed_process',
+        'exposed_settings_form' => 'qw_filter_taxonomies_exposed_settings_form',
       );
 
       // update titles for built in taxonomies
@@ -140,16 +140,17 @@ function qw_filter_taxonomies_form_include_children($filter)
 
 /*
  * Exposed settings form
- *
+ */
 function qw_filter_taxonomies_exposed_settings_form($filter)
 {
   // use the default provided single/multiple exposed values
   // saves values to [exposed_settings][type]
   print qw_exposed_setting_type($filter);
 }
+
 /*
  * Process submitted exposed form values
- *
+ */
 function qw_filter_taxonomies_exposed_process(&$args, $filter, $values){
   $alter_args = false;
 
@@ -177,12 +178,15 @@ function qw_filter_taxonomies_exposed_process(&$args, $filter, $values){
     qw_filter_taxonomies_args($args, $filter);
   }
 }
+
 /*
  * Exposed forms
- *
+ */
 function qw_filter_taxonomies_exposed_form($filter, $values){
-  $filter['values']['terms'] = $values;
-  $terms = get_terms($filter['taxonomy']->name, array('hide_empty' => false));
+  $filter['values']['submitted'] = $values;
+  $terms = array();
+  $t = get_terms($filter['taxonomy']->name, array('hide_empty' => false));
+  qw_sort_terms_hierarchicaly($t, $terms);
 
   switch ($filter['values']['exposed_settings']['type'])
   {
@@ -198,15 +202,16 @@ function qw_filter_taxonomies_exposed_form($filter, $values){
 
 /*
  * Exposed terms as select box
- *
+ */
 function qw_filter_taxonomies_exposed_form_terms_select($filter, $terms)
 {
+  qw_filter_taxonomies_exposed_limit_values($filter, $terms);
+  
   // handle submitted values
-  if (isset($filter['values']['terms'])){
-    $filter['values']['terms'] = array($filter['values']['terms'] => $filter['values']['terms']);
+  if (isset($filter['values']['submitted'])){
+    $filter['values']['terms'] = $filter['values']['submitted'];
   }
 
-  qw_filter_taxonomies_exposed_limit_values($filter, $terms);
   ?>
   <div class="query-select">
     <select name="<?php print $filter['exposed_key']; ?>">
@@ -228,31 +233,18 @@ function qw_filter_taxonomies_exposed_form_terms_select($filter, $terms)
 
 /*
  * Exposed terms as checkboxes
- *
-function qw_filter_taxonomies_exposed_form_terms_checkboxes($filter, $terms)
+ */
+function qw_filter_taxonomies_exposed_form_terms_checkboxes($filter, $terms, $wrapper_class = "")
 {
-  // adjust for submitted values
-  $values = $filter['values']['terms'];
-  if (!empty($values)){
-    if (is_array($values)){
-      $filter['values']['terms'] = array();
-      foreach($values as $value){
-        $filter['values']['terms'][$value] = $value;
-      }
-    }
-    else {
-      $filter['values']['terms'] = array($values => $values);
-    }
-  }
-
   qw_filter_taxonomies_exposed_limit_values($filter, $terms);
+  
   ?>
-  <div class="query-checkboxes">
+  <div class="query-checkboxes <?php print $wrapper_class;?>">
     <?php
       // List all categories as checkboxes
       foreach($terms as $term)
       {
-        if (is_array($filter['values']['terms']) && in_array($term->term_id, $filter['values']['terms'])) {
+        if (is_array($filter['values']['submitted']) && in_array($term->term_id, $filter['values']['submitted'])) {
           $term_checked = 'checked="checked"';
         } else {
           $term_checked = '';
@@ -266,6 +258,9 @@ function qw_filter_taxonomies_exposed_form_terms_checkboxes($filter, $terms)
           <?php print $term->name; ?>
         </label>
         <?php
+        if (!empty($term->children)){
+          qw_filter_taxonomies_exposed_form_terms_checkboxes($filter, $term->children, "children");
+        }
       }
     ?>
   </div>
@@ -274,7 +269,7 @@ function qw_filter_taxonomies_exposed_form_terms_checkboxes($filter, $terms)
 
 /*
  * Simple helper function to determine values with consideration for defaults
- *
+ */
 function qw_filter_taxonomies_exposed_limit_values($filter, &$terms){
   if (isset($filter['values']['exposed_limit_values']) && is_array($filter['values']['terms'])){
     foreach ($terms as $k => $term){
@@ -284,4 +279,25 @@ function qw_filter_taxonomies_exposed_limit_values($filter, &$terms){
     }
   }
 }
-//*/
+
+/**
+ * Recursively sort an array of taxonomy terms hierarchically. Child categories will be
+ * placed under a 'children' member of their parent term.
+ * @param Array   $cats     taxonomy term objects to sort
+ * @param Array   $into     result array to put them in
+ * @param integer $parentId the current parent ID to put them in
+ */
+function qw_sort_terms_hierarchicaly(Array &$cats, Array &$into, $parentId = 0)
+{
+    foreach ($cats as $i => $cat) {
+        if ($cat->parent == $parentId) {
+            $into[$cat->term_id] = $cat;
+            unset($cats[$i]);
+        }
+    }
+
+    foreach ($into as $topCat) {
+        $topCat->children = array();
+        qw_sort_terms_hierarchicaly($cats, $topCat->children, $topCat->term_id);
+    }
+}

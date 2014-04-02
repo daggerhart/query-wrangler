@@ -404,9 +404,10 @@
   <div id="query-preview" class="qw-query-option">
     <div id="query-preview-controls" class="query-preview-inactive">
       <label>
+        <?php $live_preview_checked = (get_option('qw_live_preview', true)) ? 'checked="checked"' : ""; ?>
         <input id="live-preview"
                type="checkbox"
-               checked="checked" />
+               <?php print $live_preview_checked; ?> />
         Live Preview
       </label>
       <div id="get-preview" class="qw-button">Preview</div>

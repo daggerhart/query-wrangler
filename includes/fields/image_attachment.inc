@@ -46,7 +46,7 @@ function qw_field_image_attachment_form($field)
         <?php
           foreach($image_styles as $key => $style)
           {
-            $style_selected = ($field['values']['image_display_style'] == $key) ? 'selected="selected"' : '';
+            $style_selected = ($field['values']['image_display_style'] == $style) ? 'selected="selected"' : '';
             ?>
               <option value="<?php print $style; ?>" <?php print $style_selected; ?>><?php print $style; ?></option>
             <?php

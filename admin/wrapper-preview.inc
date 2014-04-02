@@ -29,7 +29,7 @@ $args = "<pre>".print_r($args, true)."</pre>";
 // display
 $display = "<pre>".htmlentities(print_r($options['display'], true))."</pre>";
 
-$new_query = "<pre>".print_r($qp,true)."</pre>"."<pre>".print_r($wp_query,true)."</pre>";
+$new_query = "<pre>".htmlentities(print_r($wp_query,true))."</pre>";
 
 // return
 $preview = array(
@@ -57,13 +57,15 @@ function qw_template_scan($options)
   $all_row_styles = qw_all_row_styles();
   $style = $all_styles[$options['display']['style']];
   $row_style = $all_row_styles[$options['display']['row_style']];
+  //print_r($row_style);
   $output = array();
   $templates = array();
-
+  
+  //$options['display']['types']['this_instance']
+  
   // start building theme arguments
   $wrapper_args = array(
     'slug' => $slug,
-    'type' => $options['display']['types']['this_instance'],
     'tw_action' => 'find_only',
   );
   // template with wrapper
@@ -77,7 +79,6 @@ function qw_template_scan($options)
   $template_args = array(
     'template' => $style['template'],
     'slug' => $slug,
-    'type' => $options['display']['types']['this_instance'],
     'style' => $style['hook_key'],
     'style_settings' => $style_settings,
     'tw_action' => 'find_only',
@@ -86,12 +87,11 @@ function qw_template_scan($options)
   $templates['style'] = theme('query_display_rows', $template_args);
 
   if ($row_style['hook_key'] == "posts"){
-    $row_style_settings = $options['display']['row_style_settings'][$row_style['hook_key']];
+    $row_style_settings = $options['display'][$row_style['hook_key'].'_settings'];//$options['display']['row_style_settings'][$row_style['hook_key']];
 
     $template_args = array(
       'template' => 'query-'.$row_style_settings['size'],
       'slug' => $slug,
-      'type' => $options['display']['types']['this_instance'],
       'style' => $row_style_settings['size'],
       'tw_action' => 'find_only',
     );
@@ -99,12 +99,10 @@ function qw_template_scan($options)
   }
 
   if ($row_style['hook_key'] == "fields"){
-    $row_style_settings = $options['display']['row_style_settings'][$row_style['hook_key']];
 
     $template_args = array(
       'template' => 'query-field',
       'slug' => $slug,
-      'type' => $options['display']['types']['this_instance'],
       'style' => $options['display']['row_style'],
       'tw_action' => 'find_only',
     );
@@ -114,7 +112,7 @@ function qw_template_scan($options)
   foreach($templates as $k => $template)
   {
     foreach($template['suggestions'] as $suggestion){
-      if($suggestion == $template['found_suggestion']){
+      if(isset($template['found_suggestion']) && $suggestion == $template['found_suggestion']){
         $output[$k][] = '<strong>'.$suggestion.'</strong>';
       }
       else{
@@ -123,10 +121,12 @@ function qw_template_scan($options)
     }
 
     // see if this is the default template
-    if (stripos($template['found_path'], QW_PLUGIN_DIR) !== false){
-      $output[$k]['found'] = '<em>(default) '.$template['found_path'].'</em>';
-    } else {
-      $output[$k]['found'] = '<strong>'.$template['found_path'].'</strong>';
+    if (isset($template['found_path'])) {
+      if (stripos($template['found_path'], QW_PLUGIN_DIR) !== false){
+        $output[$k]['found'] = '<em>(default) '.$template['found_path'].'</em>';
+      } else {
+        $output[$k]['found'] = '<strong>'.$template['found_path'].'</strong>';
+      }
     }
     //$output[$k]['template'] = $template;
   }

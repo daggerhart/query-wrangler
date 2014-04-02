@@ -65,7 +65,9 @@ QueryWrangler.generate_field_tokens = function() {
 jQuery(document).ready(function(){
   // preview
   jQuery('#get-preview').click(QueryWrangler.get_preview);
-  QueryWrangler.get_preview();
+  if (jQuery('#live-preview').prop('checked')) {
+    QueryWrangler.get_preview();
+  }
 
   // accordions
   jQuery('#query-details').accordion({

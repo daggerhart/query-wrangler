@@ -7,12 +7,12 @@
 function qw_remove_page_from_query_string($query_string)
 {
   // fix tags
-  if(isset($query_string['tag']) && $query_string['paged']){
+  if(isset($query_string['tag']) && isset($query_string['paged'])){
     global $wp_query;
     $query_string['paged'] = qw_get_page_number($wp_query);
   }
   // fix categories
-  if ($query_string['name'] == 'page' && isset($query_string['page'])) {
+  if (isset($query_string['name']) && isset($query_string['page']) && $query_string['name'] == 'page') {
       unset($query_string['name']);
       unset($query_string['page']);
   }
@@ -134,6 +134,11 @@ function qw_execute_query_page(){
   // get current page query-like path
   $path = qw_get_path();
 
+  // make sure a path exists
+  if (empty($path)){
+    return;
+  }    
+  
   // fix the query paging
   if($paged = qw_get_page_number($wp_query)){
     $wp_query->query_vars['paged'] = $paged;
@@ -212,7 +217,7 @@ function qw_execute_query_page(){
   }
 
   // got results for a query
-  if(is_object($rows[0]) && $query = $rows[0])
+  if(isset($rows[0]) && is_object($rows[0]) && $query = $rows[0])
   {
     // pass the paged value into the query
     $options_override['args']['paged'] = $paged;

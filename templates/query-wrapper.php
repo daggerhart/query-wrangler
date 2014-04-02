@@ -7,9 +7,26 @@
  * $wrapper_classes - generated query wrapper classes
  * $pager_classes - generated query pager classes
  */
+
 ?>
 <div class="<?php print $wrapper_classes; ?>">
   <div class="query-wrapper-content">
+    <?php if (isset($exposed)){ ?>
+      <div class="query-exposed">
+        <form method="GET">
+          <?php
+            if(isset($exposed['filters'])) {
+              print $exposed['filters'];
+            }
+            if(isset($exposed['sorts'])) {
+              print $exposed['sorts'];
+            }
+          ?>
+          <input type="submit" value="Submit" />
+        </form>
+      </div>
+    <?php } ?>
+    
     <?php if (isset($header)) { ?>
       <div class="query-header">
         <?php print $header; ?>

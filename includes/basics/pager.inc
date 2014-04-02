@@ -145,34 +145,54 @@ function qw_make_pager($pager, &$qw_query)
 function qw_theme_pager_default($pager, &$qw_query)
 {
   // help figure out the current page
-  $path_array = explode('/page/', $_SERVER['REQUEST_URI']);
-
+  $exposed_path_array = explode('?', $_SERVER['REQUEST_URI']);
+  $path_array = explode('/page/', $exposed_path_array[0]);
+  
+  $exposed_path = NULL;
+  if (isset($exposed_path_array[1])){
+    $exposed_path = $exposed_path_array[1];
+  }
+  
   $pager_themed = '';
   $pager['next'] = ($pager['next']) ? $pager['next'] : 'Next Page &raquo;';
   $pager['previous'] = ($pager['previous']) ? $pager['previous'] : '&laquo; Previous Page';
 
   if($page = qw_get_page_number($qw_query))
   {
+    $path = rtrim($path_array[0], '/');
+    
     $wpurl = get_bloginfo('wpurl');
 
     // previous link with page number
     if($page >= 3){
+      $url = $wpurl.$path.'/page/'.($page-1);
+      if ($exposed_path){
+        $url.= '?'.$exposed_path;
+      }
       $pager_themed.= '<div class="query-prevpage">
-                        <a href="'.$wpurl.$path_array[0].'/page/'.($page-1).'">'.$pager['previous'].'</a>
+                        <a href="'.$url.'">'.$pager['previous'].'</a>
                       </div>';
     }
     // previous link with no page number
     else if ($page == 2)
     {
+      $url = $wpurl.$path;
+      if ($exposed_path){
+        $url.= '?'.$exposed_path;
+      }
       $pager_themed.= '<div class="query-prevpage">
-                        <a href="'.$wpurl.$path_array[0].'">'.$pager['previous'].'</a>
+                        <a href="'.$url.'">'.$pager['previous'].'</a>
                       </div>';
     }
 
     // next link
     if(($page+1) <= $qw_query->max_num_pages){
+      $url = $wpurl.$path.'/page/'.($page+1);
+      if ($exposed_path){
+        $url.= '?'.$exposed_path;
+      }
       $pager_themed.= '<div class="query-nextpage">
-                        <a href="'.$wpurl.$path_array[0].'/page/'.($page+1).'">'.$pager['next'].'</a>
+                        <a href="'.$url.'">'.$pager['next'].'</a>
                       </div>';
     }
 

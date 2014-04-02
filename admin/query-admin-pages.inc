@@ -110,6 +110,8 @@ function qw_edit_query_form(){
     'all_filters'   => qw_all_filters(),
     'all_fields'    => qw_all_fields(),
     'all_sorts'     => qw_all_sort_options(),
+    'image_sizes'   => get_intermediate_image_sizes(),
+    'file_styles'   => qw_all_file_styles(),
   );
 
   // Page Queries
@@ -142,8 +144,10 @@ function qw_edit_query_form(){
  * Settings!
  */
 function qw_save_settings($post){
+  $live_preview = ($post['qw-live-preview']) ? $post['qw-live-preview']: 0;
   update_option('qw_edit_theme', $post['qw-theme']);
   update_option('qw_widget_theme_compat', $post['qw-widget-theme-compat']);
+  update_option('qw_live_preview', $live_preview);
 }
 function qw_settings_page()
 {
@@ -151,6 +155,7 @@ function qw_settings_page()
     'theme' => get_option('qw_edit_theme'),
     'edit_themes' => qw_all_edit_themes(),
     'widget_theme_compat' => get_option('qw_widget_theme_compat'),
+    'live_preview' => get_option('qw_live_preview'),
   );
   $args = array(
     'title' => 'Query Wrangler Settings',

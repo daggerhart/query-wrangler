@@ -1,9 +1,9 @@
 <?php
-  $link_selected            = ($field['values']['link']) ? 'checked="checked"' : '';
-  $has_label                = ($field['values']['has_label']) ? 'checked="checked"' : '';
-  $label                    = ($field['values']['label']) ? $field['values']['label'] : "";
-  $rewrite_output_selected  = ($field['values']['rewrite_output']) ? 'checked="checked"': '';
-  $exclude_display_selected = ($field['values']['exclude_display']) ? 'checked="checked"' : '';
+  $link_selected            = (isset($field['values']['link'])) ? 'checked="checked"' : '';
+  $has_label                = (isset($field['values']['has_label'])) ? 'checked="checked"' : '';
+  $label                    = (isset($field['values']['label'])) ? $field['values']['label'] : "";
+  $rewrite_output_selected  = (isset($field['values']['rewrite_output'])) ? 'checked="checked"': '';
+  $exclude_display_selected = (isset($field['values']['exclude_display'])) ? 'checked="checked"' : '';
 ?>
 <div id="qw-field-<?php print $field['name']; ?>" class="qw-field qw-sortable-item qw-item-form">
   <span class="qw-setting-header">

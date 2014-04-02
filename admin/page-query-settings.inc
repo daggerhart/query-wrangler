@@ -30,5 +30,14 @@
     <p class="description">If you're having trouble with the way Query Wrangler Widgets appear in your sidebar, select this option.</p>
   </div>
   
+  <div class="qw-setting">
+    <div>
+      <label>
+        <input type="checkbox" name="qw-live-preview" <?php print ($live_preview == "on") ? "checked='checked'" : ""; ?> />
+        <strong>Live Preview</strong>
+      </label>
+    </div>
+    <p class="description">Default setting for live preview during query editing.</p>
+  </div>  
 </div>
 </form>
