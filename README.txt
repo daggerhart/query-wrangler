@@ -1,24 +1,28 @@
 === Query Wrangler ===
-Contributors: daggerhart, forrest.livengood
+Contributors: daggerhart
 Donate link: http://www.widgetwrangler.com/
-Tags: query, pages, widget, admin, widgets, administration, manage, views
+Tags: query, pages, widget, admin, widgets, administration, manage, views, loop
 Requires at least: 3
-Tested up to: 3.7.1
+Tested up to: 3.9
 Stable tag: trunk
 
 Query Wrangler provides an intuitive interface for creating complex WP queries as shortcodes and widgets. UI based on Drupal Views.
 
 == Description ==
 
-This plugin lets you create new WP queries widgets and use shortcodes for queries on your pages.  It also allows you to override the way category and tag pages display.
+This plugin lets you create new WP queries as widgets and use shortcodes for queries on your pages.  It also allows you to override the way category and tag pages display.
 
 Query Wrangler's interface is highly intuitive way to create queries and will be second nature for any Drupal Views user.
 
 This plugin will bring extreme flexibility to WordPress users with its ability to create custom queries using the WP_Query class with a user interface.
 
-Additional Plugins
+Supports:
 
-* [Query Slideshow](http://wordpress.org/extend/plugins/query-slideshow/ "Query Slideshow") - Turn your queries into slideshows using jquery.cycle
+* Most post data, including meta fields
+* Taxonomy data
+* Advanced Custom Fields
+* Custom Content Type Manager
+* Some exposed filters
 
 Some examples of how you would use this plugin include:
 
@@ -29,11 +33,17 @@ Some examples of how you would use this plugin include:
 
 [Introduction to Query Wrangler](http://www.widgetwrangler.com/forum/query-wrangler/general/intro-query-wrangler "Learn to setup Queries")
 
+
+Additional Plugins
+
+* [Query Slideshow](http://wordpress.org/extend/plugins/query-slideshow/ "Query Slideshow") - Turn your queries into slideshows using jquery.cycle
+
+
 == Installation ==
 
 1. Upload `query-wrangler` to the `/wp-content/plugins/` directory
 1. Activate the plugin
-1. Visit the Query Wrangler Menu to being Creating your custom queries
+1. Visit the Query Wrangler Menu to begin creating your custom queries
 
 == Frequently Asked Questions ==
 
@@ -42,7 +52,17 @@ Some examples of how you would use this plugin include:
 Easy, the code you're looking for is like this.   [query id=2] , where the number 2 is the query id. This can be found on the Query Wrangler page eside each query.
 
 * By slug: [query slug="my-query"]
-* Customize WP_Query arguments: [query id=2" args="posts_per_page=1&post_type=page"]
+* Customize WP_Query arguments: [query id=2 args="posts_per_page=1&post_type=page"]
+* Customize WP_Query arguments with contextual data: [query id=1 args="author={{post:post_author}}&post_type={{post:post_type}}"]
+
+
+= Developer & Usage =
+
+* [Custom field example](https://gist.github.com/daggerhart/10417309 "Custom field example")
+* [Callback field usage: wp_get_attachment_url](http://wordpress.org/support/topic/add-php-in-rewrite-output-of-this-field?replies=3#post-5480638 "Callback field usage")
+* [Callback field usage: the_tags](http://wordpress.org/support/topic/callback-field-plugin-version-1524?replies=1#post-5487515 "Callback field usage 2")
+* [Meta Field Display Handler: Custom Content Type Manager](http://wordpress.org/support/topic/cant-put-php-code-into-rewrite-results-field?replies=4#post-5411970 "Meta Field Display Handler: Custom Content Type Manager")
+* [Meta Field Display Handler: Advanced Custom Fields](https://wordpress.org/support/topic/how-to-get-he-image-url-instead-of-image-id?replies=5#post-5411991 "Meta Field Display Handler: Advanced Custom Fields")
 
 
 = What are overrides and how do I use them? =
@@ -57,6 +77,12 @@ Select a category or multiple categories to override.   Save the query, then vis
 1. Drupal Views Editor Theme
 
 == Changelog ==
+
+= 1.5.24 =
+
+* New: Callback field - Use any function to provide a field value.
+* New: Shortcode argument contextual tokens.  eg, [query id=1 args="author={{post:post_author}}&post_type={{post:post_type}}"]  - returns the query showing only posts by the author of the current page being viewed, and of the post type of the current post_type being viewed.
+* Fix: index on query_override_terms table
 
 = 1.5.23 =
 
@@ -226,4 +252,4 @@ Select a category or multiple categories to override.   Save the query, then vis
 
 == Upgrade Notice ==
 
-1.5.23 Features: Shortcode arguments, field support for "Advanced Custom Fields" and "Custom Content Type Manager" plugins.
+1.5.24 Features: Shortcode argument contextual tokens, Custom callback field.

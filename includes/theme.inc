@@ -362,11 +362,11 @@ function qw_make_fields_rows(&$qw_query, $options)
         $field = array_merge($field_defaults, $field_settings);
         
         // look for callback
-        if(isset($field_defaults['output_callback']))
+        if(isset($field_defaults['output_callback']) && function_exists($field_defaults['output_callback']))
         {
           // callbacks with token arguments
           if (isset($field_defaults['output_arguments'])){
-            $rows[$i]['fields'][$field_name]['output'].= $field_defaults['output_callback']($this_post, $field);
+            $rows[$i]['fields'][$field_name]['output'].= $field_defaults['output_callback']($this_post, $field, $tokens);
           }
           // normal callback w/o arguments
           else {

@@ -125,6 +125,14 @@ span.qw-rearrange-title{}
   width: 60%;
   overflow-y: scroll;
 }
+.qw-dialog {
+  position: fixed;
+  z-index: 1000;
+}
+body.toplevel_page_query-wrangler .ui-widget-overlay {
+  position: fixed;
+  z-index: 999;
+}
 .ui-dialog-content .qw-checkboxes {
   width: auto;
 }

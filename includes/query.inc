@@ -18,7 +18,7 @@ function qw_execute_query($query_id, $options_override = array(), $reset_post_da
   $options =  array_merge_recursive((array)$options, $options_override);
 
   // pre_query hook
-  $args = apply_filters('qw_pre_query', $args);
+  $args = apply_filters('qw_pre_query', $args, $options);
   //do_action_ref_array('qw_pre_query', array(&$args));
   
   // shortcodes can change the arguments
@@ -31,7 +31,7 @@ function qw_execute_query($query_id, $options_override = array(), $reset_post_da
   $qw_query = new WP_Query($args);
   
   // pre_render hook
-  $options = apply_filters('qw_pre_query', $options);
+  $options = apply_filters('qw_pre_render', $options);
   //do_action_ref_array('qw_pre_render', array(&$options));
 
   // get the themed content
@@ -401,6 +401,45 @@ function qw_get_meta_keys() {
 			ORDER BY meta_key" );
 
 	return $keys;
+}
+
+/*
+ * Replace contextual tokens within a string
+ *
+ * @params string $args - a query argument string
+ *
+ * @return string - query argument string with tokens replaced with values
+ */
+function qw_contextual_tokens_replace($args){
+  $matches = array();
+  preg_match_all('/{{([^}]*)}}/', $args, $matches);
+  if (isset($matches[1])){
+    global $post;
+    
+    foreach ($matches[1] as $i => $context_token){
+      if (stripos($context_token, ':') !== false){
+        $a = explode(':', $context_token);
+        // post:
+        if ($a[0] == 'post') {
+          // post:post_meta:meta_key
+          if ($a[1] == 'post_meta'){
+            $meta_value = get_post_meta($post->ID, $a[2], true);
+            $args = str_replace($matches[0][$i], $meta_value, $args);
+          }
+          else {
+            // post:property
+            if (isset($post->{$a[1]})){
+              $args = str_replace($matches[0][$i], $post->{$a[1]}, $args);
+            }
+          }
+        }
+        else if ($a[0] == 'query_var' && $replace = get_query_var($a[1])){
+          $args = str_replace($matches[0][$i], $replace, $args);
+        }
+      }
+    }
+  }
+  return $args;
 }
 
 /*
