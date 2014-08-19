@@ -43,17 +43,8 @@ class Query_Wrangler_Widget extends WP_Widget {
   {
     extract( $args );
     $output = '';
-    $options_override = array();
-      
-    if (isset($instance['qw-shortcode-args']) && !empty($instance['qw-shortcode-args'])){
-      if (stripos($instance['qw-shortcode-args'], '{{') !== false){
-        $instance['qw-shortcode-args'] = qw_contextual_tokens_replace($instance['qw-shortcode-args']);
-      }
-      $options_override['shortcode_args'] = html_entity_decode($instance['qw-shortcode-args']);
-    }
-    
     $options = qw_generate_query_options($instance['qw-widget']);
-		$widget_content = qw_execute_query($instance['qw-widget'], $options_override);
+		$widget_content = qw_execute_query($instance['qw-widget']);
     
     if (!get_option('qw_widget_theme_compat')){
       $output = $widget_content;
@@ -77,7 +68,6 @@ class Query_Wrangler_Widget extends WP_Widget {
     $instance = $old_instance; 
     $instance['title'] = $new_instance['title'];
     $instance['qw-widget'] = $new_instance['qw-widget'];
-    $instance['qw-shortcode-args'] = $new_instance['qw-shortcode-args'];
     return $instance;
 	}
   /**
@@ -88,7 +78,7 @@ class Query_Wrangler_Widget extends WP_Widget {
   function form( $instance )
   {
     // Set up some default widget settings. 
-    $defaults = array( 'title' => __('QW Widget', 'querywranglerwidget'), 'qw-widget' => '', 'qw-shortcode-args' => '' );
+    $defaults = array( 'title' => __('QW Widget', 'querywranglerwidget'), 'qw-widget' => '' );
     $instance = wp_parse_args( (array) $instance, $defaults );
     $widgets = qw_get_all_widgets();
     ?>
@@ -121,17 +111,6 @@ class Query_Wrangler_Widget extends WP_Widget {
     </p>
     <p>
       <a href="<?php print get_bloginfo('wpurl').'/wp-admin/admin.php?page=query-wrangler&edit='.$selected_query_id; ?>">Edit this Query</a>
-    </p>
-    
-    <p>
-      <label for="<?php print $this->get_field_id( 'qw-shortcode-args' ); ?>">
-        <?php _e('Contextual Arguments:', 'qw-shortcode-args'); ?>
-      </label> 
-     <input id="<?php print $this->get_field_id( 'qw-shortcode-args' ); ?>"
-            name="<?php print $this->get_field_name( 'qw-shortcode-args' ); ?>"
-            class="widefat"
-            style="width:100%;"
-            value="<?php print sanitize_text_field( $instance['qw-shortcode-args'] ); ?>" />
     </p>
     <?php
   }

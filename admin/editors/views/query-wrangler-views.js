@@ -267,41 +267,17 @@ QueryWrangler.sortable_list_build = function(element){
       output+= '<li class="qw-sortable ui-helper-reset ui-state-default ui-corner-all">'+html+'</li>';
     });
   output+= '</ul>';
-    
-  var dialog_height = jQuery(window).height() - jQuery('#wpadminbar').outerHeight();
-  var dialog_width = jQuery('#wpbody').width() * .85;
-    
-    
+
   jQuery(output).appendTo('#qw-options-forms');
   jQuery('#'+QueryWrangler.current_form_id+'-sortable')
     .sortable()
     .dialog({
       modal: true,
-        dialogClass: 'qw-dialog',
-        height: dialog_height,
-        width: dialog_width,
-        position: {
-          my: 'top+33',
-          at: 'right',
-          of: '#wpcontent'
-        },
-        show: {
-          effect: "slide",
-          direction: 'right',
-          duration: 300
-        },
-        hide: {
-          effect: "slide",
-          direction: 'right',
-          duration: 300
-        },        
-      	draggable: false,
-        
-      //width: (wWidth * 0.7),
-      //height: (wHeight * 0.8),
+      width: (wWidth * 0.7),
+      height: (wHeight * 0.8),
       title: jQuery(element).text(),
 			open: function() {
-				//jQuery(this).dialog("option", "position", "center");
+				jQuery(this).dialog("option", "position", "center");
 			},
       close: function() {
         QueryWrangler.sortable_list_destroy(this);
@@ -409,36 +385,14 @@ jQuery(document).ready(function(){
     else if (clicked_element_title.indexOf('-override-') > 0){
       handler = 'override';
     }
-  
-  var dialog_height = jQuery(window).height() - jQuery('#wpadminbar').outerHeight();
-  var dialog_width = jQuery('#wpbody').width() * .85;
-  
+    
     jQuery('#'+QueryWrangler.current_form_id).dialog({
       modal: true,
-        dialogClass: 'qw-dialog',
-        height: dialog_height,
-        width: dialog_width,
-        position: {
-          my: 'top+33',
-          at: 'right',
-          of: '#wpcontent'
-        },
-        show: {
-          effect: "slide",
-          direction: 'right',
-          duration: 300
-        },
-        hide: {
-          effect: "slide",
-          direction: 'right',
-          duration: 300
-        },        
-      	draggable: false,      
-      //width: (wWidth * 0.7),
-      //height: (wHeight * 0.8),
+      width: (wWidth * 0.7),
+      height: (wHeight * 0.8),
       title: dialog_title[0],
 			open: function() {
-				//jQuery(this).dialog("option", "position", "center");
+				jQuery(this).dialog("option", "position", "center");
 			},			
       resizable: false,
       close: function() {
