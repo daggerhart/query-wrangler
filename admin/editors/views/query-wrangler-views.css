@@ -164,10 +164,10 @@ span.qw-rearrange-title{}
 .add-selected-wrapper {
   display: block;
   height: 40px;
-  background: transparent url('../images/loading.gif') -40px top no-repeat;
+  background: transparent url('../../css/images/loading.gif') -40px top no-repeat;
 }
 .add-selected-wrapper-active {
-  background: transparent url('../images/loading.gif') left center no-repeat;
+  background: transparent url('../../cssimages/loading.gif') left center no-repeat;
   padding-left: 28px;
 }
 .qw-changes {
@@ -196,4 +196,10 @@ li.qw-sortable span.qw-setting-value {
 }
 
 .ui-dialog .qw-weight {
+}
+.ui-dialog {
+    z-index: 2;
+}
+.ui-widget-overlay {
+    position: fixed;
 }
