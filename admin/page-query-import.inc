@@ -7,6 +7,8 @@
   
   <strong>Paste query code here:</strong><br />
   <textarea name="import-query" id="import-query"></textarea>
-  <input type="hidden" name="action" value="import" />
-  <input type="submit" class="button-primary" value="Import" />
+  <div>
+    <input type="hidden" name="action" value="import" />
+    <input type="submit" class="button-primary" value="Import" />
+  </div>
 </form>

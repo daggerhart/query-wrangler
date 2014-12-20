@@ -87,7 +87,12 @@ function qw_template_scan($options)
   $templates['style'] = theme('query_display_rows', $template_args);
 
   if ($row_style['hook_key'] == "posts"){
-    $row_style_settings = $options['display'][$row_style['hook_key'].'_settings'];//$options['display']['row_style_settings'][$row_style['hook_key']];
+
+    $row_style_settings = array( 'size' => 'complete' );
+
+    if ( isset( $options['display'][$row_style['hook_key'].'_settings'] ) ) {
+      $row_style_settings =  $options['display'][$row_style['hook_key'].'_settings'];
+    }
 
     $template_args = array(
       'template' => 'query-'.$row_style_settings['size'],

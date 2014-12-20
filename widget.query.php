@@ -43,19 +43,35 @@ class Query_Wrangler_Widget extends WP_Widget {
   {
     extract( $args );
     $output = '';
-    $options = qw_generate_query_options($instance['qw-widget']);
-		$widget_content = qw_execute_query($instance['qw-widget']);
-    
-    if (!get_option('qw_widget_theme_compat')){
-      $output = $widget_content;
-    }
-    else {
-      $output = $before_widget;
-      // title
-			if ($options['display']['title']) {
-        $output.= $before_title . $options['display']['title'] . $after_title;
+    $options_override = array();
+
+    if (isset($instance['qw-widget']) && !empty($instance['qw-widget'])){
+
+      // shortcode args
+      if (isset($instance['qw-shortcode-args']) && !empty($instance['qw-shortcode-args'])){
+        if (stripos($instance['qw-shortcode-args'], '{{') !== false){
+          $instance['qw-shortcode-args'] = qw_contextual_tokens_replace($instance['qw-shortcode-args']);
+        }
+        $options_override['shortcode_args'] = html_entity_decode($instance['qw-shortcode-args']);
       }
-      $output.= $widget_content.$after_widget;
+
+      $options = qw_generate_query_options($instance['qw-widget']);
+      $widget_content = qw_execute_query($instance['qw-widget'], $options_override);
+
+      $theme_compat = get_option('qw_widget_theme_compat', false);
+
+      $show_title = (isset($instance['qw-show-widget-title']) && !empty($instance['qw-show-widget-title']));
+      $title = ($show_title && $options['display']['title']) ? $before_title . $options['display']['title'] . $after_title : '';
+
+      if ($theme_compat){
+        $output = $before_widget;
+
+        $output.= $title.$widget_content.$after_widget;
+
+      }
+      else {
+        $output = $title. $widget_content;
+      }
     }
     print $output;
   }
@@ -68,6 +84,8 @@ class Query_Wrangler_Widget extends WP_Widget {
     $instance = $old_instance; 
     $instance['title'] = $new_instance['title'];
     $instance['qw-widget'] = $new_instance['qw-widget'];
+    $instance['qw-shortcode-args'] = $new_instance['qw-shortcode-args'];
+    $instance['qw-show-widget-title'] = $new_instance['qw-show-widget-title'];
     return $instance;
 	}
   /**
@@ -78,19 +96,24 @@ class Query_Wrangler_Widget extends WP_Widget {
   function form( $instance )
   {
     // Set up some default widget settings. 
-    $defaults = array( 'title' => __('QW Widget', 'querywranglerwidget'), 'qw-widget' => '' );
+    $defaults = array( 'title' => __('QW Widget', 'querywranglerwidget'), 'qw-widget' => '', 'qw-shortcode-args' => '', 'qw-show-widget-title' => '' );
     $instance = wp_parse_args( (array) $instance, $defaults );
     $widgets = qw_get_all_widgets();
+    $this_widget_value = isset($widgets[$instance['qw-widget']]) ? $widgets[$instance['qw-widget']] : '';
     ?>
     <?php // Widget Title: Hidden Input ?>
-    <input type="hidden" id="<?php print $this->get_field_id( 'title' ); ?>" name="<?php print $this->get_field_name( 'title' ); ?>" value="<?php print $widgets[$instance['qw-widget']]; ?>" style="width:100%;" />
-    
+    <input type="hidden" id="<?php print $this->get_field_id( 'title' ); ?>" name="<?php print $this->get_field_name( 'title' ); ?>" value="<?php print $this_widget_value; ?>" style="width:100%;" />
+    <p>
+      <label><input type="checkbox" id="<?php print $this->get_field_id( 'qw-show-widget-title' ); ?>" name="<?php print $this->get_field_name( 'qw-show-widget-title' ); ?>" <?php checked( $instance['qw-show-widget-title'] , 'on'); ?> /> Show query's Display Title as Widget Title</label>
+    </p>
+
     <?php // Widget: Select Box ?>
     <p>
       <label for="<?php print $this->get_field_id( 'qw-widget' ); ?>">
         <?php _e('Query Widget:', 'qw-widget'); ?>
       </label> 
      <select id="<?php print $this->get_field_id( 'qw-widget' ); ?>" name="<?php print $this->get_field_name( 'qw-widget' ); ?>" class="widefat" style="width:100%;">
+       <option value="-none-">- Select -</option>
       <?php
         $selected_query_id = 0;
         foreach($widgets as $query_id => $name)
@@ -111,6 +134,16 @@ class Query_Wrangler_Widget extends WP_Widget {
     </p>
     <p>
       <a href="<?php print get_bloginfo('wpurl').'/wp-admin/admin.php?page=query-wrangler&edit='.$selected_query_id; ?>">Edit this Query</a>
+    </p>
+    <p>
+      <label for="<?php print $this->get_field_id( 'qw-shortcode-args' ); ?>">
+        <?php _e('Contextual Arguments:', 'qw-shortcode-args'); ?>
+      </label>
+      <input id="<?php print $this->get_field_id( 'qw-shortcode-args' ); ?>"
+             name="<?php print $this->get_field_name( 'qw-shortcode-args' ); ?>"
+             class="widefat"
+             style="width:100%;"
+             value="<?php print sanitize_text_field( $instance['qw-shortcode-args'] ); ?>" />
     </p>
     <?php
   }

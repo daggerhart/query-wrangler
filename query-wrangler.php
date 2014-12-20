@@ -9,7 +9,7 @@ Plugin URI:        http://www.widgetwrangler.com/query-wrangler
 Description:       Query Wrangler provides an intuitive interface for creating complex WP queries as pages or widgets. Based on Drupal Views.
 Author:            Jonathan Daggerhart
 Author URI:        http://www.websmiths.co
-Version:           1.5.24
+Version:           1.5.25
 
 ******************************************************************
 
@@ -196,14 +196,14 @@ function qw_query_wrangler_table(){
   global $wpdb;
   $table_name = $wpdb->prefix."query_wrangler";
   $sql = "CREATE TABLE " . $table_name . " (
-	 id mediumint(9) NOT NULL AUTO_INCREMENT,
-   name varchar(255) NOT NULL,
-   slug varchar(255) NOT NULL,
-   type varchar(16) NOT NULL,
-   path varchar(255),
-	  data text NOT NULL,
-	  UNIQUE KEY id (id)
-	);";
+id mediumint(9) NOT NULL AUTO_INCREMENT,
+name varchar(255) NOT NULL,
+slug varchar(255) NOT NULL,
+type varchar(16) NOT NULL,
+path varchar(255),
+data text NOT NULL,
+UNIQUE KEY id (id)
+);";
 
   require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
   dbDelta($sql);
@@ -215,10 +215,10 @@ function qw_query_override_terms_table(){
   global $wpdb;
   $table_name = $wpdb->prefix."query_override_terms";
   $sql = "CREATE TABLE " . $table_name . " (
-	  query_id mediumint(9) NOT NULL,
-   term_id bigint(20) NOT NULL,
-   UNIQUE KEY `query_term` (`query_id`,`term_id`)
-	);";
+query_id mediumint(9) NOT NULL,
+term_id bigint(20) NOT NULL,
+UNIQUE KEY query_term (query_id,term_id)
+);";
 
   require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
   dbDelta($sql);

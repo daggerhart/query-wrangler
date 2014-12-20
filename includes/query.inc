@@ -1,6 +1,6 @@
 <?php
 /*
- * Primary function for bulding and displaying a query
+ * Primary function for building and displaying a query
  *
  * @param int $query_id Id for the query
  * @param array $options_override an array for changing or adding query data options
@@ -18,8 +18,7 @@ function qw_execute_query($query_id, $options_override = array(), $reset_post_da
   $options =  array_merge_recursive((array)$options, $options_override);
 
   // pre_query hook
-  $args = apply_filters('qw_pre_query', $args);
-  //do_action_ref_array('qw_pre_query', array(&$args));
+  $args = apply_filters('qw_pre_query', $args, $options);
   
   // shortcodes can change the arguments
   if (isset($options_override['shortcode_args'])){
@@ -31,8 +30,7 @@ function qw_execute_query($query_id, $options_override = array(), $reset_post_da
   $qw_query = new WP_Query($args);
   
   // pre_render hook
-  $options = apply_filters('qw_pre_query', $options);
-  //do_action_ref_array('qw_pre_render', array(&$options));
+  $options = apply_filters('qw_pre_render', $options);
 
   // get the themed content
   $themed = qw_template_query($qw_query, $options);
@@ -61,11 +59,15 @@ function qw_generate_query_options($query_id, $options_override = array(), $full
 {
   global $wpdb;
   $table_name = $wpdb->prefix."query_wrangler";
-  $sql = "SELECT id,name,type,slug,data FROM ".$table_name." WHERE id = ".$query_id;
+  $sql = "SELECT id,name,type,slug,data FROM ".$table_name." WHERE id = %d";
 
-  $rows = $wpdb->get_results($sql);
+  $rows = $wpdb->get_results($wpdb->prepare($sql, $query_id));
 
-  // unserealize the stored data
+  if (empty( $rows )){
+    return array();
+  }
+
+  // unserialize the stored data
   $options = qw_unserialize($rows[0]->data);
 
   // override options
@@ -326,7 +328,8 @@ function qw_serialize($array){
  */
 function qw_unserialize($serial_str) {
   $array = array();
-  $serial_str= preg_replace('!s:(\d+):"(.*?)";!se', "'s:'.strlen('$2').':\"$2\";'", $serial_str ); 
+  // TODO preg_replace \e deprecated - use preg_replace_callback
+  $serial_str= @preg_replace('!s:(\d+):"(.*?)";!se', "'s:'.strlen('$2').':\"$2\";'", $serial_str );
   $array = unserialize($serial_str);
   if(is_array($array)){
     // stripslashes twice for science

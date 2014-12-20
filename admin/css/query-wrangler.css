@@ -12,6 +12,7 @@ textarea.qw-meta-value {
   width: 94%;
   height: 300px;
   font-family: monospace;
+  display: block;
 }
 #query-preview-controls {
   float: right;
