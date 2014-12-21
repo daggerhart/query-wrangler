@@ -3,7 +3,7 @@ Contributors: daggerhart
 Donate link: http://www.widgetwrangler.com/
 Tags: query, pages, widget, admin, widgets, administration, manage, views, loop
 Requires at least: 3
-Tested up to: 3.9.2
+Tested up to: 4.1
 Stable tag: trunk
 
 Query Wrangler provides an intuitive interface for creating complex WP queries as shortcodes and widgets. UI based on Drupal Views.
@@ -77,6 +77,10 @@ Select a category or multiple categories to override.   Save the query, then vis
 1. Drupal Views Editor Theme
 
 == Changelog ==
+
+= 1.5.26 =
+
+* Bug fix: Admin UI fix on WP 4.1
 
 = 1.5.25 =
 
@@ -262,4 +266,4 @@ Select a category or multiple categories to override.   Save the query, then vis
 
 == Upgrade Notice ==
 
-1.5.25 Minor bug fixes and Widget improvements
+1.5.26 Admin UI fix on WP 4.1
