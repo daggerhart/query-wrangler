@@ -279,7 +279,7 @@
                    value="<?php print $sort['hook_key']; ?>" />
             <?php print $sort['title']; ?>
           </label>
-          <p class="description qw-desc"><?php print $sort['description']; ?></p>
+          <p class="description"><?php print $sort['description']; ?></p>
           <?php
         }
       ?>
@@ -304,7 +304,7 @@
                    value="<?php print $field['hook_key']; ?>" />
             <?php print $field['title']; ?>
           </label>
-          <p class="description qw-desc"><?php print $field['description']; ?></p>
+          <p class="description"><?php print $field['description']; ?></p>
           <?php
         }
       ?>
@@ -331,7 +331,7 @@
                    value="<?php print $filter['hook_key']; ?>" />
             <?php print $filter['title']; ?>
             </label>
-            <p class="description qw-desc"><?php print $filter['description']; ?></p>
+            <p class="description"><?php print $filter['description']; ?></p>
             <?php
           }
         }

@@ -46,164 +46,163 @@ $overrides
 
   <div class="qw-clear-gone"><!-- ie hack -->&nbsp;</div>
 
-  <div id="qw-query-admin-options-wrap">
+  <!-- QUERY SETTINGS -->
+  <div class="qw-query-admin-column">
+    <h2>Query Settings</h2>
+    <p class="description"></p>
 
-<!-- QUERY SETTINGS -->
-    <div class="qw-query-admin-column">
-      <h2>Query Settings</h2>
-	    <p class="description"></p>
+    <table class="form-table">
+      <?php
+        $tmp = array(
+          $basics['posts_per_page'],
+          $basics['post_status'],
+          $basics['offset']
+        );
 
-      <table class="form-table">
-        <?php
-          $tmp = array(
-            $basics['posts_per_page'],
-            $basics['post_status'],
-            $basics['offset']
-          );
-
-          foreach($tmp as $basic)
-          { ?>
-            <tr>
-              <th><label><?php print $basic['title']; ?></label></th>
-              <td>
-              <?php
-                if ( isset( $basic['form_callback'] ) && function_exists( $basic['form_callback'] ) )
-                { ?>
-                  <div class="qw-basic-form">
-                    <?php
-                    ob_start();
-                      $basic['form_callback']($basic, $options[$basic['option_type']]);
-                    print ob_get_clean();
-                    ?>
-                  </div>
-                <?php
-                }
-              ?>
-              </td>
-            </tr>
+        foreach($tmp as $basic)
+        { ?>
+          <tr>
+            <th><label><?php print $basic['title']; ?></label></th>
+            <td>
             <?php
-          }
-        ?>
+              if ( isset( $basic['form_callback'] ) && function_exists( $basic['form_callback'] ) )
+              { ?>
+                <div class="qw-basic-form">
+                  <?php
+                  ob_start();
+                    $basic['form_callback']($basic, $options[$basic['option_type']]);
+                  print ob_get_clean();
+                  ?>
+                </div>
+              <?php
+              }
+            ?>
+            </td>
+          </tr>
+          <?php
+        }
+      ?>
 
-        <?php // filters ?>
-        <tr>
-          <th>
-            <label>Filters</label>
-            <p class="description">Select filters to affect the query's results.</p>
-          </th>
-          <td>
-            <div class="qw-add-items-wrapper">
-              <div class="qw-add-items-controls">
-                <span class="qw-add-item button">Add Filters</span>
-              </div>
-              <div id="qw-all-filters" class="qw-add-new-items">
-                <?php
-                  // loop through filters
-                  foreach($all_filters as $hook_key => $filter)
-                  {
-                    // for now, this is how I'll prevent certain filters on overrides
-                    if(isset($filter['query_display_types']) && is_array($filter['query_display_types']) && in_array($query_type, $filter['query_display_types']))
-                    { ?>
+      <?php // filters ?>
+      <tr>
+        <th>
+          <label>Filters</label>
+          <p class="description">Select filters to affect the query's results.</p>
+        </th>
+        <td>
+          <div class="qw-add-items-wrapper">
+            <div class="qw-add-items-controls">
+              <span class="qw-add-item button">Add Filters</span>
+            </div>
+            <div class="qw-add-new-items">
+              <?php
+                // loop through filters
+                foreach( $all_filters as $hook_key => $filter ) {
+                  // for now, this is how I'll prevent certain filters on overrides
+                  if( isset( $filter['query_display_types'] ) &&
+                      is_array( $filter['query_display_types'] ) &&
+                      in_array( $query_type, $filter['query_display_types'] ) )
+                  { ?>
                     <label>
                       <input type="checkbox" value="<?php print $filter['type']; ?>" />
                       <input type="hidden" value="<?php print $filter['hook_key']; ?>" />
                       <?php print $filter['title']; ?>
                     </label>
-                    <p class="description qw-desc"><?php print $filter['description']; ?></p>
+                    <p class="description"><?php print $filter['description']; ?></p>
+                    <p class="description"><?php print $filter['description']; ?></p>
                     <?php
-                    }
-                  }
-                ?>
-                <div class="qw-add-items-submit-wrapper">
-                  <span class="qw-add-items-submit button" title="filter">Submit</span>
-                </div>
-              </div>
-            </div>
-            <div id="query-filters" class="sortable qw-handler-items">
-              <?php
-                // loop through and display
-                if ( is_array( $filters ) ) {
-                  foreach($filters as $filter_name => $filter)
-                  {
-                    $args = array(
-                      'filter' => $filter,
-                      'weight' => $filter['weight'],
-                    );
-                    ?>
-                    <div class="qw-handler-item">
-                      <?php print theme('query_filter', $args); ?>
-                    </div>
-                  <?php
                   }
                 }
               ?>
-            </div>
-          </td>
-        </tr>
-
-        <?php // sorts ?>
-        <tr>
-          <th>
-            <label>Order By</label>
-            <p class="description">Select options for sorting the query results.</p>
-          </th>
-          <td>
-            <div class="qw-add-items-wrapper">
-              <div class="qw-add-items-controls">
-                <span class="qw-add-item button" title="sort">Add Sorts</span>
+              <div class="qw-add-items-submit-wrapper">
+                <span class="qw-add-items-submit button" data-handler-type="filter">Submit</span>
               </div>
-              <div id="qw-all-sorts" class="qw-add-new-items">
+            </div>
+          </div>
+          <div id="query-filters" class="qw-handler-items">
+            <?php
+              // loop through and display
+              if ( is_array( $filters ) ) {
+                foreach($filters as $filter_name => $filter)
+                {
+                  $args = array(
+                    'filter' => $filter,
+                    'weight' => $filter['weight'],
+                  );
+                  ?>
+                  <div class="qw-handler-item">
+                    <?php print theme('query_filter', $args); ?>
+                  </div>
                 <?php
-                  // list all sorts that can be chosen
-                  foreach($all_sorts as $hook_key => $sort)
-                  { ?>
-                    <label>
-                      <input type="checkbox"
-                             value="<?php print $sort['type']; ?>" />
-                      <input class="qw-handler-hook_key"
-                             type="hidden"
-                             value="<?php print $sort['hook_key']; ?>" />
-                      <?php print $sort['title']; ?>
-                    </label>
-                    <p class="description"><?php print $sort['description']; ?></p>
-                    <?php
-                  }
-                ?>
-                <div class="qw-add-items-submit-wrapper">
-                  <span class="qw-add-items-submit button" title="sort">Submit</span>
-                </div>
-              </div>
-            </div>
+                }
+              }
+            ?>
+          </div>
+        </td>
+      </tr>
 
-            <div id="query-sorts" class="sortable qw-handler-items">
+      <?php // sorts ?>
+      <tr>
+        <th>
+          <label>Order By</label>
+          <p class="description">Select options for sorting the query results.</p>
+        </th>
+        <td>
+          <div class="qw-add-items-wrapper">
+            <div class="qw-add-items-controls">
+              <span class="qw-add-item button">Add Sorts</span>
+            </div>
+            <div class="qw-add-new-items">
               <?php
-                // list all existing sorts on the query
-                if( is_array( $sorts ) ){
-                  foreach($sorts as $sort)
-                  {
-                    $args = array(
-                      'sort' => $sort,
-                      'weight' => $sort['weight'],
-                    );
-                    ?>
-                    <div class="qw-handler-item">
-                      <?php  print theme('query_sort', $args); ?>
-                    </div>
-                    <?php
-                  }
+                // list all sorts that can be chosen
+                foreach($all_sorts as $hook_key => $sort)
+                { ?>
+                  <label>
+                    <input type="checkbox"
+                           value="<?php print $sort['type']; ?>" />
+                    <input class="qw-handler-hook_key"
+                           type="hidden"
+                           value="<?php print $sort['hook_key']; ?>" />
+                    <?php print $sort['title']; ?>
+                  </label>
+                  <p class="description"><?php print $sort['description']; ?></p>
+                  <?php
                 }
               ?>
+              <div class="qw-add-items-submit-wrapper">
+                <span class="qw-add-items-submit button" data-handler-type="sort">Submit</span>
+              </div>
             </div>
-          </td>
-        </tr>
-      </table>
-    </div><!-- /query settings -->
+          </div>
 
+          <div id="query-sorts" class="qw-handler-items">
+            <?php
+              // list all existing sorts on the query
+              if( is_array( $sorts ) ){
+                foreach($sorts as $sort)
+                {
+                  $args = array(
+                    'sort' => $sort,
+                    'weight' => $sort['weight'],
+                  );
+                  ?>
+                  <div class="qw-handler-item">
+                    <?php  print theme('query_sort', $args); ?>
+                  </div>
+                  <?php
+                }
+              }
+            ?>
+          </div>
+        </td>
+      </tr>
+    </table>
+  </div><!-- /query settings -->
 
   <!-- DISPLAY SETTINGS -->
   <div class="qw-query-admin-column">
     <h2>Display Settings</h2>
-	  <p class="description"></p>
+    <p class="description"></p>
 
     <table class="form-table">
       <?php
@@ -249,9 +248,9 @@ $overrides
         <td>
           <div class="qw-add-items-wrapper">
             <div class="qw-add-items-controls">
-              <span class="qw-add-item button" title="field">Add Fields</span>
+              <span class="qw-add-item button">Add Fields</span>
             </div>
-            <div id="qw-all-fields" class="qw-add-new-items">
+            <div class="qw-add-new-items">
               <?php
                 // loop through fields
                 foreach($all_fields as $hook_key => $field)
@@ -266,16 +265,16 @@ $overrides
                     <?php print $field['title']; ?>
                   </label>
                   <p class="description"><?php print $field['description']; ?></p>
-                <?php
+                  <?php
                 }
               ?>
               <div class="qw-add-items-submit-wrapper">
-                <span class="qw-add-items-submit button" title="field">Submit</span>
+                <span class="qw-add-items-submit button" data-handler-type="field">Submit</span>
               </div>
             </div>
           </div>
 
-          <div id="query-fields" class="sortable qw-handler-items">
+          <div id="query-fields" class="qw-handler-items">
             <?php
               if( is_array( $fields ) ) {
                 $tokens = array();
@@ -315,7 +314,7 @@ $overrides
   { ?>
     <div class="qw-query-admin-column">
       <h2>Contextual Settings</h2>
-	    <p class="description"></p>
+      <p class="description"></p>
 
       <table class="form-table">
         <tr>
