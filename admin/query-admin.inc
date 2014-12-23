@@ -293,7 +293,8 @@ function qw_admin_get_current_query_id(){
 // get a single query by its ID
 function qw_get_query_by_id( $id ){
   global $wpdb;
-  $sql = "SELECT * FROM {$wpdb->prefix}query_wrangler WHERE id %d LIMIT 1";
+  $table = $wpdb->prefix.'query_wrangler';
+  $sql = "SELECT * FROM $table WHERE id = %d LIMIT 1";
   $query = $wpdb->get_row( $wpdb->prepare( $sql, $id ) );
 
   if ($query){

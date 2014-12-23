@@ -129,33 +129,19 @@
         </span>
       </div>
 
-              <h4>Fields</h4>
+      <h4>Fields</h4>
       <div class="qw-clear-gone"><!-- ie hack -->&nbsp;</div>
       <div id="query-fields" class="qw-handler-items">
         <?php
-          if(is_array($fields)){
-            foreach($fields as $field)
-            {
-              $tokens[$field['name']] = '{{'.$field['name'].'}}';
-              $args = array(
-                'image_sizes' => $image_sizes,
-                'file_styles' => $file_styles,
-                'field' => $field,
-                'weight' => $field['weight'],
-                'options' => $options,
-                'display' => $display,
-                'args'  => $args,
-                'tokens' => $tokens,
-              );
-              ?>
-              <div class="qw-handler-item">
-                <div class="qw-handler-item-title"><?php print $field['title'];  ?></div>
-                <div class="qw-handler-item-form">
-                  <?php print theme('query_field', $args); ?>
-                </div>
+          foreach($fields as $field)
+          { ?>
+            <div class="qw-handler-item">
+              <div class="qw-handler-item-title"><?php print $field['title'];  ?></div>
+              <div class="qw-handler-item-form">
+                <?php print $field['wrapper_form']; ?>
               </div>
-              <?php
-            }
+            </div>
+            <?php
           }
         ?>
       </div>
@@ -180,22 +166,15 @@
       <div class="qw-clear-gone"><!-- ie hack -->&nbsp;</div>
       <div id="query-sorts" class="qw-handler-items">
         <?php
-          if(is_array($sorts)){
-            foreach($sorts as $sort)
-            {
-              $args = array(
-                'sort' => $sort,
-                'weight' => $sort['weight'],
-              );
-              ?>
-              <div class="qw-handler-item">
-                <div class="qw-handler-item-title"><?php print $sort['title'];  ?></div>
-                <div class="qw-handler-item-form">
-                  <?php  print theme('query_sort', $args); ?>
-                </div>
+          foreach($sorts as $sort)
+          { ?>
+            <div class="qw-handler-item">
+              <div class="qw-handler-item-title"><?php print $sort['title'];  ?></div>
+              <div class="qw-handler-item-form">
+                <?php print $sort['wrapper_form']; ?>
               </div>
-              <?php
-            }
+            </div>
+            <?php
           }
         ?>
       </div>
@@ -218,22 +197,15 @@
       <div id="query-filters" class="qw-handler-items">
         <?php
           // loop through and display
-          if(is_array($filters)){
-            foreach($filters as $filter_name => $filter)
-            {
-              $args = array(
-                'filter' => $filter,
-                'weight' => $filter['weight'],
-              );
-              ?>
-                <div class="qw-handler-item">
-                  <div class="qw-handler-item-title"><?php print $filter['title']; ?></div>
-                  <div class="qw-handler-item-form">
-                    <?php print theme('query_filter', $args); ?>
-                  </div>
+          foreach($filters as $filter_name => $filter)
+          { ?>
+              <div class="qw-handler-item">
+                <div class="qw-handler-item-title"><?php print $filter['title']; ?></div>
+                <div class="qw-handler-item-form">
+                  <?php print $filter['wrapper_form']; ?>
                 </div>
-              <?php
-            }
+              </div>
+            <?php
           }
         ?>
       </div>

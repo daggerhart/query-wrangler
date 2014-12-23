@@ -65,20 +65,56 @@ function qw_page_handler(){
  * Query Edit Page
  */
 function qw_edit_query_form(){
-  global $wpdb;
-  $table_name = $wpdb->prefix."query_wrangler";
-  $query_id = $_GET['edit'];
-  $sql = "SELECT name,slug,type,data,path FROM ".$table_name." WHERE id = ".$query_id." LIMIT 1";
-  $row = $wpdb->get_row($sql);
+  if ( $query_id = qw_admin_get_current_query_id() ){
+    $row = qw_get_query_by_id( $query_id );
+  }
+  if ( !$row ){ return; }
 
-  $options = qw_unserialize($row->data);
-
-  // preprocess existing handlers
-  $handlers = qw_preprocess_handlers($options);
+  $options = $row->options;
+  $display = array_map('stripslashes_deep',$options['display']);
+  $image_sizes = get_intermediate_image_sizes();
+  $file_styles = qw_all_file_styles();
 
   $theme = get_option('qw_edit_theme', QW_DEFAULT_THEME);
   if($theme == ""){
     $theme = QW_DEFAULT_THEME;
+  }
+
+  // preprocess existing handlers
+  $handlers = qw_preprocess_handlers($options);
+
+  // go ahead and make existing items wrapper forms
+  // filters
+  foreach($handlers['filter']['items'] as $k => &$filter){
+    $args = array(
+      'filter' => $filter,
+      'weight' => $filter['weight'],
+    );
+    $filter['wrapper_form'] = theme('query_filter', $args);
+  }
+  // sorts
+  foreach($handlers['sort']['items'] as $k => &$sort){
+    $args = array(
+      'sort' => $sort,
+      'weight' => $sort['weight'],
+    );
+    $sort['wrapper_form'] = theme('query_sort', $args);
+  }
+
+  $tokens = array();
+  // fields
+  foreach($handlers['field']['items'] as $k => &$field){
+    $tokens[$field['name']] = '{{'.$field['name'].'}}';
+    $args = array(
+      'image_sizes' => $image_sizes,
+      'file_styles' => $file_styles,
+      'field' => $field,
+      'weight' => $field['weight'],
+      'options' => $options,
+      'display' => $display,
+      'tokens' => $tokens,
+    );
+    $field['wrapper_form'] = theme('query_field', $args);
   }
 
   // start building edit page data
@@ -86,10 +122,10 @@ function qw_edit_query_form(){
     // editor theme
     'theme' => $theme,
     // query data
-    'query_id'  => $query_id,
+    'query_id'  => $row->id,
     'options'   => $options,
     'args'      => $options['args'],
-    'display'   => array_map('stripslashes_deep',$options['display']),
+    'display'   => $display,
     'query_name' => $row->name,
     'query_type' => $row->type,
     'query_page_title' => isset($options['display']['title']) ? $options['display']['title'] : '',
@@ -111,8 +147,8 @@ function qw_edit_query_form(){
     'all_filters'   => qw_all_filters(),
     'all_fields'    => qw_all_fields(),
     'all_sorts'     => qw_all_sort_options(),
-    'image_sizes'   => get_intermediate_image_sizes(),
-    'file_styles'   => qw_all_file_styles(),
+    'image_sizes'   => $image_sizes,
+    'file_styles'   => $file_styles,
   );
 
   // Page Queries
@@ -126,7 +162,7 @@ function qw_edit_query_form(){
   }
 
   $edit_wrapper_args = array(
-    'query_id' => $query_id,
+    'query_id' => $row->id,
     'theme' => $theme,
     'editor' => theme('query_edit', $edit_args),
   );

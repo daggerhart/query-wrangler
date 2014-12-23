@@ -10,6 +10,7 @@
     init: function(){
       // sortable item lists
       QueryWrangler.sortables.init('.qw-handler-items', '.qw-handler-item');
+      QueryWrangler.optionGroups.init();
 
       // freshen the ui js
       QWPicnic.refresh_ui();

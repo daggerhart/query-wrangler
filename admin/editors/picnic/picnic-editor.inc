@@ -107,19 +107,12 @@ $overrides
         <div id="query-filters" class="qw-handler-items">
           <?php
             // loop through and display
-            if ( is_array( $filters ) ) {
-              foreach($filters as $filter_name => $filter)
-              {
-                $args = array(
-                  'filter' => $filter,
-                  'weight' => $filter['weight'],
-                );
-                ?>
-                <div class="qw-handler-item">
-                  <?php print theme('query_filter', $args); ?>
-                </div>
+            foreach($filters as $filter_name => $filter)
+            { ?>
+              <div class="qw-handler-item">
+                <?php print $filter['wrapper_form']; ?>
+              </div>
               <?php
-              }
             }
           ?>
         </div>
@@ -163,19 +156,12 @@ $overrides
         <div id="query-sorts" class="qw-handler-items">
           <?php
             // list all existing sorts on the query
-            if( is_array( $sorts ) ){
-              foreach($sorts as $sort)
-              {
-                $args = array(
-                  'sort' => $sort,
-                  'weight' => $sort['weight'],
-                );
-                ?>
-                <div class="qw-handler-item">
-                  <?php print theme('query_sort', $args); ?>
-                </div>
-                <?php
-              }
+            foreach($sorts as $sort)
+            { ?>
+              <div class="qw-handler-item">
+                <?php print $sort['wrapper_form']; ?>
+              </div>
+              <?php
             }
           ?>
         </div>
@@ -261,28 +247,13 @@ $overrides
 
         <div id="query-fields" class="qw-handler-items">
           <?php
-            if( is_array( $fields ) ) {
-              $tokens = array();
-              // loop through existing fields
-              foreach($fields as $field)
-              {
-                $tokens[$field['name']] = '{{'.$field['name'].'}}';
-                $args = array(
-                  'image_sizes' => $image_sizes,
-                  'file_styles' => $file_styles,
-                  'field' => $field,
-                  'weight' => $field['weight'],
-                  'options' => $options,
-                  'display' => $display,
-                  'args'  => $args,
-                  'tokens' => $tokens,
-                );
-                ?>
-                <div class="qw-handler-item">
-                  <?php print theme('query_field', $args); ?>
-                </div>
-                <?php
-              }
+            // loop through existing fields
+            foreach($fields as $field)
+            { ?>
+              <div class="qw-handler-item">
+                <?php print $field['wrapper_form']; ?>
+              </div>
+              <?php
             }
           ?>
         </div>
