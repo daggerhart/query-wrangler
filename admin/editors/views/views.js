@@ -60,6 +60,7 @@
      * @param element - dom element where the checkboxes can be found
      */
     addHandlerItems: function( element ){
+      var handler = $(element).data('handler-type');
       var checkedboxes = $(element).find('input[type=checkbox]:checked');
 
       $.each( checkedboxes, function( index, box ) {

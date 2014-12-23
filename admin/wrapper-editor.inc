@@ -1,3 +1,25 @@
+<form id="qw-edit-query-form"
+      action="<?php print admin_url("admin.php?page=query-wrangler&action=update&edit=$query_id&noheader=true"); ?>"
+      method='post'
+      data-query-id="<?php print $query_id; ?>"
+      data-ajax-url="<?php print admin_url( 'admin-ajax.php' ); ?>">
+  <div id="qw-query-action-buttons">
+    <div id="query-actions">
+      <a href="<?php print admin_url("admin.php?page=query-wrangler&export=$query_id"); ?>">Export</a>
+    </div>
+    <?php submit_button('Save'); ?>
+  </div>
+  <div id="message" class="updated qw-changes">
+    <p><strong>*</strong> Changes have been made that need to be saved.</p>
+  </div>
+  <div class="qw-clear-gone"><!-- ie hack -->&nbsp;</div>
+
+  <?php
+    // the editor
+    print $editor;
+  ?>
+
+</form>
 
 <!-- Preview -->
 <div id="query-preview" class="qw-query-option">
@@ -54,4 +76,3 @@
   </div>
 
 </div>
-</form>

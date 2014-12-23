@@ -280,17 +280,6 @@ function qw_admin_js(){
                   plugins_url('/admin/js/query-wrangler.js', dirname(__FILE__)),
                   array('jquery-ui-core'),
                   QW_VERSION, true);
-  
-  if ( $query_id = qw_admin_get_current_query_id() ){
-    wp_localize_script( 'qw-admin-js',
-      'QueryWrangler',
-      array(
-        'l10n_print_after' => '
-          QW_Query_ID = ' . $query_id . ';
-          QW_Ajax_URL = "' . admin_url( 'admin-ajax.php' ) . '";'
-      )
-    );
-  }
 }
 
 // get the current query being edited

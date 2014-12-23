@@ -125,11 +125,17 @@ function qw_edit_query_form(){
     $edit_args['query_override_type'] = $row->override_type;
   }
 
+  $edit_wrapper_args = array(
+    'query_id' => $query_id,
+    'theme' => $theme,
+    'editor' => theme('query_edit', $edit_args),
+  );
+
   // admin wrapper arguments
   $admin_args = array(
     'title' => 'Edit query <em>'.$edit_args['query_name'].'</em> <sup>'.$row->slug.'</sup>',
     // content is the query_edit page
-    'content' => theme('query_edit', $edit_args)
+    'content' => theme('query_edit_wrapper', $edit_wrapper_args )
   );
 
   // add view link for pages

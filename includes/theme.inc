@@ -13,6 +13,14 @@ function qw_templates($templates){
     'default_path' => QW_PLUGIN_DIR,
     'arguments' => array('options' => NULL),
   );
+  // edit query wrapper template
+  $templates['query_edit_wrapper'] = array(
+    'files' => 'admin/wrapper-editor.inc',
+    'default_path' => QW_PLUGIN_DIR,
+    'arguments' => array(
+      'theme' => get_option('qw_edit_theme', QW_DEFAULT_THEME),
+    ),
+  );
   // edit query template
   $templates['query_edit'] = array(
     'files' => 'admin/editors/[theme]/[theme]-editor.inc',

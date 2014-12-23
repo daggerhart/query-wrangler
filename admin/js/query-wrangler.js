@@ -76,7 +76,7 @@ var QueryWrangler = {};
     post: function (post_data_form, callback) {
       // ajax call to get form
       jQuery.ajax({
-        url: QW_Ajax_URL,
+        url: $('form#qw-edit-query-form').data('ajax-url'),
         type: 'POST',
         async: false,
         data: post_data_form,
@@ -389,14 +389,18 @@ var QueryWrangler = {};
 /*
  * Init QW
  */
-jQuery(document).ready(function(){
-  // some data is required from PHP
-  if ( QW_Query_ID && QW_Ajax_URL ) {
-    QueryWrangler.init( QW_Query_ID );
-  }
-  else {
-    alert('no query id');
-  }
-});
+(function($){
 
+  $(document).ready(function(){
+    var $form = $('form#qw-edit-query-form');
 
+    // some data is required from PHP
+    if ( $form.data('query-id') && $form.data('ajax-url') ) {
+      QueryWrangler.init( $form.data('query-id') );
+    }
+    else {
+      alert('no query id');
+    }
+  });
+
+})(jQuery);
