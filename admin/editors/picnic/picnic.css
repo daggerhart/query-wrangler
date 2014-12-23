@@ -1,0 +1,68 @@
+
+.qw-handler-item {
+    background: white;
+    padding: 12px;
+    border: 1px solid #bbb;
+}
+.qw-add-new-items {
+    background: white;
+    padding: 12px;
+    border: 1px solid #bbb;
+}
+.qw-add-items-controls {
+    text-align: right;
+}
+.qw-handler-item {
+    position: relative;
+}
+.qw-handler-item .group {
+    display: none;
+}
+.qw-handler-item .group .description{
+    margin: 12px 0;
+}
+.sortable-handle {
+    background: transparent url('../../images/handle2.png') left top no-repeat;
+    float: left;
+    margin-right: 8px;
+    width: 16px;
+    height: 16px;
+    cursor: row-resize;
+}
+.qw-add-items-controls {
+    margin-bottom: 12px;
+}
+.qw-setting-header {
+    padding: 0;
+    color: #0074a2;
+    font-weight: bold;
+    display: block;
+    cursor: pointer;
+}
+.qw-setting-header .details {
+    color: #222;
+    font-weight: normal;
+}
+.qw-setting-header .details:before {
+    content: "- ";
+    color: #222;
+}
+
+.qw-remove {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+}
+
+textarea.qw-field-textarea {
+    width: 98%;
+    height: 240px;
+}
+textarea.qw-field-textarea.blurred {
+    height: 1.6em;
+    width: 240px;
+}
+
+label.qw-field-checkbox {
+    margin: 8px 0;
+}

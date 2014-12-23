@@ -15,10 +15,10 @@ function qw_templates($templates){
   );
   // edit query template
   $templates['query_edit'] = array(
-    'files' => 'admin/editors/[theme]/query-edit-[theme].inc',
+    'files' => 'admin/editors/[theme]/[theme]-editor.inc',
     'default_path' => QW_PLUGIN_DIR,
     'arguments' => array(
-      'theme' => get_option('qw_edit_theme'),
+      'theme' => get_option('qw_edit_theme', QW_DEFAULT_THEME),
     ),
   );
   // create query template

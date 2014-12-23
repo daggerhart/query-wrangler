@@ -76,10 +76,11 @@ function qw_edit_query_form(){
   // preprocess existing handlers
   $handlers = qw_preprocess_handlers($options);
 
-  $theme = get_option('qw_edit_theme');
+  $theme = get_option('qw_edit_theme', QW_DEFAULT_THEME);
   if($theme == ""){
     $theme = QW_DEFAULT_THEME;
   }
+
   // start building edit page data
   $edit_args = array(
     // editor theme

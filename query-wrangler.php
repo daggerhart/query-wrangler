@@ -112,8 +112,9 @@ function qw_init(){
     include_once QW_PLUGIN_DIR.'/admin/ajax.inc';
     include_once QW_PLUGIN_DIR.'/admin/default_editors.inc';
 
-    add_action( 'wp_ajax_nopriv_qw_form_ajax', 'qw_form_ajax' );
+    //add_action( 'wp_ajax_nopriv_qw_form_ajax', 'qw_form_ajax' );
     add_action( 'wp_ajax_qw_form_ajax', 'qw_form_ajax' );
+    add_action( 'wp_ajax_qw_data_ajax', 'qw_data_ajax' );
 
     // js
     if(isset($_GET['page']) && $_GET['page'] == 'query-wrangler')

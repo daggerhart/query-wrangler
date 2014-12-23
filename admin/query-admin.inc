@@ -255,7 +255,7 @@ function qw_init_edit_theme(){
 
 // CSS
 function qw_admin_css(){
-  print '<link rel="stylesheet" type="text/css" href="'.QW_PLUGIN_URL.'/admin/css/jquery-ui.css" />';
+  //print '<link rel="stylesheet" type="text/css" href="'.QW_PLUGIN_URL.'/admin/css/jquery-ui.css" />';
   print '<link rel="stylesheet" type="text/css" href="'.QW_PLUGIN_URL.'/admin/css/query-wrangler.css" />';
 }
 // admin list page
@@ -281,18 +281,42 @@ function qw_admin_js(){
                   array('jquery-ui-core'),
                   QW_VERSION, true);
   
-  $data = qw_edit_json();
-  wp_localize_script( 'qw-admin-js',
-                      'QueryWrangler',
-                      array(
-                        'l10n_print_after' => 'QueryWrangler = ' . $data. ';'
-                      )
-                    );
+  if ( $query_id = qw_admin_get_current_query_id() ){
+    wp_localize_script( 'qw-admin-js',
+      'QueryWrangler',
+      array(
+        'l10n_print_after' => '
+          QW_Query_ID = ' . $query_id . ';
+          QW_Ajax_URL = "' . admin_url( 'admin-ajax.php' ) . '";'
+      )
+    );
+  }
 }
+
+// get the current query being edited
+function qw_admin_get_current_query_id(){
+  if ( isset( $_GET['page'] ) && $_GET['page'] == 'query-wrangler' && isset( $_GET['edit'] ) ) {
+    return $_GET['edit'];
+  }
+  return false;
+}
+
+// get a single query by its ID
+function qw_get_query_by_id( $id ){
+  global $wpdb;
+  $sql = "SELECT * FROM {$wpdb->prefix}query_wrangler WHERE id %d LIMIT 1";
+  $query = $wpdb->get_row( $wpdb->prepare( $sql, $id ) );
+
+  if ($query){
+    $query->options = qw_unserialize($query->data);
+    return $query;
+  }
+  return false;
+}
+
 // Base Json data for query edit page
 function qw_edit_json(){
   $data = array(
-    'ajaxForm' => admin_url( 'admin-ajax.php' ),
     'allFields' => qw_all_fields(),
     'allStyles' => qw_all_styles(),
     'allRowStyles' => qw_all_row_styles(),
@@ -305,22 +329,8 @@ function qw_edit_json(){
   );
 
   // editing a query
-  if($query_id = $_GET['edit'])
-  {
-    // get the query
-    global $wpdb;
-    $table_name = $wpdb->prefix."query_wrangler";
-    $sql = "SELECT name,type,data,path FROM ".$table_name." WHERE id = ".$query_id." LIMIT 1";
-    $row = $wpdb->get_row($sql);
-
-    $additional_data['query'] = array(
-      'id' => $query_id,
-      'options' => qw_unserialize($row->data),
-      'name' => $row->name,
-      'type' => $row->type,
-    );
-
-    $data = array_merge($data, $additional_data);
+  if ( $row = qw_get_query_by_id( $_GET['edit'] ) ) {
+    $data['query'] = $row;
   }
   return json_encode( $data ) ;
 }

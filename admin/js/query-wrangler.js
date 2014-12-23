@@ -1,80 +1,402 @@
-/*
- * Globals
- */
-QueryWrangler.current_form_id = '';
-QueryWrangler.new_form_id = '';
-QueryWrangler.form_backup = '';
-// array of available options for looping
-QueryWrangler.handlers = ['field','filter','sort'];
-// changes have been made
-QueryWrangler.changes = false;
 
-/*
- * Ajax preview
- */
-QueryWrangler.get_preview = function() {
-  // show throbber
-  jQuery('#query-preview-controls').removeClass('query-preview-inactive').addClass('query-preview-active');
-  // serialize form data
-  QueryWrangler.form_backup = jQuery('form#qw-edit-query-form').serialize();
-  // prepare post data
-  var post_data_form = {
-    'action': 'qw_form_ajax',
-    'form': 'preview',
-    'options': QueryWrangler.form_backup,
-    'query_id': QueryWrangler.query.id
-  };
-  // make ajax call
-  jQuery.ajax({
-    url: QueryWrangler.ajaxForm,
-    type: 'POST',
-    async: false,
-    data: post_data_form,
-    dataType: 'json',
-    success: function(results){
-      jQuery('#query-preview-target').html(results.preview);
-      jQuery('#qw-show-arguments-target').html(results.args);
-      jQuery('#qw-show-php_wpquery-target').html(results.php_wpquery);
-      jQuery('#qw-show-display-target').html(results.display);
-      jQuery('#qw-show-wpquery-target').html(results.wpquery);
-      jQuery('#qw-show-templates-target').html(results.templates);
+var QueryWrangler = {};
+
+(function($){
+
+  QueryWrangler = {
+    // this query specific data
+    query: {},
+
+    // results from qw_all hooks. All handlers, styles, etc
+    data: {},
+
+    // array of available options for looping
+    handlers: ['field', 'filter', 'sort'],
+
+    // changes have been made
+    changes: false,
+
+    /**
+     * Init core QW UI components
+     */
+    init: function (query_id) {
+      QueryWrangler.query.id = query_id;
+
+      // hide message that says this query needs saving
+      $('.qw-changes').hide();
+
+      // bind preview button click
+      $('#get-preview').click(QueryWrangler.ajax.getPreview);
+
+      // show initial preview
+      if ($('#live-preview').prop('checked')) {
+        QueryWrangler.ajax.getPreview();
+      }
+
+      // preview data accordions
+      $('#query-details').accordion({
+        header: '> div > .qw-setting-header',
+        heightStyle: "content",
+        collapsible: true,
+        active: false,
+        autoHeight: false
+      });
+
+      // get our core hook data
+      QueryWrangler.ajax.getQwData();
+    },
+
+    /**
+     * Make and output tokens for fields
+     */
+    generateFieldTokens: function () {
+      var tokens = [];
+
+      $('#existing-fields div.qw-field').each(function (i, element) {
+        // field name
+        var field_name = $(element).find('.qw-field-name').val();
+        // add tokens
+        tokens.push('<li>{{' + field_name + '}}</li>');
+        // target the field and insert tokens
+        $('#qw-field-' + field_name + ' ul.qw-field-tokens-list').html(tokens.join(""));
+      });
     }
-  });
-  // hide throbber
-  jQuery('#query-preview-controls').removeClass('query-preview-active').addClass('query-preview-inactive');
-}
+  };
+
+
+  /**
+   * AJAX methods & helpers
+   */
+  QueryWrangler.ajax = {
+    /**
+     * Submit an ajax call via POST
+     * @param post_data_form
+     * @param callback
+     */
+    post: function (post_data_form, callback) {
+      // ajax call to get form
+      jQuery.ajax({
+        url: QW_Ajax_URL,
+        type: 'POST',
+        async: false,
+        data: post_data_form,
+        dataType: 'json',
+        success: callback
+      });
+    },
+
+    /**
+     * Get QW hook and query data
+     */
+    getQwData: function(){
+      var post_data = {
+        action: 'qw_data_ajax',
+        data: 'all_hooks'
+      };
+      QueryWrangler.ajax.post( post_data, function( results ){
+        QueryWrangler.data = JSON.parse(results);
+      });
+    },
+
+    /**
+     * Preview
+     */
+    getPreview: function () {
+      var $preview_controls = $('#query-preview-controls');
+
+      // show throbber
+      $preview_controls.removeClass('query-preview-inactive').addClass('query-preview-active');
+
+      // prepare post data
+      var post_data_form = {
+        'action': 'qw_form_ajax',
+        'form': 'preview',
+        'options': $('form#qw-edit-query-form').serialize(),
+        'query_id': QueryWrangler.query.id
+      };
+
+      // make ajax call
+      QueryWrangler.ajax.post(post_data_form, function (results) {
+        $('#query-preview-target').html(results.preview);
+        $('#qw-show-arguments-target').html(results.args);
+        $('#qw-show-php_wpquery-target').html(results.php_wpquery);
+        $('#qw-show-display-target').html(results.display);
+        $('#qw-show-wpquery-target').html(results.wpquery);
+        $('#qw-show-templates-target').html(results.templates);
+      });
+
+      // hide throbber
+      $preview_controls.removeClass('query-preview-active').addClass('query-preview-inactive');
+    },
+
+    /**
+     *
+     * @param handler - text name of handler: field, filter, sort
+     * @param item_type - handler item type.  a specific name for the handler
+     * @param callback - success callback
+     */
+    getHandlerItemTemplate: function ( handler, item_type, hook_key, callback ){
+      var item_count = $('#query-'+handler+'s input.qw-'+handler+'-type[value='+item_type+']').length;
+
+      // prepare post data for form and sortable form
+      var post_data_form = {
+        'action': 'qw_form_ajax',
+        'form': handler+'_form',
+        'name': (item_count > 0) ? item_type + "_" + item_count : item_type,
+        'handler': handler,
+        'hook_key': hook_key,
+        'type': item_type,
+        'query_type': QueryWrangler.query.type,
+        'next_weight': $('#query-'+handler+'s .qw-handler-item').length
+      };
+
+      var original_handler;
+
+      // get original object from QW
+      switch (post_data_form.handler) {
+        case 'filter':
+          if ( QueryWrangler.data.allFilters[ post_data_form.hook_key ] ) {
+            original_handler = QueryWrangler.data.allFilters[ post_data_form.hook_key ];
+          }
+          break;
+
+        case 'sort':
+          if ( QueryWrangler.data.allSortOptions[ post_data_form.hook_key ] ) {
+            original_handler = QueryWrangler.data.allSortOptions[ post_data_form.hook_key ];
+          }
+          break;
+
+        case 'field':
+          if ( QueryWrangler.data.allFields[ post_data_form.hook_key ] ) {
+            original_handler = QueryWrangler.data.allFields[ post_data_form.hook_key ];
+          }
+          break;
+      }
+
+      // get template and handle results
+      QueryWrangler.ajax.post( post_data_form, function( results ){
+        callback( results, original_handler );
+      });
+    }
+  };
+  // ajax
+
+  /**
+   * Methods for Sortable handler items (fields, filters, sorts)
+   */
+  QueryWrangler.sortables = {
+
+    // css selector where sortables can be found
+    wrapper_selector: '',
+    // individual item that is sortable
+    item_selector: '',
+
+    /**
+     * Init sortables and create handles
+     *
+     * @params selector - common css selector for all sortable areas
+     */
+    init: function ( wrapper_selector , item_selector ) {
+      QueryWrangler.sortables.wrapper_selector = wrapper_selector;
+      QueryWrangler.sortables.item_selector = item_selector;
+
+      $( wrapper_selector )
+        .sortable({
+          handle: '.sortable-handle',
+          update: QueryWrangler.sortables.updateItemWeights
+        });
+      QueryWrangler.sortables.refresh();
+    },
+
+    /**
+     * Refresh the jQuery UI sortable()
+     */
+    refresh: function () {
+      QueryWrangler.sortables.makeSortableHandles();
+      $( QueryWrangler.sortables.wrapper_selector ).sortable('refresh');
+    },
+
+    /**
+     * Create handles for sortable items
+     *
+     * @params selector - common css selector where the handles should be created
+     */
+    makeSortableHandles: function () {
+      var $handler_items = $( QueryWrangler.sortables.wrapper_selector ).find( QueryWrangler.sortables.item_selector );
+      $handler_items.find('.sortable-handle').remove();
+
+      $handler_items.each(function (i, element) {
+        $(element).prepend('<div class="sortable-handle"></div>');
+      });
+    },
+
+    /**
+     * jQuery UI sortable.update callback
+     * - Update all item weights
+     */
+    updateItemWeights: function () {
+      // loop through sortable handlers
+      $( QueryWrangler.sortables.wrapper_selector ).each(function (handlers_i, handler_items) {
+        // loop through handler items and set new weights
+        $(handler_items).find( QueryWrangler.sortables.item_selector ).each(function (i, handler_item) {
+          $(handler_item).find('.qw-weight').attr('value', i).val(i);
+        });
+      });
+    }
+  };
+  // sortables
+
+  /**
+   * Option Group methods
+   *  - option groups are extra settings for handler item that require enabling to work.
+   *  - eg, rewrite output, create label, etc
+   */
+  QueryWrangler.optionGroups = {
+    /**
+     * Init option groups by delegating checkbox change
+     */
+    init: function () {
+      // delegate toggling of option group
+      $('body').on('change', '.qw-options-group-title input[type=checkbox]', function (event) {
+        $box = $(this);
+
+        if ($box.is(':checked')) {
+          // show options
+          $box.closest('.qw-options-group').find('.qw-options-group-content').show();
+        }
+        else {
+          // hide options
+          $box.closest('.qw-options-group').find('.qw-options-group-content').hide();
+        }
+      });
+
+      // set load-states
+      QueryWrangler.optionGroups.refresh();
+    },
+
+    /**
+     * Loop through options groups, determine state, and toggle as necessary
+     */
+    refresh: function () {
+      $('.qw-options-group').each(function (i, group) {
+        // get the checkbox
+        var $box = $(group).find('.qw-options-group-title').find('input[type=checkbox]');
+
+        if (!$box.is(':checked')) {
+          // hide options if not checked initially
+          $box.closest('.qw-options-group').find('.qw-options-group-content').hide();
+        }
+      });
+    }
+  };
+  // option groups
+
+  /**
+   * JS Titles
+   *
+   * @type {Object}
+   */
+  QueryWrangler.jsTitles =  {
+
+    // generic selector for all handler items
+    handler_items_selector: '',
+
+    // selector for where the js-title details should be placed
+    details_container_selector: '',
+
+    /**
+     * Initialize the js-titles for handlers
+     *
+     * @param handler_items_selector
+     * @param details_container_selector
+     */
+    init: function( handler_items_selector, details_container_selector ){
+      QueryWrangler.jsTitles.handler_items_selector = handler_items_selector;
+      QueryWrangler.jsTitles.details_container_selector = details_container_selector;
+
+      // initial titles
+      QueryWrangler.jsTitles.refresh();
+    },
+
+    /**
+     * Update handler item titles based on values selected
+     * - gets values from fields with .qw-js-title class
+     */
+    refresh: function(){
+      // remove and recreate any details spans
+      $( QueryWrangler.jsTitles.details_container_selector + ' .details').remove();
+      $( QueryWrangler.jsTitles.details_container_selector ).append('<span class="details"></span>');
+
+      var handler_items = $( QueryWrangler.jsTitles.handler_items_selector );
+
+      // each handler_item may have multiple qw-js-title fields
+      $.each(handler_items, function(i, handler_item){
+        var $handler_item = $(handler_item);
+        var $title_target = $handler_item.find( QueryWrangler.jsTitles.details_container_selector + ' .details');
+        var new_title = [];
+
+        // loop through all js-title elements and make a new tile
+        $handler_item.find('.qw-js-title').each(function(i, element){
+          $element = $(element);
+          var element_value = $element.val();
+
+          switch ( $element.prop('tagName') ){
+            case 'INPUT':
+              var tag_type = $element.attr('type');
+              // checkboxes are special!
+              if (tag_type == 'checkbox'){
+                var is_checked = $element.prop('checked');
+                if (!element_value) {
+                  element_value = (is_checked) ? "on" : "off";
+                }
+                else if (!is_checked){
+                  element_value = '';
+                }
+              }
+
+              if (element_value){
+                new_title.push(element_value);
+              }
+              break;
+
+            case 'TEXTAREA':
+              if (element_value){
+                new_title.push('In Use');
+              }
+              break;
+
+            case 'SELECT':
+              new_title.push(element_value);
+              break;
+          }
+        });
+
+        // no items found
+        if (new_title.length == 0){
+          new_title.push('None');
+        }
+        // title array to string
+        new_title = new_title.join(', ');
+
+        // set new title
+        $title_target.text(new_title);
+      });
+    }
+  };
+
+})(jQuery);
 
 /*
- * Make tokens for fields
- */
-QueryWrangler.generate_field_tokens = function() {
-  var tokens = [];
-  jQuery('#existing-fields div.qw-field').each(function(i, element){
-    // field name
-    var field_name = jQuery(element).find('.qw-field-name').val();
-    // add tokens
-    tokens.push('<li>{{'+field_name+'}}</li>');
-    // target the field and insert tokens
-    jQuery('#qw-field-'+field_name+' ul.qw-field-tokens-list').html(tokens.join(""));
-  });
-}
-
-/*
- * Init()
+ * Init QW
  */
 jQuery(document).ready(function(){
-  // preview
-  jQuery('#get-preview').click(QueryWrangler.get_preview);
-  if (jQuery('#live-preview').prop('checked')) {
-    QueryWrangler.get_preview();
+  // some data is required from PHP
+  if ( QW_Query_ID && QW_Ajax_URL ) {
+    QueryWrangler.init( QW_Query_ID );
   }
-
-  // accordions
-  jQuery('#query-details').accordion({
-      header: '> div > .qw-setting-header',
-			heightStyle: "content",
-      collapsible: true,
-      active: false,
-      autoHeight: false
-  });
+  else {
+    alert('no query id');
+  }
 });
+
+

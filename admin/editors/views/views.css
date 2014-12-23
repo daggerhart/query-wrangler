@@ -33,24 +33,28 @@
 #qw-form-backup {
   display: none;
 }
-div.qw-query-title {
-  display: block;
-  padding: 4px 8px;
-  color: #21759B;
-  
-  cursor: pointer;
+div.qw-handler-item-title {
+    display: block;
+    padding: 4px 8px;
+    color: #21759B;
+    cursor: pointer;
 	border-bottom: 1px solid #ccc;
 	margin-bottom: 1px;
-}
-div.qw-query-title span.qw-setting-title {
-	text-decoration: underline;
+    text-decoration: underline;
 	font-weight: bold;
 }
-div.qw-query-title span.qw-setting-value {
+div.qw-handler-item-title span.details {
+    display: inline-block;
 	color: #444;
+    font-weight: normal;
+    text-decoration: none;
 }
-div.qw-query-title:hover,
-div.qw-query-title:hover span.qw-setting-value {
+div.qw-handler-item-title span.details:before {
+    content: ': ';
+}
+
+div.qw-handler-item-title:hover,
+div.qw-handler-item-title:hover span.qw-setting-value {
 	background: #fff;
 	color: #d54e21;
 }
@@ -112,7 +116,7 @@ ul.qw-field-tokens-list li {
 	color: #d54e21;
 }
 span.qw-rearrange-title{}
-.qw-query-add-titles span.qw-query-title {
+.qw-query-add-titles span.qw-add-title {
 	border-right: 1px solid #bbb;
 	border-left: 1px solid #bbb;
 }
@@ -188,7 +192,7 @@ li.qw-sortable span.qw-setting-value {
   text-decoration: none;
   cursor: default;
 }
-.qw-sortable .qw-query-title {
+.qw-sortable .qw-handler-item-title {
 	border-bottom: none;
 }
 .ui-dialog .ui-dialog-titlebar-close span.ui-button-text {
@@ -202,4 +206,14 @@ li.qw-sortable span.qw-setting-value {
 }
 .ui-widget-overlay {
     position: fixed;
+}
+
+.qw-remove {
+    display: none;
+}
+.qw-handler-item-form {
+    display: none;
+}
+.sortable-handle {
+    display: none;
 }
