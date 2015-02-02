@@ -2,6 +2,9 @@
 
   QWViews = {
 
+    // current open dialog
+    current_dialog: {},
+
     // HTML id of current form in dialog
     current_dialog_id: '',
 
@@ -14,12 +17,14 @@
     init: function(){
       $('#qw-edit-query-form')
         // item title dialogs
-        .on('click','.qw-handler-item-title', QWViews.handlerItemTitleDialog )
+        .on('click','.qw-handler-item-title', QWViews.handlerItemTitleDialog );
 
+      // need a broad content because dialog is near top of html
+      $('body')
         // remove buttons
-        .on('click', '.qw-remove', function(){
-          $(this).closest('.qw-handler-item').remove();
-          QueryWrangler.sortables.updateItemWeights();
+        .on('click', '.qw-remove.button', function(){
+          /// get the dialog element and execute the remove
+          QWViews.removeHandlerItem( QWViews.current_dialog );
         });
 
       // rearrange sortable handler items
@@ -167,6 +172,8 @@
       }
 
       $element.dialog( args ).dialog('open');
+
+      QWViews.current_dialog = $element;
     },
 
     /**
@@ -183,7 +190,8 @@
           .find('#' + QWViews.current_dialog_id)
             .html( QWViews.current_dialog_backup );
 
-        // clear the current form id
+        // clear the current dialog info
+        QWViews.current_dialog = {};
         QWViews.current_dialog_id = '';
         QWViews.current_dialog_backup = '';
       }

@@ -84,7 +84,7 @@ function qw_get_path(){
   $dirty_path = explode('/page/', $request_uri[0]);
 
   // Clean the result for DB
-  $path = $wpdb->escape(ltrim($dirty_path[0],'/'));
+  $path = esc_sql(ltrim($dirty_path[0],'/'));
 
   return $path;
 }

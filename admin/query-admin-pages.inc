@@ -13,31 +13,31 @@ function qw_page_handler(){
       case 'update':
         qw_update_query($_POST);
         // redirect to the edit page
-        wp_redirect(get_bloginfo('wpurl').'/wp-admin/admin.php?page=query-wrangler&edit='.$_GET['edit']);
+        qw_admin_redirect( $_GET['edit'] );
         break;
 
       case 'delete':
         qw_delete_query($_GET['edit']);
         // redirect to the list page
-        wp_redirect(get_bloginfo('wpurl').'/wp-admin/admin.php?page=query-wrangler');
+        qw_admin_redirect();
         break;
 
       case 'create':
         $new_query_id = qw_insert_new_query($_POST);
         // forward to the edit page
-        wp_redirect(get_bloginfo('wpurl').'/wp-admin/admin.php?page=query-wrangler&edit='.$new_query_id);
+        qw_admin_redirect($new_query_id);
         break;
 
       case 'import':
         $new_query_id = qw_query_import($_POST);
         // forward to edit page
-        wp_redirect(get_bloginfo('wpurl').'/wp-admin/admin.php?page=query-wrangler&edit='.$new_query_id);
+        qw_admin_redirect($new_query_id);
         break;
 
       case 'save_settings':
         qw_save_settings($_POST);
         // forward to edit page
-        wp_redirect(get_bloginfo('wpurl').'/wp-admin/admin.php?page=qw-settings');
+        qw_admin_redirect( NULL, 'qw-settings');
         break;
     }
   }
@@ -59,6 +59,23 @@ function qw_page_handler(){
     include QW_PLUGIN_DIR.'/admin/page-query-list.inc';
     qw_list_queries_form();
   }
+}
+
+
+/**
+ * Simple redirect helper
+ *
+ * @param null $query_id
+ * @param string $page
+ */
+function qw_admin_redirect( $query_id = NULL, $page = 'query-wrangler' ) {
+  $url = admin_url("admin.php?page=$page");
+
+  if ( $query_id ){
+    $url.= "&edit=".(int)$query_id;
+  }
+  wp_redirect($url);
+  exit();
 }
 
 /*

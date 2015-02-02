@@ -42,11 +42,13 @@ function qw_default_fields($fields)
     'title' => 'Post Content',
     'description' => 'The full content body of a post.',
     'output_callback' => 'get_the_content',
+    'content_options' => true,
   );
   $fields['post_excerpt'] = array(
     'title' => 'Post Excerpt',
     'description' => 'The excerpt of a post.',
     'output_callback' => 'get_the_excerpt',
+    'content_options' => true,
   );
   $fields['post_date'] = array(
     'title' => 'Post Date',

@@ -104,10 +104,11 @@ function qw_exposed_submitted_data(){
     }
     else {
       if(is_array($v)){
+        array_walk_recursive($v, 'sanitize_text_field');
         $data[$k] = $v;
       }
       else {
-        $data[$k] = urldecode($v);
+        $data[$k] = sanitize_text_field( urldecode($v) );
       }
     }
   }

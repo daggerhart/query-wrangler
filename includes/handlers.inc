@@ -158,6 +158,10 @@ function qw_preprocess_handlers($options){
         $handlers[$type]['items'][$name] = $this_item;
       }
     }
+    else {
+      // empty array by default
+      $handlers[$type]['items'] = array();
+    }
 
     // sort sorts according to weight
     if(is_array($handlers[$type]['items'])){

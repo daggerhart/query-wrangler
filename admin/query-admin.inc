@@ -64,10 +64,9 @@ function qw_update_query($post){
   $options = $post['qw-query-options'];
 
   // hook for presave
-  do_action_ref_array('qw_pre_save', array(&$options));
-
+  $options = apply_filters('qw_pre_save', $options);
   $new_data = qw_serialize($options);
-  $query_id = $post['query-id'];
+  $query_id = (int) $_GET['edit'];
 
   // update for pages
   if($post['qw-query-options']['display']['page']['path']){
@@ -79,32 +78,41 @@ function qw_update_query($post){
       $page_path = ltrim($page_path, '/');
     }
 
-    $sql = "UPDATE ".$table_name." SET data = '".$new_data."', path = '".$page_path."' WHERE id = ".$query_id;
+    $sql = "UPDATE ".$table_name." SET data = %s, path = %s WHERE id = %d LIMIT 1";
+    $wpdb->query( $wpdb->prepare( $sql, $new_data, $page_path, $query_id ) );
   }
 
   // update for widgets
   else {
-    $sql = "UPDATE ".$table_name." SET data = '".$new_data."' WHERE id = ".$query_id;
+    $sql = "UPDATE ".$table_name." SET data = %s WHERE id = %d LIMIT 1";
+    $t = $wpdb->prepare( $sql, $new_data, $query_id);
+    //__d($t);exit;
+    $wpdb->query( $t );
   }
-  $wpdb->query($sql);
 
   // addition override work
-  if(is_array($post['qw-query-options']['override']))
+  if(isset($post['qw-query-options']['override']))
   {
     $terms = array();
+
     // merge categories
-    if(is_array($post['qw-query-options']['override']['cats'])){
+    if(isset($post['qw-query-options']['override']['cats']) &&
+       is_array($post['qw-query-options']['override']['cats']) )
+    {
       $terms = array_merge($terms, array_keys($post['qw-query-options']['override']['cats']));
     }
+
     // merge tags
-    if(is_array($post['qw-query-options']['override']['tags'])){
+    if(isset($post['qw-query-options']['override']['tags']) &&
+       is_array($post['qw-query-options']['override']['tags']))
+    {
       $terms = array_merge($terms, array_keys($post['qw-query-options']['override']['tags']));
     }
 
     // delete all existing relationships
     $table = $wpdb->prefix."query_override_terms";
-    $sql = "DELETE FROM ".$table." WHERE query_id = ".$query_id;
-    $wpdb->query($sql);
+    $sql = "DELETE FROM $table WHERE query_id = %d";
+    $wpdb->query( $wpdb->prepare( $sql, $query_id ) );
 
     $data = array('query_id' => $query_id);
     // loop through all terms and insert them
@@ -113,9 +121,6 @@ function qw_update_query($post){
       $wpdb->insert($table, $data);
     }
   }
-
-  // send back to edit page
-  wp_redirect(get_bloginfo('wpurl').'/wp-admin/admin.php?page=query-wrangler&edit='.$query_id);
 }
 /*
  * Delete an existing query
@@ -355,65 +360,3 @@ function qw_check_version()
     update_option('qw_plugin_version', QW_VERSION);
   }
 }
-/*
- * Organize an existing filters and give it all the data they needs
- *
- * @param $type
- *   handler-type = 'filter', 'field', 'sort'
- *
-function qw_preprocess_handlers($type, $handlers){
-  if(is_array($handlers))
-  {
-    // load all our default handlers
-    switch ($type){
-      case 'sort':
-        $all = qw_all_sort_options();
-        break;
-      case 'field':
-        $all = qw_all_fields();
-        break;
-      case 'filter':
-        $all = qw_all_filters();
-        break;
-    }
-
-    // generate the form name prefixes
-    foreach($handlers as $name => $values)
-    {
-
-      // load sort type data
-      $hook_key = qw_get_hook_key($all, $values);
-
-      $this_handler = $all[$hook_key];
-
-      // move type, hook_key, and weight to top level of array
-      $this_handler['type'] = $values['type']; unset($values['type']);
-      $this_handler['weight'] = $values['weight']; unset($values['weight']);
-      $this_handler['hook_key'] = $values['hook_key']; unset($values['hook_key']);
-
-      // values are own array
-      $this_handler['values'] = $values;
-      $this_handler['name'] = $name;
-      $this_handler['form_prefix'] = qw_make_form_prefix($type, $name);
-
-      // this handler's form
-      if (function_exists($this_handler['form_callback'])){
-        $this_handler['form'] = $this_handler['form_callback']($this_handler);
-      }
-      // provide template wrangler support
-      else if (isset($this_handler['form_template'])){
-        $this_handler['form'] = theme($this_handler['form_template'], array('this' => $this_handler));
-      }
-
-      // set new sort
-      $handlers[$name] = $this_handler;
-    }
-    // sort sorts according to weight
-    if(is_array($handlers)){
-      uasort($handlers,'qw_cmp');
-    }
-
-    return $handlers;
-  }
-}
-// */
