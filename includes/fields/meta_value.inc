@@ -27,6 +27,7 @@ function qw_field_meta_value($fields){
         'output_arguments' => true,
         'meta_key' => $key,
         'form_callback' => 'qw_meta_value_form_callback',
+        'content_options' => true,
       );
       
     }

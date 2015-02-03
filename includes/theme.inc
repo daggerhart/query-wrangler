@@ -396,16 +396,6 @@ function qw_make_fields_rows(&$qw_query, $options)
           $rows[$i]['fields'][$field_name]['output'] = $field_settings['custom_output'];
         }
 
-        // the_content filter
-        if (isset($field_settings['apply_the_content'])) {
-          $rows[$i]['fields'][$field_name]['output'] = apply_filters('the_content', $rows[$i]['fields'][$field_name]['output']);
-        }
-
-        // do_shortcode
-        if (isset($field_settings['do_shortcode'])) {
-          $rows[$i]['fields'][$field_name]['output'] = do_shortcode($rows[$i]['fields'][$field_name]['output']);
-        }
-
         // apply link to field
         if(isset($field_settings['link'])){
           $rows[$i]['fields'][$field_name]['output'] = '<a class="query-field-link" href="'.get_permalink().'">'.$rows[$i]['fields'][$field_name]['output'].'</a>';
@@ -422,8 +412,14 @@ function qw_make_fields_rows(&$qw_query, $options)
           $rows[$i]['fields'][$field_name]['output'] = '<label class="query-label">'.$field_settings['label'].'</label> '.$rows[$i]['fields'][$field_name]['output'];
         }
 
-        // apply shortcodes to field output
-        $rows[$i]['fields'][$field_name]['output'] = do_shortcode($rows[$i]['fields'][$field_name]['output']);
+        // the_content filter
+        if (isset($field_settings['apply_the_content'])) {
+          $rows[$i]['fields'][$field_name]['output'] = apply_filters('the_content', $rows[$i]['fields'][$field_name]['output']);
+        }
+        else {
+          // apply shortcodes to field output
+          $rows[$i]['fields'][$field_name]['output'] = do_shortcode($rows[$i]['fields'][$field_name]['output']);
+        }
 
         // after all operations, remove if excluded
         if(isset($field_settings['exclude_display'])){

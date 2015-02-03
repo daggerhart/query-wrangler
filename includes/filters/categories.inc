@@ -15,6 +15,11 @@ function qw_filter_categories($filters){
   return $filters;
 }
 
+/**
+ * Options for "categories" filter
+ *
+ * @param $filter
+ */
 function qw_filter_categories_form($filter){
   $cat_ops = array(
     "cat" => "Any category plus children categories",
@@ -61,11 +66,22 @@ function qw_filter_categories_form($filter){
   <?php
 }
 
-
+/**
+ * Alter the values for the given category operator
+ *
+ * @param $args
+ * @param $filter
+ */
 function qw_generate_query_args_categories(&$args, $filter){
-  if($filter['values']['cat_operator'] == 'cat' && is_array($filter['values']['cats'])){
+  // category__not_in wants and array of term ids
+  if ( $filter['values']['cat_operator'] == 'category__not_in' && is_array( $filter['values']['cats'] ) ) {
+    $args[$filter['values']['cat_operator']] = array_keys($filter['values']['cats']);
+  }
+  // cats wants a comma separated string
+  else if( ( $filter['values']['cat_operator'] == 'cat' && is_array( $filter['values']['cats'] ) ) ) {
     $args[$filter['values']['cat_operator']] = implode(",", array_keys($filter['values']['cats']));
   }
+  //
   else {
     $args[$filter['values']['cat_operator']] = $filter['values']['cats'];
   }

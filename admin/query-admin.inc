@@ -86,7 +86,6 @@ function qw_update_query($post){
   else {
     $sql = "UPDATE ".$table_name." SET data = %s WHERE id = %d LIMIT 1";
     $t = $wpdb->prepare( $sql, $new_data, $query_id);
-    //__d($t);exit;
     $wpdb->query( $t );
   }
 

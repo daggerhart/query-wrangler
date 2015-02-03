@@ -78,6 +78,14 @@ Select a category or multiple categories to override.   Save the query, then vis
 
 == Changelog ==
 
+= 1.5.3 =
+
+* Feature: post content and post excerpt fields have new option to apply the_content filter
+* Feature: new sort option: post__in to sort by order of post__in filter array
+* Feature: new editor theme 'Picnic'
+* Bug fix: is_array check for missing override value
+* Bug fix: category__not_in needs term ids as array
+
 = 1.5.26 =
 
 * Bug fix: Admin UI fix on WP 4.1
@@ -266,4 +274,4 @@ Select a category or multiple categories to override.   Save the query, then vis
 
 == Upgrade Notice ==
 
-1.5.26 Admin UI fix on WP 4.1
+1.5.3 bug fixes, features added, and new editor theme "Picnic"!

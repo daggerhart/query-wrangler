@@ -94,10 +94,18 @@ function qw_default_sort_options($sort_options){
   $sort_options['none'] = array(
     'title' => 'None',
     'description' => 'No sort order.',
+    'order_options' => array(
+      'none' => 'None',
+    )
   );
   $sort_options['rand'] = array(
     'title' => 'Random',
     'description' => 'Random order.',
+  );
+  $sort_options['post__in'] = array(
+    'title' => 'Post__in order',
+    'description' => 'Preserve post ID order given in the post__in array.',
+    'order_options' => false,
   );
   return $sort_options;
 }
@@ -107,25 +115,27 @@ function qw_default_sort_options($sort_options){
  */
 function qw_form_default_sort_order_options($sort)
 {
-  ?>
+  if ( !empty( $sort['order_options'] ) )
+  { ?>
     <p>
       <!-- sort options -->
       <label class="qw-label">Order by <?php print $sort['title']; ?>:</label>
-      <select class='qw-js-title' name="<?php print $sort['form_prefix']; ?>[order_value]">
+      <select class='qw-js-title'
+              name="<?php print $sort['form_prefix']; ?>[order_value]">
         <?php
-          foreach ($sort['order_options'] as $value => $label)
-          {
-            $selected = ($sort['values']['order_value'] == $value) ? 'selected="selected"' : '';
-            ?>
-            <option value="<?php print $value; ?>"
-                    <?php print $selected; ?>>
-              <?php print $label; ?>
-            </option>
-            <?php
-          }
+        foreach ($sort['order_options'] as $value => $label) {
+          $selected = ( $sort['values']['order_value'] == $value ) ? 'selected="selected"' : '';
+          ?>
+          <option value="<?php print $value; ?>"
+            <?php print $selected; ?>>
+            <?php print $label; ?>
+          </option>
+        <?php
+        }
         ?>
       </select>
     </p>
     <p class="description">Select how to order the results.</p>
-  <?php
+    <?php
+  }
 }

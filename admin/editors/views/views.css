@@ -155,7 +155,7 @@ li.qw-sortable span.qw-setting-value {
 }
 .ui-dialog .qw-weight {}
 .ui-dialog {
-    z-index: 2;
+    z-index: 9991;
 }
 .ui-widget-overlay {
     position: fixed;

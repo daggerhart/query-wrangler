@@ -5,7 +5,6 @@
   $rewrite_output_selected  = (isset($field['values']['rewrite_output'])) ? 'checked="checked"': '';
   $exclude_display_selected = (isset($field['values']['exclude_display'])) ? 'checked="checked"' : '';
   $apply_the_content        = (isset($field['values']['apply_the_content'])) ? 'checked="checked"': '';
-  $do_shortcode             = (isset($field['values']['do_shortcode'])) ? 'checked="checked"' : '';
 ?>
 <div id="qw-field-<?php print $field['name']; ?>" class="qw-field qw-sortable-item qw-item-form">
   <span class="qw-setting-header">
@@ -95,13 +94,6 @@
                    name='<?php print $field['form_prefix']; ?>[apply_the_content]'
               <?php print $apply_the_content; ?> />
             Apply "the_content" filter to this field.
-          </label>
-
-          <label class='qw-field-checkbox'>
-            <input type='checkbox'
-                   name='<?php print $field['form_prefix']; ?>[do_shortcode]'
-              <?php print $do_shortcode; ?> />
-            Do shortcodes found in this field.
           </label>
           <?php
         }
