@@ -9,7 +9,7 @@ Plugin URI:        http://daggerhart.com
 Description:       Query Wrangler provides an intuitive interface for creating complex WP queries as pages or widgets. Based on Drupal Views.
 Author:            Jonathan Daggerhart
 Author URI:        http://daggerhart.com
-Version:           1.5.3
+Version:           1.5.27
 
 ******************************************************************
 
@@ -225,8 +225,3 @@ UNIQUE KEY query_term (query_id,term_id)
   dbDelta($sql);
 }
 register_activation_hook(__FILE__,'qw_query_override_terms_table');
-/*/
-function _d($v){
-  print '<hr/><pre>'.print_r($v,1).'</pre>';
-}
-// */

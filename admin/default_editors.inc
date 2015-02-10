@@ -14,10 +14,10 @@
     );
  */
 function qw_default_edit_themes($themes){
-  $themes['picnic'] = array(
-    'title' => 'Picnic',
-    'init_callback' => 'qw_edit_theme_picnic',
-  );
+//  $themes['picnic'] = array(
+//    'title' => 'Picnic',
+//    'init_callback' => 'qw_edit_theme_picnic',
+//  );
   $themes['views'] = array(
     'title' => 'Drupal Views',
     'init_callback' => 'qw_edit_theme_views',
