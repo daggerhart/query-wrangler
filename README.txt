@@ -78,10 +78,11 @@ Select a category or multiple categories to override.   Save the query, then vis
 
 == Changelog ==
 
-= 1.5.27 =
+= 1.5.3 =
 
 * Feature: post content and post excerpt fields have new option to apply the_content filter
 * Feature: new sort option: post__in to sort by order of post__in filter array
+* New shortcode hooks for custom attributes and query options
 * Bug fix: is_array check for missing override value
 * Bug fix: category__not_in needs term ids as array
 
@@ -273,4 +274,4 @@ Select a category or multiple categories to override.   Save the query, then vis
 
 == Upgrade Notice ==
 
-1.5.27 bug fixes, and some new features.
+1.5.3 bug fixes, and some new features.

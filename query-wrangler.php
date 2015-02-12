@@ -9,7 +9,7 @@ Plugin URI:        http://daggerhart.com
 Description:       Query Wrangler provides an intuitive interface for creating complex WP queries as pages or widgets. Based on Drupal Views.
 Author:            Jonathan Daggerhart
 Author URI:        http://daggerhart.com
-Version:           1.5.27
+Version:           1.5.3
 
 ******************************************************************
 
@@ -50,6 +50,7 @@ function qw_init_frontend(){
   include_once QW_PLUGIN_DIR.'/includes/hooks.inc';
   include_once QW_PLUGIN_DIR.'/includes/exposed.inc';
   include_once QW_PLUGIN_DIR.'/includes/handlers.inc';
+  include_once QW_PLUGIN_DIR.'/includes/shortcodes.inc';
   
   //include_once QW_PLUGIN_DIR.'/includes/data.defaults.inc';
   
@@ -165,29 +166,6 @@ function qw_menu()
   //$debug_page  = add_submenu_page( 'query-wrangler', 'Debug', 'Debug', 'manage_options', 'qw-debug', 'qw_debug');
 }
 
-/*
- * Shortcode support for all queries
- */
-function qw_single_query_shortcode($atts) {
-  $short_array = shortcode_atts(array('id' => '', 'slug' => '', 'args' => ''), $atts);
-  extract($short_array);
-  
-  if (!$id && $slug){
-    $id = qw_get_query_by_slug($slug);
-  }
-  
-  $options_override = array();
-  if (isset($args) && !empty($args)){
-    if (stripos($args, '{{') !== false){
-      $args = qw_contextual_tokens_replace($args);
-    }
-    $options_override['shortcode_args'] = html_entity_decode($args);
-  }
-  
-  $themed = qw_execute_query($id, $options_override);
-  return $themed;
-}
-add_shortcode('query','qw_single_query_shortcode');
 
 /*===================================== DB TABLES =========================================*/
 /*

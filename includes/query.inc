@@ -14,18 +14,10 @@ function qw_execute_query($query_id, $options_override = array(), $reset_post_da
 
   // get formatted query arguments
   $args = qw_generate_query_args($options);
-  
-  $options =  array_merge_recursive((array)$options, $options_override);
 
   // pre_query hook
   $args = apply_filters('qw_pre_query', $args, $options);
-  
-  // shortcodes can change the arguments
-  if (isset($options_override['shortcode_args'])){
-    $shortcode_args = wp_parse_args($options_override['shortcode_args']);
-    $args =  array_merge_recursive((array)$args, $shortcode_args);
-  }
-  
+
   // set the new query
   $qw_query = new WP_Query($args);
   
