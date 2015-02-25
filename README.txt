@@ -3,7 +3,7 @@ Contributors: daggerhart
 Donate link: http://www.widgetwrangler.com/
 Tags: query, pages, widget, admin, widgets, administration, manage, views, loop
 Requires at least: 3
-Tested up to: 4.1
+Tested up to: 4.1.1
 Stable tag: trunk
 
 Query Wrangler provides an intuitive interface for creating complex WP queries as shortcodes and widgets. UI based on Drupal Views.
@@ -78,7 +78,7 @@ Select a category or multiple categories to override.   Save the query, then vis
 
 == Changelog ==
 
-= 1.5.3 =
+= 1.5.30 =
 
 * Feature: post content and post excerpt fields have new option to apply the_content filter
 * Feature: new sort option: post__in to sort by order of post__in filter array
@@ -274,4 +274,4 @@ Select a category or multiple categories to override.   Save the query, then vis
 
 == Upgrade Notice ==
 
-1.5.3 bug fixes, and some new features.
+1.5.30 bug fixes, and some new features.
