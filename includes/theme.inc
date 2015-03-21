@@ -206,6 +206,7 @@ function theme_query_display_style_preprocess($template)
 function qw_template_query(&$qw_query, $options)
 {
   $results_count = count($qw_query->posts);
+  $options['meta']['results_count'] = $results_count;
   $content = '';
 
   // start building theme arguments
@@ -386,6 +387,9 @@ function qw_make_fields_rows(&$qw_query, $options)
           $rows[$i]['fields'][$field_name]['output'].= $this_post->{$field_settings['type']};
         }
 
+        // remember if any value was found
+        $empty = empty($rows[$i]['fields'][$field_name]['output']);
+
         // add token for replace
         $tokens['{{'.$field_name.'}}'] = $rows[$i]['fields'][$field_name]['output'];
 
@@ -421,8 +425,11 @@ function qw_make_fields_rows(&$qw_query, $options)
           $rows[$i]['fields'][$field_name]['output'] = do_shortcode($rows[$i]['fields'][$field_name]['output']);
         }
 
+        // hide if empty
+        $hide = (isset($field_settings['hide_if_empty']) && $empty);
+
         // after all operations, remove if excluded
-        if(isset($field_settings['exclude_display'])){
+        if(isset($field_settings['exclude_display']) || $hide ){
           unset($rows[$i]['fields'][$field_name]['output']);
         }
       }

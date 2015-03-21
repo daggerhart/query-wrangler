@@ -1,6 +1,6 @@
 === Query Wrangler ===
 Contributors: daggerhart
-Donate link: http://www.widgetwrangler.com/
+Donate link: http://www.daggerhart.com/
 Tags: query, pages, widget, admin, widgets, administration, manage, views, loop
 Requires at least: 3
 Tested up to: 4.1.1
@@ -34,11 +34,6 @@ Some examples of how you would use this plugin include:
 [Introduction to Query Wrangler](http://www.widgetwrangler.com/forum/query-wrangler/general/intro-query-wrangler "Learn to setup Queries")
 
 
-Additional Plugins
-
-* [Query Slideshow](http://wordpress.org/extend/plugins/query-slideshow/ "Query Slideshow") - Turn your queries into slideshows using jquery.cycle
-
-
 == Installation ==
 
 1. Upload `query-wrangler` to the `/wp-content/plugins/` directory
@@ -63,6 +58,7 @@ Easy, the code you're looking for is like this.   [query id=2] , where the numbe
 * [Callback field usage: the_tags](http://wordpress.org/support/topic/callback-field-plugin-version-1524?replies=1#post-5487515 "Callback field usage 2")
 * [Meta Field Display Handler: Custom Content Type Manager](http://wordpress.org/support/topic/cant-put-php-code-into-rewrite-results-field?replies=4#post-5411970 "Meta Field Display Handler: Custom Content Type Manager")
 * [Meta Field Display Handler: Advanced Custom Fields](https://wordpress.org/support/topic/how-to-get-he-image-url-instead-of-image-id?replies=5#post-5411991 "Meta Field Display Handler: Advanced Custom Fields")
+* [Query Slideshow](http://wordpress.org/extend/plugins/query-slideshow/ "Query Slideshow") - Example of creating a custom style. Turn your queries into slideshows using jquery.cycle
 
 
 = What are overrides and how do I use them? =
@@ -77,6 +73,17 @@ Select a category or multiple categories to override.   Save the query, then vis
 1. Drupal Views Editor Theme
 
 == Changelog ==
+
+= 1.5.31 =
+
+* Feature: Fields can now be hidden if empty
+* Feature: New setting "Show silent meta" allow for custom fields that start with underscores.
+* Feature: post_id filter can now use a callback to provide an array of post ids
+* Feature: New sort "meta_value" - for sorting strings
+* Feature: New sort "Meta_value_num" - for sorting numbers
+* Feature: New filter "Search" - for searching
+* Changed get_category_ids() to get_terms()
+* Minor UI improvements
 
 = 1.5.30 =
 
@@ -274,4 +281,4 @@ Select a category or multiple categories to override.   Save the query, then vis
 
 == Upgrade Notice ==
 
-1.5.30 bug fixes, and some new features.
+1.5.31 Sweet new features and minor bug fixes

@@ -26,8 +26,8 @@
         <label>Widget Theme Compatibility</label>
       </th>
       <td>
-        <p class="description">If you're having trouble with the way Query Wrangler Widgets appear in your sidebar, select this option.</p>
         <input type="checkbox" name="qw-widget-theme-compat" <?php checked($widget_theme_compat, "on"); ?> />
+        <p class="description">If you're having trouble with the way Query Wrangler Widgets appear in your sidebar, select this option.</p>
       </td>
     </tr>
 
@@ -36,8 +36,18 @@
         <label>Live Preview</label>
       </th>
       <td>
-        <p class="description">Default setting for live preview during query editing.</p>
         <input type="checkbox" name="qw-live-preview" <?php checked($live_preview, "on"); ?> />
+        <p class="description">Default setting for live preview during query editing.</p>
+      </td>
+    </tr>
+
+    <tr>
+      <th>
+        <label>Show Silent Meta</label>
+      </th>
+      <td>
+        <input type="checkbox" name="qw-show-silent-meta" <?php checked($show_silent_meta, "on"); ?> />
+        <p class="description">Show custom meta fields that are normally hidden.</p>
       </td>
     </tr>
   </table>

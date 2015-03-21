@@ -162,7 +162,7 @@
       };
 
       // handler items can be removed
-      if ( $element.hasClass('qw-handler-item-form') ) {
+      if ( $element.hasClass('can-remove') ) {
         args.buttons.push({
           text: 'Remove',
           click: function(){

@@ -9,7 +9,7 @@ Plugin URI:        http://daggerhart.com
 Description:       Query Wrangler provides an intuitive interface for creating complex WP queries as pages or widgets. Based on Drupal Views.
 Author:            Jonathan Daggerhart
 Author URI:        http://daggerhart.com
-Version:           1.5.30
+Version:           1.5.31
 
 ******************************************************************
 
@@ -30,7 +30,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 // some useful definitions
-define('QW_VERSION', 1.5);
+define('QW_VERSION', 1.531);
 define('QW_PLUGIN_DIR', dirname(__FILE__));
 define('QW_PLUGIN_URL', plugins_url( '', __FILE__ ));
 define('QW_DEFAULT_THEME', 'views');
@@ -80,6 +80,7 @@ function qw_init_frontend(){
   
   //include_once QW_PLUGIN_DIR.'/includes/data.default_filters.inc';
   include_once QW_PLUGIN_DIR.'/includes/filters/author.inc';
+  include_once QW_PLUGIN_DIR.'/includes/filters/callback.inc';
   include_once QW_PLUGIN_DIR.'/includes/filters/post_types.inc';
   include_once QW_PLUGIN_DIR.'/includes/filters/post_id.inc';
   include_once QW_PLUGIN_DIR.'/includes/filters/meta_key.inc';
@@ -90,6 +91,7 @@ function qw_init_frontend(){
   include_once QW_PLUGIN_DIR.'/includes/filters/post_parent.inc';
   include_once QW_PLUGIN_DIR.'/includes/filters/taxonomies.inc';
   include_once QW_PLUGIN_DIR.'/includes/filters/taxonomy_relation.inc';
+  include_once QW_PLUGIN_DIR.'/includes/filters/search.inc';
   
   include_once QW_PLUGIN_DIR.'/includes/sorts/default_sorts.inc';
   

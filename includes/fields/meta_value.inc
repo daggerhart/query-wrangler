@@ -10,15 +10,18 @@ add_filter('qw_meta_value_display_handlers', 'qw_meta_value_display_handlers_def
  * Add field to qw_fields
  */
 function qw_field_meta_value($fields){
+  $show_silent_meta = get_option('qw_show_silent_meta', false);
 
   // add meta keys to field list
   $meta = qw_get_meta_keys();
   foreach($meta as $key){
     $field_key = 'meta_'.str_replace(" ", "_", $key);
-    // ignore WP keys and Widget Wangler keys
-    if(substr($key, 0, 1) != '_' &&
-       substr($key,0,3) != 'ww-' &&
-       substr($key,0,3) != 'ww_')
+
+    $key_is_not_silent = ( substr($key, 0, 1) != '_' && substr($key,0,3) != 'ww-' && substr($key,0,3) != 'ww_' );
+
+    // show all keys if show_silent_meta is true
+    // otherwise, show any key that is not silent
+    if( $show_silent_meta || $key_is_not_silent )
     {
       $fields[$field_key] = array(
         'title' => 'Custom Field: '.$key,

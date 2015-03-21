@@ -30,11 +30,10 @@ function qw_filter_categories_form($filter){
   ?>
   <div class="qw-checkboxes">
     <?php
-      $category_ids = get_all_category_ids();
+    $categories = get_terms('category', array('fields' => 'id=>name', 'hide_empty' => 0));
       // List all categories as checkboxes
-      foreach($category_ids as $cat_id)
+      foreach($categories as $cat_id => $cat_name)
       {
-        $cat_name = get_cat_name($cat_id);
         $cat_checked = (isset($filter['values']['cats'][$cat_id])) ? 'checked="checked"' : '';
         ?>
         <label class="qw-query-checkbox">

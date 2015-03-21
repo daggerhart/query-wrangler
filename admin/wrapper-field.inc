@@ -5,6 +5,7 @@
   $rewrite_output_selected  = (isset($field['values']['rewrite_output'])) ? 'checked="checked"': '';
   $exclude_display_selected = (isset($field['values']['exclude_display'])) ? 'checked="checked"' : '';
   $apply_the_content        = (isset($field['values']['apply_the_content'])) ? 'checked="checked"': '';
+  $hide_if_empty            = (isset($field['values']['hide_if_empty'])) ? 'checked="checked"': '';
 ?>
 <div id="qw-field-<?php print $field['name']; ?>" class="qw-field qw-sortable-item qw-item-form">
   <span class="qw-setting-header">
@@ -99,6 +100,13 @@
         }
       ?>
 
+    <!-- link -->
+    <label class='qw-field-checkbox'>
+      <input type='checkbox'
+             name='<?php print $field['form_prefix']; ?>[hide_if_empty]'
+        <?php print $hide_if_empty; ?> />
+      Hide field if empty
+    </label>
 
       <!-- rewrite output -->
       <div class="qw-options-group">

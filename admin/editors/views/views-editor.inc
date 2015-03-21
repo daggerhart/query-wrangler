@@ -137,7 +137,7 @@
           { ?>
             <div class="qw-handler-item">
               <div class="qw-handler-item-title"><?php print $field['title'];  ?></div>
-              <div class="qw-handler-item-form">
+              <div class="qw-handler-item-form can-remove">
                 <?php print $field['wrapper_form']; ?>
               </div>
             </div>
@@ -170,7 +170,7 @@
           { ?>
             <div class="qw-handler-item">
               <div class="qw-handler-item-title"><?php print $sort['title'];  ?></div>
-              <div class="qw-handler-item-form">
+              <div class="qw-handler-item-form can-remove">
                 <?php print $sort['wrapper_form']; ?>
               </div>
             </div>
@@ -201,7 +201,7 @@
           { ?>
               <div class="qw-handler-item">
                 <div class="qw-handler-item-title"><?php print $filter['title']; ?></div>
-                <div class="qw-handler-item-form">
+                <div class="qw-handler-item-form can-remove">
                   <?php print $filter['wrapper_form']; ?>
                 </div>
               </div>

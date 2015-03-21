@@ -21,10 +21,16 @@ function qw_filter_post_id_form($filter)
 {
   ?>
     <p>
-      <input class="qw-js-title" type='text' name="<?php print $filter['form_prefix']; ?>[post_ids]" value='<?php print $filter['values']['post_ids']; ?>' />
+      <label>Provide post_ids as a comma separated list:</label>
+      <div><input class="qw-js-title" type='text' size="46" name="<?php print $filter['form_prefix']; ?>[post_ids]" value='<?php print $filter['values']['post_ids']; ?>' /></div>
     </p>
-    <p class="description">How to treat these post IDs.</p>
     <p>
+      <label>Or, provide a callback function name that returns an array of post_ids:</label>
+      <div><input class="qw-js-title" type="text" size="46" name="<?php print $filter['form_prefix']; ?>[post_ids_callback]" value="<?php print $filter['values']['post_ids_callback']; ?>" /></div>
+      <p class="description">Note: you cannot expose a filter if using a callback.</p>
+    </p>
+    <p>
+      <label>How to treat these post IDs.</label>
       <select class="qw-js-title" name="<?php print $filter['form_prefix']; ?>[compare]">
         <option value="post__in" <?php if($filter['values']['compare'] == "post__in") { print 'selected="selected"';} ?>>Only these posts</option>
         <option value="post__not_in" <?php if($filter['values']['compare'] == "post__not_in") { print 'selected="selected"';} ?>>Not these posts</option>
@@ -34,7 +40,13 @@ function qw_filter_post_id_form($filter)
 }
 
 function qw_generate_query_args_post_id(&$args, $filter){
-  $pids = explode(",", $filter['values']['post_ids']);
+  if ( isset( $filter['values']['post_ids_callback'] ) && function_exists( $filter['values']['post_ids_callback'] ) ){
+    $pids = $filter['values']['post_ids_callback']($args);
+  }
+  else {
+    $pids = explode(",", $filter['values']['post_ids']);
+  }
+
   array_walk($pids, 'qw_trim');
   $args[$filter['values']['compare']] = $pids;
 }
@@ -82,7 +94,7 @@ function qw_filter_post_id_exposed_form($filter, $values)
   <?php
 }
 /*
- * Simple helper funtion to handle default values
+ * Simple helper function to handle default values
  */
 function qw_filter_post_id_exposed_default_values($filter, &$values){
   if (isset($filter['values']['exposed_default_values'])){

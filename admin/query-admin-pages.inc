@@ -159,7 +159,7 @@ function qw_edit_query_form(){
     'page_templates'=> get_page_templates(),
     'post_types'    => qw_all_post_types(),
     'pager_types'   => qw_all_pager_types(),
-    'category_ids'  => get_all_category_ids(),
+    'category_ids'  => get_terms('category', array('fields' => 'ids', 'hide_empty' => 0)),
     'tags'          => get_tags(array('hide_empty' => false)),
     'all_filters'   => qw_all_filters(),
     'all_fields'    => qw_all_fields(),
@@ -205,9 +205,11 @@ function qw_edit_query_form(){
  */
 function qw_save_settings($post){
   $live_preview = ($post['qw-live-preview']) ? $post['qw-live-preview']: 0;
+  $show_silent_meta = ($post['qw-show-silent-meta']) ? $post['qw-show-silent-meta']: 0;
   update_option('qw_edit_theme', $post['qw-theme']);
   update_option('qw_widget_theme_compat', $post['qw-widget-theme-compat']);
   update_option('qw_live_preview', $live_preview);
+  update_option('qw_show_silent_meta', $show_silent_meta);
 }
 function qw_settings_page()
 {
@@ -216,6 +218,7 @@ function qw_settings_page()
     'edit_themes' => qw_all_edit_themes(),
     'widget_theme_compat' => get_option('qw_widget_theme_compat'),
     'live_preview' => get_option('qw_live_preview'),
+    'show_silent_meta' => get_option('qw_show_silent_meta'),
   );
   $args = array(
     'title' => 'Query Wrangler Settings',
