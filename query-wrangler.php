@@ -95,7 +95,12 @@ function qw_init_frontend(){
   include_once QW_PLUGIN_DIR.'/includes/filters/search.inc';
   
   include_once QW_PLUGIN_DIR.'/includes/sorts/default_sorts.inc';
-  
+
+  // overrides
+  include_once QW_PLUGIN_DIR.'/includes/overrides/categories.inc';
+  include_once QW_PLUGIN_DIR.'/includes/overrides/tags.inc';
+  //include_once QW_PLUGIN_DIR.'/includes/overrides/taxonomies.inc';
+
   // Necessary functions to show a query
   include_once QW_PLUGIN_DIR.'/includes/query.inc';
   include_once QW_PLUGIN_DIR.'/includes/theme.inc';

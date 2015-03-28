@@ -150,6 +150,7 @@ function qw_edit_query_form(){
     'filters'   => $handlers['filter']['items'],
     'fields'    => $handlers['field']['items'],
     'sorts'     => $handlers['sort']['items'],
+    'overrides' => $handlers['override']['items'],
 
     // all datas
     'post_statuses' => qw_all_post_statuses(),
@@ -159,8 +160,9 @@ function qw_edit_query_form(){
     'page_templates'=> get_page_templates(),
     'post_types'    => qw_all_post_types(),
     'pager_types'   => qw_all_pager_types(),
-    'category_ids'  => get_terms('category', array('fields' => 'ids', 'hide_empty' => 0)),
-    'tags'          => get_tags(array('hide_empty' => false)),
+    //'category_ids'  => get_terms('category', array('fields' => 'ids', 'hide_empty' => 0)),
+    //'tags'          => get_tags(array('hide_empty' => false)),
+    'all_overrides' => qw_all_overrides(),
     'all_filters'   => qw_all_filters(),
     'all_fields'    => qw_all_fields(),
     'all_sorts'     => qw_all_sort_options(),

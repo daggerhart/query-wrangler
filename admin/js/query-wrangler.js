@@ -121,6 +121,7 @@ var QueryWrangler = {};
         $('#qw-show-arguments-target').html(results.args);
         $('#qw-show-php_wpquery-target').html(results.php_wpquery);
         $('#qw-show-display-target').html(results.display);
+        $('#qw-show-args-target').html(results.args);
         $('#qw-show-wpquery-target').html(results.wpquery);
         $('#qw-show-templates-target').html(results.templates);
       });

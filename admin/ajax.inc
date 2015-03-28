@@ -37,6 +37,11 @@ function qw_form_ajax()
       $all = qw_all_filters();
       break;
 
+    case 'override_form':
+      $template = 'query_override';
+      $all = qw_all_overrides();
+      break;
+
     case 'sort_sortable':
       $template = 'query_sort_sortable';
       $all = qw_all_sort_options();

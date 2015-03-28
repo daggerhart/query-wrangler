@@ -62,6 +62,12 @@
       </div>
     </div>
     <div class="group">
+      <div class="qw-setting-header">Args Settings</div>
+      <div id="qw-show-args-target">
+        <!-- args -->
+      </div>
+    </div>
+    <div class="group">
       <div class="qw-setting-header">Resulting WP_Query Object</div>
       <div id="qw-show-wpquery-target">
         <!-- WP_Query -->
@@ -70,7 +76,7 @@
     <div class="group">
       <div class="qw-setting-header">Template Suggestions</div>
       <div id="qw-show-templates-target">
-        <!-- WP_Query -->
+        <!-- templates -->
       </div>
     </div>
   </div>

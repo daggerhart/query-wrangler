@@ -30,16 +30,14 @@ function qw_handlers_default($handlers){
     'form_prefix' => '[args][filters]',
     'wrapper_template' => 'query_filter',
   );
-/* Disabled for now
-  $handlers['contextual_filter'] = array(
-    'title' => 'Contextual Filter',
-    'description' => 'Select contextual filters to affect the query results based on the context of where the query is displayed.',
-    'data_callback' => 'qw_handler_contextual_filter_data',
-    'all_callback' => 'qw_all_contextual_filters',
-    'form_prefix' => '[args][contextual_filters]',
-    'wrapper_template' => 'query_contextual_filter',
+  $handlers['override'] = array(
+    'title' => 'Override',
+    'description' => 'Select overrides to affect the query results based on the context of where the query is displayed.',
+    'data_callback' => 'qw_handler_override_data',
+    'all_callback' => 'qw_all_overrides',
+    'form_prefix' => '[args][overrides]',
+    'wrapper_template' => 'query_override',
   );
-*/
   return $handlers;
 }
 
@@ -102,13 +100,12 @@ function qw_handler_filter_data($options){
     return $options['args']['filters'];
   }
 }
-/*
-function qw_handler_contextual_filter_data($options){
-  if (isset($options['args']['contextual_filters'])){
-    return $options['args']['contextual_filters'];
+function qw_handler_override_data($options){
+  if (isset($options['args']['overrides'])){
+    return $options['args']['overrides'];
   }
 }
-*/
+
 /*
  * Organize an existing filters and give it all the data they needs
  *
