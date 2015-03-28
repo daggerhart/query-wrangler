@@ -85,6 +85,7 @@ function qw_init_frontend(){
   include_once QW_PLUGIN_DIR.'/includes/filters/post_id.inc';
   include_once QW_PLUGIN_DIR.'/includes/filters/meta_key.inc';
   include_once QW_PLUGIN_DIR.'/includes/filters/meta_key_value.inc';
+  include_once QW_PLUGIN_DIR.'/includes/filters/meta_query.inc';
   include_once QW_PLUGIN_DIR.'/includes/filters/meta_value.inc';
   include_once QW_PLUGIN_DIR.'/includes/filters/tags.inc';
   include_once QW_PLUGIN_DIR.'/includes/filters/categories.inc';
