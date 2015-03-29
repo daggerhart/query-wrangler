@@ -11,7 +11,7 @@ var QueryWrangler = {};
     data: {},
 
     // array of available options for looping
-    handlers: ['field', 'filter', 'sort'],
+    handlers: ['field', 'filter', 'sort', 'override'],
 
     // changes have been made
     changes: false,
@@ -52,7 +52,7 @@ var QueryWrangler = {};
     generateFieldTokens: function () {
       var tokens = [];
 
-      $('#existing-fields div.qw-field').each(function (i, element) {
+      $('#qw-query-fields div.qw-field').each(function (i, element) {
         // field name
         var field_name = $(element).find('.qw-field-name').val();
         // add tokens
@@ -170,6 +170,12 @@ var QueryWrangler = {};
         case 'field':
           if ( QueryWrangler.data.allFields[ post_data_form.hook_key ] ) {
             original_handler = QueryWrangler.data.allFields[ post_data_form.hook_key ];
+          }
+          break;
+
+        case 'override':
+          if ( QueryWrangler.data.allOverrides[ post_data_form.hook_key ] ) {
+            original_handler = QueryWrangler.data.allOverrides[ post_data_form.hook_key ];
           }
           break;
       }

@@ -56,7 +56,7 @@ function qw_page_handler(){
   }
   // else we need a list of queries
   else {
-    include QW_PLUGIN_DIR.'/admin/page-query-list.inc';
+    include QW_PLUGIN_DIR . '/admin/templates/page-query-list.inc';
     qw_list_queries_form();
   }
 }
@@ -132,6 +132,15 @@ function qw_edit_query_form(){
       'tokens' => $tokens,
     );
     $field['wrapper_form'] = theme('query_field', $args);
+  }
+
+  // overrides
+  foreach($handlers['override']['items'] as $k => &$override){
+    $args = array(
+      'override' => $override,
+      'weight' => $override['weight'],
+    );
+    $override['wrapper_form'] = theme('query_override', $args);
   }
 
   // start building edit page data

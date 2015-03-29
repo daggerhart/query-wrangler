@@ -90,7 +90,7 @@ function qw_all_overrides(){
 
   foreach($overrides as $type => $override){
     // set override's type as a value if not provided by override
-    if(!isset($override['type'])){
+    if( empty( $override['type'] ) ){
       $overrides[$type]['type'] = $type;
     }
     // maintain the hook's key

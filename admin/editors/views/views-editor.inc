@@ -9,7 +9,8 @@
  * https://github.com/daggerhart/Query-Wrangler/wiki/Template-Wrangler
  */
 
-__d($args);
+//__d($options);
+
 ?>
 <div id="qw-query-admin-options-wrap">
 <!-- left column -->
@@ -50,7 +51,7 @@ __d($args);
       if($query_type == 'override')
       { ?>
         <!-- override settings -->
-        <div id="qw-query-overrides" class="qw-query-admin-options qw-handler-items">
+        <div id="qw-query-overrides" class="qw-query-admin-options">
           <div class="qw-query-add-titles">
             <span class="qw-rearrange-title">
               Rearrange
@@ -61,7 +62,7 @@ __d($args);
           </div>
           <h4>Overrides</h4>
           <div class="qw-clear-gone"><!-- ie hack -->&nbsp;</div>
-          <div id="query-fields" class="qw-handler-items">
+          <div id="query-overrides" class="qw-handler-items">
             <?php
               foreach ( $overrides as $override )
               { ?>
@@ -69,7 +70,7 @@ __d($args);
                   <div class="qw-handler-item-title"><?php print $override['title']; ?></div>
                   <div class="qw-handler-item-form">
                     <div class="qw-item-form">
-                      <?php print $override['form_wrapper']; ?>
+                      <?php print $override['wrapper_form']; ?>
                     </div>
                   </div>
                 </div>

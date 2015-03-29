@@ -1,4 +1,70 @@
 <?php
+
+add_action('tw_templates', 'qw_admin_templates');
+
+function qw_admin_templates( $templates ){
+  // preview query
+  $templates['query_preview'] = array(
+    'files' => 'admin/templates/preview-json.inc',
+    'default_path' => QW_PLUGIN_DIR,
+    'arguments' => array('options' => NULL),
+  );
+  // edit query wrapper template
+  $templates['query_edit_wrapper'] = array(
+    'files' => 'admin/templates/form-editor.inc',
+    'default_path' => QW_PLUGIN_DIR,
+    'arguments' => array(
+      'theme' => get_option('qw_edit_theme', QW_DEFAULT_THEME),
+    ),
+  );
+  // create query template
+  $templates['query_create'] = array(
+    'files' => 'admin/templates/form-create.inc',
+    'default_path' => QW_PLUGIN_DIR,
+  );
+  // import query template
+  $templates['query_import'] = array(
+    'files' => 'admin/templates/form-import.inc',
+    'default_path' => QW_PLUGIN_DIR,
+  );
+  // import query template
+  $templates['query_settings'] = array(
+    'files' => 'admin/templates/form-settings.inc',
+    'default_path' => QW_PLUGIN_DIR,
+  );
+  // export query template
+  $templates['query_export'] = array(
+    'files' => 'admin/templates/form-export.inc',
+    'default_path' => QW_PLUGIN_DIR,
+    'arguments' => array(
+      'query_id' => 0,
+    ),
+  );
+
+  // generic admin page wrapper
+  $templates['admin_wrapper'] = array(
+    'files' => array(
+      'admin/templates/page-admin-wrapper.inc',
+    ),
+    'default_path' => QW_PLUGIN_DIR,
+    'arguments' => array(
+      'title' => 'Admin Page',
+      'content' => 'content goes here.',
+    ),
+  );
+
+  // editor theme template
+  $templates['query_edit'] = array(
+    'files' => 'admin/editors/[theme]/[theme]-editor.inc',
+    'default_path' => QW_PLUGIN_DIR,
+    'arguments' => array(
+      'theme' => get_option('qw_edit_theme', QW_DEFAULT_THEME),
+    ),
+  );
+  // handlers.inc will add wrapper templates
+
+  return $templates;
+}
 /*
  * Create the new Query
  *
@@ -320,6 +386,7 @@ function qw_edit_json(){
     'allFileStyles' => qw_all_file_styles(),
     'allFilters'  => qw_all_filters(),
     'allSortOptions' => qw_all_sort_options(),
+    'allOverrides' => qw_all_overrides(),
   );
 
   // editing a query

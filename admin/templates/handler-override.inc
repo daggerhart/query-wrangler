@@ -2,6 +2,7 @@
 /*
  * $override: array of default override data, and specific override data
  */
+//__d($override);
 ?>
 <!-- <?php print $override['name']; ?> -->
 <div id="qw-override-<?php print $override['name']; ?>" class="qw-override qw-sortable-item qw-item-form">
@@ -27,14 +28,14 @@
     </div>
     <div class="qw-weight-container">
       <input class='qw-weight'
-             name='qw-query-options[args][overrides][<?php print $override['name']; ?>][weight]'
+             name='<?php print $override['form_prefix']; ?>[weight]'
              type='text' size='2'
              value='<?php print $weight; ?>' />
     </div>
 
     <p class="description"><?php print $override['description']; ?></p>
 
-    <?php if ($override['form']) { ?>
+    <?php if ($override['form']) {  ?>
       <div class="qw-override-form">
         <?php print $override['form']; ?>
       </div>

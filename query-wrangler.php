@@ -116,7 +116,7 @@ function qw_init(){
     if (get_option('qw_live_preview') === FALSE){
       add_option('qw_live_preview', 'on');
     }
-    include_once QW_PLUGIN_DIR.'/admin/query-admin.inc';
+    include_once QW_PLUGIN_DIR . '/admin/admin.inc';
     include_once QW_PLUGIN_DIR.'/admin/query-admin-pages.inc';
     include_once QW_PLUGIN_DIR.'/admin/ajax.inc';
     include_once QW_PLUGIN_DIR.'/admin/default_editors.inc';

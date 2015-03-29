@@ -5,8 +5,8 @@ add_filter('qw_overrides', 'qw_override_categories');
 
 function qw_override_categories($overrides){
 
-  $overrides['categories'] = array(
-    'title' => 'categories',
+  $overrides['cats'] = array(
+    'title' => 'Categories',
     'description' => 'Override output based on categories',
     'form_callback' => 'qw_override_categories_form',
   );

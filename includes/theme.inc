@@ -7,68 +7,6 @@
  * @return array All template arrays filtered so far by Wordpress' filter hook
  */
 function qw_templates($templates){
-  // preview query
-  $templates['query_preview'] = array(
-    'files' => 'admin/wrapper-preview.inc',
-    'default_path' => QW_PLUGIN_DIR,
-    'arguments' => array('options' => NULL),
-  );
-  // edit query wrapper template
-  $templates['query_edit_wrapper'] = array(
-    'files' => 'admin/wrapper-editor.inc',
-    'default_path' => QW_PLUGIN_DIR,
-    'arguments' => array(
-      'theme' => get_option('qw_edit_theme', QW_DEFAULT_THEME),
-    ),
-  );
-  // edit query template
-  $templates['query_edit'] = array(
-    'files' => 'admin/editors/[theme]/[theme]-editor.inc',
-    'default_path' => QW_PLUGIN_DIR,
-    'arguments' => array(
-      'theme' => get_option('qw_edit_theme', QW_DEFAULT_THEME),
-    ),
-  );
-  // create query template
-  $templates['query_create'] = array(
-    'files' => 'admin/page-query-create.inc',
-    'default_path' => QW_PLUGIN_DIR,
-  );
-  // import query template
-  $templates['query_import'] = array(
-    'files' => 'admin/page-query-import.inc',
-    'default_path' => QW_PLUGIN_DIR,
-  );
-  // import query template
-  $templates['query_settings'] = array(
-    'files' => 'admin/page-query-settings.inc',
-    'default_path' => QW_PLUGIN_DIR,
-  );
-  // export query template
-  $templates['query_export'] = array(
-    'files' => 'admin/page-query-export.inc',
-    'default_path' => QW_PLUGIN_DIR,
-    'arguments' => array(
-      'query_id' => 0,
-    ),
-  );
-// field template
-  $templates['query_field'] = array(
-    'files' => 'admin/wrapper-field.inc',
-    'default_path' => QW_PLUGIN_DIR,
-  );
-
-// filters edit form
-  $templates['query_filter'] = array(
-    'files' => 'admin/wrapper-filter.inc',
-    'default_path' => QW_PLUGIN_DIR,
-  );
-
-// sorts edit form
-  $templates['query_sort'] = array(
-    'files' => 'admin/wrapper-sort.inc',
-    'default_path' => QW_PLUGIN_DIR,
-  );
 
   // display queries style wrapper
   $templates['query_display_wrapper'] = array(
@@ -98,53 +36,6 @@ function qw_templates($templates){
       'rows' => array(),
     )
   );
-  // useful for plugin admin pages
-  $templates['admin_wrapper'] = array(
-    'files' => array(
-        'admin/wrapper-admin.inc',
-        'wrapper-admin.inc',
-    ),
-    'default_path' => QW_PLUGIN_DIR,
-    'arguments' => array(
-        'title' => 'Admin Page',
-        'content' => 'content goes here.',
-    ),
-  );
-
-  // filters
-  $filters = qw_all_filters();
-  foreach($filters as $type => $filter){
-    if(isset($filter['form_template'])){
-      $templates[$filter['form_template']] = array(
-        'arguments' => array(
-          'filter' => array()
-        )
-      );
-    }
-  }
-  // fields
-  $fields = qw_all_fields();
-  foreach($fields as $type => $field){
-    if(isset($field['form_template'])){
-      $templates[$field['form_template']] = array(
-        'arguments' => array(
-          'field' => array()
-        )
-      );
-    }
-  }
-
-  // sorts
-  $sorts = qw_all_sort_options();
-  foreach($sorts as $type => $sort){
-    if(isset($sort['form_template'])){
-      $templates[$sort['form_template']] = array(
-        'arguments' => array(
-          'sort' => array()
-        )
-      );
-    }
-  }
 
   return $templates;
 }
