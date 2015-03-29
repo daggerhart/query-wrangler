@@ -88,28 +88,6 @@ function qw_get_path(){
 
   return $path;
 }
-/*
- * Query pages
- */
-add_action('wp', 'qw_query_pages_handler');
-
-/*
- * Handle Query pages
- * ref: http://www.blogseye.com/2010/05/creating-fake-wordpress-posts-on-the-fly/
- */
-function qw_query_pages_handler()
-{
-  global $wp_query,$wpdb;
-  // page op is based on WP tags like is_category() && is_404()
-  $op = qw_get_page_op();
-
-  // we only handle sepcific types of pages and overrides
-  if($op == 'category' ||
-     $op == 'tag')
-  {
-		qw_execute_query_page();
-  }
-}
 
 //********* New page handling ********************/
 
@@ -165,60 +143,13 @@ function qw_execute_query_page(){
 
     // Look for the query path given
     $sql = "SELECT id,name,path,data FROM ".$qw_table." WHERE type = 'page' AND (path = '".$path."' OR path = '".$alt_path."')";
-  }
-
-  /*
-   * Category & Tag -> Query type = Override
-   */
-  if($op == 'category' ||
-     $op == 'tag')
-  {
-    // get first term
-    if($op == 'category') {
-      // drill down to the actually term
-      if ($term = get_query_var('category_name')) {
-        if(is_array($term)){
-           $term = array_pop($term);
-        }
-        $term = qw_get_term($term, 'slug');
-        // override options
-        $options_override['args']['filters']['categories']['type'] = 'categories';
-        $options_override['args']['filters']['categories']['cat_operator'] = 'cat';
-        $options_override['args']['filters']['categories']['cats'] = array($term->term_id => $term->name);
-      }
-    }
-    else if ($op == 'tag'){
-      // drill down to the actually term
-      if ($term = get_query_var('tag')){
-        if (is_array($term)){
-          $term = array_pop($terms);
-        }
-        $term = qw_get_term($term, 'slug');
-        // override options
-        $options_override['args']['filters']['tags']['type'] = 'tags';
-        $options_override['args']['filters']['tags']['tag_operator'] = 'tag__in';
-        $options_override['args']['filters']['tags']['tags'] = array($term->term_id => $term->name);
-      }
-    }
-
-    // build the term query
-    if(isset($term)){
-      $sql = "SELECT qw.id,qw.name,qw.slug,qw.type,qw.data
-              FROM ".$qw_table." as qw
-              LEFT JOIN ".$qot_table." as ot ON ot.query_id = qw.id
-              WHERE qw.type = 'override' AND ot.term_id = ".$term->term_id."
-              LIMIT 1";
-    }
-  }
-
-  // see if we have a query
-  if(isset($sql)) {
     $rows = $wpdb->get_results($sql);
   }
 
   // got results for a query
   if(isset($rows[0]) && is_object($rows[0]) && $query = $rows[0])
   {
+    //
     // pass the paged value into the query
     $options_override['args']['paged'] = $paged;
 
@@ -228,21 +159,9 @@ function qw_execute_query_page(){
     // resulting query
     $themed_query = qw_execute_query($query->id, $options_override, false);
 
-    // post title
-    if($op == '404' ||
-       $op == 'default')
-    {
-      // The title of the query
-      $post_title = ($options['display']['title']) ? $options['display']['title'] : $query->name;
-    }
-    else {
-      // categories and tags use term name for title
-      $post_title = $term->name;
-    }
+    // The title of the query
+    $post_title = ($options['display']['title']) ? $options['display']['title'] : $query->name;
 
-    // remove the autop filter to prevent paragraph randomly being added
-    //remove_filter( 'the_content', 'wpautop' );
-    
     // Make the post object
     $post = new stdClass();
       $post->ID           = -42;  // Arbitrary post id
@@ -281,5 +200,6 @@ function qw_execute_query_page(){
     include($template_path);
 
     exit();
+    // */
   }
 }

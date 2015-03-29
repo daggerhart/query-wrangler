@@ -53,9 +53,9 @@
     addHandlerItemsDialog: function(){
       var handler = $(this).data('handler-type');
       var title   = $(this).closest('.qw-query-admin-options').find('h4:first').text();
-      var id      = '#' + $(this).data('form-id');
+      var id      = $(this).data('form-id');
 
-      QWViews.openDialog( title , $(id), QWViews.addHandlerItems );
+      QWViews.openDialog( title , $('#' + id), id, QWViews.addHandlerItems );
     },
 
     /**
@@ -103,20 +103,26 @@
      */
     rearrangeHandlerItemsDialog: function(){
       var $wrapper = $(this).closest('.qw-query-admin-options').find('.qw-handler-items');
-      var wrapper_selector = '#' + $wrapper.attr('id');
-      QWViews.openDialog( $(this).text(), $wrapper );
+      var id = $wrapper.attr('id');
 
       // similar to sortables.init, but with some differences to the sortable setup
-      QueryWrangler.sortables.wrapper_selector = wrapper_selector;
+      QueryWrangler.sortables.wrapper_selector = '#' + id;
       QueryWrangler.sortables.item_selector = '.qw-handler-item';
 
-      $( wrapper_selector )
-        .sortable({
-          update: QueryWrangler.sortables.updateItemWeights
-        })
+      QWViews.openDialog( $(this).text(), $wrapper, id, QWViews.rearrangeUpdate );
+
+      $( QueryWrangler.sortables.wrapper_selector ).sortable()
         // avoid potential conflicts with other complicated ui elements and events
         .disableSelection();
       QueryWrangler.sortables.refresh();
+    },
+
+    /**
+     * Update after rearranging.
+     */
+    rearrangeUpdate: function(){
+      QueryWrangler.sortables.updateItemWeights();
+      QueryWrangler.generateFieldTokens();
     },
 
     /**
@@ -126,11 +132,18 @@
      * @param element - element to load into the dialog
      * @param update_callback - callback to execute after dialog Update button pressed
      */
-    openDialog: function( dialog_title, element, update_callback ){
+    openDialog: function( dialog_title, element, dialog_id, update_callback ){
       var $element = $(element);
 
       QWViews.current_dialog_backup = $element.html();
-      QWViews.current_dialog_id = $element.find('.qw-item-form:first').attr('id');
+
+      if ( typeof dialog_id !== 'undefined' ){
+        QWViews.current_dialog_id = dialog_id;
+      }
+      // look for it using element as a context
+      else {
+        QWViews.current_dialog_id = $element.find('.qw-item-form:first').attr('id');
+      }
 
       var args = {
         modal: true,
@@ -226,6 +239,8 @@
     removeHandlerItem: function( element ){
       $(element).dialog('destroy')
         .closest('.qw-handler-item').remove();
+
+      QueryWrangler.generateFieldTokens();
     }
   };
 

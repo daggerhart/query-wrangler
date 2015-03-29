@@ -113,7 +113,8 @@ function qw_generate_query_args($options = array())
   $args['posts_per_page'] = ($options['args']['posts_per_page']) ? $options['args']['posts_per_page']: 5;
   $args['offset']         = ($options['args']['offset']) ? $options['args']['offset']: 0;
   $args['post_status']    = $options['args']['post_status'];
-  
+  $args['ignore_sticky_posts'] = 1;
+
   $submitted_data = qw_exposed_submitted_data();
   
   foreach ($handlers as $handler_type => $handler)
@@ -166,6 +167,42 @@ function qw_get_query_by_slug($slug){
   global $wpdb;
   return $wpdb->get_var($wpdb->prepare("SELECT id FROM ".$wpdb->prefix."query_wrangler WHERE `slug` = '%s'",$slug));
 }
+
+// get a single query by its ID
+function qw_get_query_by_id( $id ){
+  global $wpdb;
+  $table = $wpdb->prefix.'query_wrangler';
+  $sql = "SELECT * FROM $table WHERE id = %d LIMIT 1";
+  $query = $wpdb->get_row( $wpdb->prepare( $sql, $id ) );
+
+  if ($query){
+    $query->data = qw_unserialize($query->data);
+    return $query;
+  }
+  return false;
+}
+
+
+function qw_get_query_by_override_term( $term_id ){
+
+  global $wpdb;
+  $qw_table = $wpdb->prefix."query_wrangler";
+  $qot_table = $wpdb->prefix."query_override_terms";
+
+  $sql = "SELECT qw.id FROM ".$qw_table." as qw
+              LEFT JOIN ".$qot_table." as ot ON ot.query_id = qw.id
+              WHERE qw.type = 'override' AND ot.term_id = %d
+              LIMIT 1";
+
+  $row = $wpdb->get_row( $wpdb->prepare($sql, $term_id) );
+
+  if ( $row ){
+    return $row->id;
+  }
+
+  return false;
+}
+
 /*
  * Get all queries of the type widget
  *
@@ -362,22 +399,18 @@ function qw_get_hook_key($all, $single)
  * Generate form prefixes for handlers
  *
  * @param string
- *    $type = sort, field, filter
+ *    $type = sort, field, filter, override
  */
 function qw_make_form_prefix($type, $name){
-  $output = "qw-query-options";
-  switch($type){
-    case 'sort':
-      $output.= "[args][sorts]";
-      break;
-    case 'field':
-      $output.= "[display][field_settings][fields]";
-      break;
-    case 'filter':
-      $output.= "[args][filters]";
-      break;
+  $handlers = qw_all_handlers();
+
+  if ( isset( $handlers[ $type ]['form_prefix'] ) ) {
+    $output = QW_FORM_PREFIX . $handlers[ $type ]['form_prefix'].'['.$name.']';
   }
-  $output.= "[".$name."]";
+  else {
+    $output = QW_FORM_PREFIX."[".$name."]";
+  }
+
   return $output;
 }
 
@@ -432,4 +465,270 @@ function qw_contextual_tokens_replace($args){
 function qw_cmp($a,$b) {
   if ($a['weight'] == $b['weight']) return 0;
   return ($a['weight'] < $b['weight'])? -1 : 1;
+}
+
+/*
+ * Default values for  new query
+ *
+ * @return array Default query settings
+ */
+function qw_default_query_data(){
+  return array (
+    'display' => array (
+      'title' => '',
+      'style' => 'unformatted',
+      'row_style' => 'posts',
+      'post_settings' => array (
+        'size' => 'complete',
+      ),
+      'header' => '',
+      'footer' => '',
+      'empty' => '',
+      'wrapper-classes' => '',
+      'page' => array (
+        'pager' => array (
+          'type' => 'default',
+          'previous' => '',
+          'next' => '',
+        ),
+      ),
+    ),
+    'args' => array (
+      'posts_per_page' => '5',
+      'offset' => 0,
+      'post_status' => 'publish',
+      'filters' => array (
+        'post_types' => array (
+          'type' => 'post_types',
+          'hook_key' => 'post_types',
+          'name' => 'post_types',
+          'weight' => '0',
+          'post_types' =>
+            array (
+              'post' => 'post',
+            ),
+        ),
+      ),
+      'sorts' => array (
+        'date' => array (
+          'type' => 'date',
+          'hook_key' => 'post_date',
+          'name' => 'date',
+          'weight' => '0',
+          'order_value' => 'DESC',
+        ),
+      ),
+    ),
+  );
+}
+
+class QW_Query {
+
+  public $id,$name,$slug,$type,$path,$data;
+
+  // query is not in the db
+  public $is_new = FALSE;
+
+  // row from db
+  public $query;
+
+  // generated WP_Query, not the global wp_query
+  public $wp_query;
+
+  // processed values
+  public $options;
+  public $args;
+
+  // query execution options
+  public $options_override = array();
+  public $reset_postdata = TRUE;
+  
+  // final html output
+  public $output;
+
+  /**
+   * @param null $id
+   * @param array $options_override
+   * @param bool $reset_postdata
+   */
+  function __construct( $id = NULL, $options_override = array(), $reset_postdata = true ){
+    // load by query id
+    if ( $id && $query = qw_get_query_by_id( $id ) ){
+      // copy all the db row info
+      $this->id = $id;
+      $this->name = $query->name;
+      $this->slug = $query->slug;
+      $this->type = $query->type;
+      $this->path = $query->path;
+      $this->data = $query->data;
+
+      // retain original info
+      $this->query = $query;
+    }
+    // or make a new blank query
+    else {
+      $this->query['data'] = qw_default_query_data();
+      $this->is_new = TRUE;
+    }
+    
+    $this->options_override = $options_override;
+    $this->reset_postdata = $reset_postdata;
+  }
+
+  /**
+   *
+   * @return $this
+   */
+  function process_options(){
+    // get the query options
+    if ( ! $this->options ) {
+      $this->options = $this->generate_options( $this->data, $this->options_override );
+    }
+
+    // get formatted query arguments
+    if ( ! $this->args ) {
+      $this->args = qw_generate_query_args( $this->options );
+      //__d($this->args);
+    }
+    return $this;
+  }
+
+  /**
+   * @param $data
+   * @param $options_override
+   *
+   * @return array
+   */
+  function generate_options( $data, $options_override ) {
+    // combine data and options_override to get $options
+    $options = array_replace_recursive( (array) $data, $options_override);
+  
+    // build query_details
+    $options['meta'] = array();
+    $options['meta']['id'] = $this->id;
+    $options['meta']['slug'] = $this->slug;
+    $options['meta']['name'] = $this->name;
+    $options['meta']['type'] = $this->type;
+    $options['meta']['pagination'] = ( isset($options['display']['page']['pager']['active'])) ? 1 : 0;
+    $options['meta']['header'] = $options['display']['header'];
+    $options['meta']['footer'] = $options['display']['footer'];
+    $options['meta']['empty'] = $options['display']['empty'];
+
+    return $options;
+  }
+
+  /**
+   *
+   * @return mixed|string|void
+   */
+  function execute(){
+    $this->process_options();
+
+    // pre_query hook
+    $this->args = apply_filters('qw_pre_query', $this->args, $this->options);
+
+    // set the new query
+    $this->wp_query = new WP_Query( $this->args );
+
+    // pre_render hook
+    $this->options = apply_filters('qw_pre_render', $this->options);
+
+    // get the themed content
+    $this->output = qw_template_query($this->wp_query, $this->options);
+
+    // Reset Post Data
+    if ( $this->reset_postdata ) {
+      wp_reset_postdata();
+    }
+
+    return $this->output;
+  }
+  
+  /**
+   * Filters
+   *
+   * @param $key
+   * @return null
+   */
+  function get_filter( $key ){
+    if ( isset( $this->query->data['args']['filters'][ $key ] ) ) {
+      return $this->query->data['args']['filters'][ $key ];
+    }
+    return null;
+  }
+
+  function filters(){
+    return $this->query->data['args']['filters'];
+  }
+
+  function set_filter( $key, $filter ){
+    $this->query->data['args']['filters'][ $key ] = $filter;
+    return $this;
+  }
+
+  /**
+   * Fields
+   *
+   * @param $key
+   * @return null
+   */
+  function get_field( $key ){
+    if ( isset( $this->query->data['display']['field_settings']['fields'][ $key ] ) ) {
+      return $this->query->data['display']['field_settings']['fields'][ $key ];
+    }
+    return null;
+  }
+
+  function fields(){
+    return $this->query->data['display']['field_settings']['fields'];
+  }
+
+  function set_field( $key, $field ){
+    $this->query->data['display']['field_settings']['fields'][ $key ] = $field;
+    return $this;
+  }
+
+  /**
+   * Sorts
+   *
+   * @param $key
+   * @return null
+   */
+  function get_sort( $key ){
+    if ( isset( $this->query->data['args']['sorts'][ $key ] ) ) {
+      return $this->query->data['args']['sorts'][ $key ];
+    }
+    return null;
+  }
+
+  function sorts(){
+    return $this->query->data['args']['sorts'];
+  }
+
+  function set_sort( $key, $sort ){
+    $this->query->data['args']['sorts'][ $key ] = $sort;
+    return $this;
+  }
+
+  /**
+   * Override
+   *
+   * @param $key
+   * @return null
+   */
+  function get_override( $key ){
+    if ( isset( $this->query->data['override'][ $key ] ) ) {
+      return $this->query->data['override'][ $key ];
+    }
+    return null;
+  }
+
+  function overrides(){
+    return $this->query->data['override'];
+  }
+
+  function set_override( $key, $override ){
+    $this->query->data['override'][ $key ] = $override;
+    return $this;
+  }
 }

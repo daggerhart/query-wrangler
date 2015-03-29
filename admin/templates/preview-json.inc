@@ -31,12 +31,15 @@ $display = "<pre>".htmlentities(print_r($options['display'], true))."</pre>";
 
 $new_query = "<pre>".htmlentities(print_r($wp_query,true))."</pre>";
 
+$all_options =  "<pre>".htmlentities(print_r($options,true))."</pre>";
+
 // return
 $preview = array(
   'preview' => $preview,
   'php_wpquery' => $php_wpquery,
   'args' => $args,
   'display' => $display,
+  'options' => $all_options,
   'wpquery' => $new_query,
   'templates' => $templates,
 );

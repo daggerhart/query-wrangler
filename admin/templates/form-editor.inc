@@ -62,8 +62,8 @@
       </div>
     </div>
     <div class="group">
-      <div class="qw-setting-header">Args Settings</div>
-      <div id="qw-show-args-target">
+      <div class="qw-setting-header">All Options</div>
+      <div id="qw-show-options-target">
         <!-- args -->
       </div>
     </div>

@@ -61,7 +61,7 @@ function qw_admin_templates( $templates ){
       'theme' => get_option('qw_edit_theme', QW_DEFAULT_THEME),
     ),
   );
-  // handlers.inc will add wrapper templates
+  // handlers.inc will add handler wrapper templates
 
   return $templates;
 }
@@ -95,48 +95,48 @@ function qw_insert_new_query($post){
 function qw_update_query($post){
   global $wpdb;
   $table_name = $wpdb->prefix."query_wrangler";
-
+  
   // if you can't tell, i'm having a lot of trouble with slashes
   $post = array_map( 'stripslashes_deep', $post );
 
+  $options = $post[ QW_FORM_PREFIX ];
+
   // look for obvious errors
-  if(empty($post['qw-query-options']['args']['posts_per_page'])){
-    $post['qw-query-options']['args']['posts_per_page'] = 5;
+  if(empty($options['args']['posts_per_page'])){
+    $options['args']['posts_per_page'] = 5;
   }
-  if(empty($post['qw-query-options']['args']['offset'])){
-    $post['qw-query-options']['args']['offset'] = 0;
+  if(empty($options['args']['offset'])){
+    $options['args']['offset'] = 0;
   }
-  if(empty($post['qw-query-options']['args']['post_status'])){
-    $post['qw-query-options']['args']['post_status'] = 'publish';
+  if(empty($options['args']['post_status'])){
+    $options['args']['post_status'] = 'publish';
   }
 
   // handle page settings
-  if(isset($post['qw-query-options']['display']['page']['template-file']))
+  if(isset($options['display']['page']['template-file']))
   {
     // handle template name
-    if($post['qw-query-options']['display']['page']['template-file'] == 'index.php'){
-      $post['qw-query-options']['display']['page']['template-name'] = 'Default';
+    if($options['display']['page']['template-file'] == 'index.php'){
+      $options['display']['page']['template-name'] = 'Default';
     }
     else {
       $page_templates = get_page_templates();
       foreach($page_templates as $name => $file){
-        if($post['qw-query-options']['display']['page']['template-file'] == $file){
-          $post['qw-query-options']['display']['page']['template-name'] = $name;
+        if($options['display']['page']['template-file'] == $file){
+          $options['display']['page']['template-name'] = $name;
         }
       }
     }
   }
 
-  $options = $post['qw-query-options'];
-
   // hook for presave
-  $options = apply_filters('qw_pre_save', $options);
-  $new_data = qw_serialize($options);
   $query_id = (int) $_GET['edit'];
+  $options = apply_filters('qw_pre_save', $options, $query_id );
+  $new_data = qw_serialize($options);
 
   // update for pages
-  if($post['qw-query-options']['display']['page']['path']){
-    $page_path = ($post['qw-query-options']['display']['page']['path']) ? $post['qw-query-options']['display']['page']['path'] : '';
+  if($options['display']['page']['path']){
+    $page_path = ($options['display']['page']['path']) ? $options['display']['page']['path'] : '';
 
     // handle opening slash
     // checking against $wp_query->query['pagename'], so, no slash
@@ -153,38 +153,6 @@ function qw_update_query($post){
     $sql = "UPDATE ".$table_name." SET data = %s WHERE id = %d LIMIT 1";
     $t = $wpdb->prepare( $sql, $new_data, $query_id);
     $wpdb->query( $t );
-  }
-
-  // addition override work
-  if(isset($post['qw-query-options']['override']))
-  {
-    $terms = array();
-
-    // merge categories
-    if(isset($post['qw-query-options']['override']['cats']) &&
-       is_array($post['qw-query-options']['override']['cats']) )
-    {
-      $terms = array_merge($terms, array_keys($post['qw-query-options']['override']['cats']));
-    }
-
-    // merge tags
-    if(isset($post['qw-query-options']['override']['tags']) &&
-       is_array($post['qw-query-options']['override']['tags']))
-    {
-      $terms = array_merge($terms, array_keys($post['qw-query-options']['override']['tags']));
-    }
-
-    // delete all existing relationships
-    $table = $wpdb->prefix."query_override_terms";
-    $sql = "DELETE FROM $table WHERE query_id = %d";
-    $wpdb->query( $wpdb->prepare( $sql, $query_id ) );
-
-    $data = array('query_id' => $query_id);
-    // loop through all terms and insert them
-    foreach($terms as $term_id){
-      $data['term_id'] = $term_id;
-      $wpdb->insert($table, $data);
-    }
   }
 }
 /*
@@ -237,60 +205,6 @@ function qw_query_import($post){
   return $wpdb->insert_id;
 }
 
-/*
- * Default values for  new query
- *
- * @return array Default query settings
- */
-function qw_default_query_data(){
-  return array (
-      'display' => array (
-        'title' => '',
-        'style' => 'unformatted',
-        'row_style' => 'posts',
-        'post_settings' => array (
-          'size' => 'complete',
-        ),
-        'header' => '',
-        'footer' => '',
-        'empty' => '',
-        'wrapper-classes' => '',
-        'page' => array (
-          'pager' => array (
-            'type' => 'default',
-            'previous' => '',
-            'next' => '',
-          ),
-        ),
-      ),
-      'args' => array (
-        'posts_per_page' => '5',
-        'offset' => 0,
-        'post_status' => 'publish',
-        'filters' => array (
-          'post_types' => array (
-            'type' => 'post_types',
-            'hook_key' => 'post_types',
-            'name' => 'post_types',
-            'weight' => '0',
-            'post_types' => 
-            array (
-              'post' => 'post',
-            ),
-          ),
-        ),
-        'sorts' => array (
-          'date' => array (
-            'type' => 'date',
-            'hook_key' => 'post_date',
-            'name' => 'date',
-            'weight' => '0',
-            'order_value' => 'DESC',
-          ),
-        ),
-      ),
-    );  
-}
 /*
  * Slug creation
  */
@@ -360,20 +274,6 @@ function qw_admin_get_current_query_id(){
   return false;
 }
 
-// get a single query by its ID
-function qw_get_query_by_id( $id ){
-  global $wpdb;
-  $table = $wpdb->prefix.'query_wrangler';
-  $sql = "SELECT * FROM $table WHERE id = %d LIMIT 1";
-  $query = $wpdb->get_row( $wpdb->prepare( $sql, $id ) );
-
-  if ($query){
-    $query->options = qw_unserialize($query->data);
-    return $query;
-  }
-  return false;
-}
-
 // Base Json data for query edit page
 function qw_edit_json(){
   $data = array(
@@ -391,6 +291,7 @@ function qw_edit_json(){
 
   // editing a query
   if ( $row = qw_get_query_by_id( $_GET['edit'] ) ) {
+    $row->options = $row->data;
     $data['query'] = $row;
   }
   return json_encode( $data ) ;

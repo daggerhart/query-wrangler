@@ -11,6 +11,7 @@ function qw_handlers_default($handlers){
     'description' => 'Select Fields to add to this query output.',
     'data_callback' => 'qw_handler_field_data',
     'all_callback' => 'qw_all_fields',
+    // relative to qw-query-options base
     'form_prefix' => '[display][field_settings][fields]',
     'wrapper_template' => 'query_field',
   );
@@ -19,6 +20,7 @@ function qw_handlers_default($handlers){
     'description' => 'Select options for sorting the query results.',
     'data_callback' => 'qw_handler_sort_data',
     'all_callback' => 'qw_all_sort_options',
+    // relative to qw-query-options base
     'form_prefix' => '[args][sorts]',
     'wrapper_template' => 'query_sort',
   );
@@ -27,6 +29,7 @@ function qw_handlers_default($handlers){
     'description' => 'Select filters to affect the query results.',
     'data_callback' => 'qw_handler_filter_data',
     'all_callback' => 'qw_all_filters',
+    // relative to qw-query-options base
     'form_prefix' => '[args][filters]',
     'wrapper_template' => 'query_filter',
   );
@@ -35,6 +38,7 @@ function qw_handlers_default($handlers){
     'description' => 'Select overrides to affect the query results based on the context of where the query is displayed.',
     'data_callback' => 'qw_handler_override_data',
     'all_callback' => 'qw_all_overrides',
+    // relative to qw-query-options base
     'form_prefix' => '[override]',
     'wrapper_template' => 'query_override',
   );
@@ -120,9 +124,6 @@ function qw_preprocess_handlers($options){
     // load all our default handlers
     if (is_array($handler['items']))
     {
-      // sort according to weights
-      uasort($handler['items'],'qw_cmp');
-
       $all = $handler['all_items'];
 
       // generate the form name prefixes
@@ -142,7 +143,7 @@ function qw_preprocess_handlers($options){
         $this_item['type'] = !empty( $values['type'] ) ? $values['type'] : $name;
         $this_item['weight'] = !empty( $values['weight'] ) ? $values['weight'] : 1;
         $this_item['hook_key'] = $hook_key;
-        $this_item['form_prefix'] = $handler['form_prefix'].'['.$name.']';
+        $this_item['form_prefix'] = QW_FORM_PREFIX . $handler['form_prefix'].'['.$name.']';
 
         // values are own array
         $this_item['values'] = $values;
@@ -158,9 +159,9 @@ function qw_preprocess_handlers($options){
       $handlers[$type]['items'] = array();
     }
 
-    // sort sorts according to weight
-    if(is_array($handlers[$type]['items'])){
-      uasort($handlers[$type]['items'], 'qw_cmp');
+    // sort according to weight
+    if( is_array( $handlers[ $type ]['items'] ) ){
+      uasort( $handlers[ $type ]['items'], 'qw_cmp' );
     }
   }
 

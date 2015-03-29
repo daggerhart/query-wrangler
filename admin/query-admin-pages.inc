@@ -87,7 +87,7 @@ function qw_edit_query_form(){
   }
   if ( !$row ){ return; }
 
-  $options = $row->options;
+  $options = $row->data;
   $display = array_map('stripslashes_deep',$options['display']);
   $image_sizes = get_intermediate_image_sizes();
   $file_styles = qw_all_file_styles();

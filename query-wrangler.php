@@ -34,6 +34,7 @@ define('QW_VERSION', 1.531);
 define('QW_PLUGIN_DIR', dirname(__FILE__));
 define('QW_PLUGIN_URL', plugins_url( '', __FILE__ ));
 define('QW_DEFAULT_THEME', 'views');
+define('QW_FORM_PREFIX', "qw-query-options");
 
 // Query Widget
 include_once QW_PLUGIN_DIR.'/widget.query.php';
@@ -51,10 +52,8 @@ function qw_init_frontend(){
   include_once QW_PLUGIN_DIR.'/includes/exposed.inc';
   include_once QW_PLUGIN_DIR.'/includes/handlers.inc';
   include_once QW_PLUGIN_DIR.'/includes/shortcodes.inc';
-  
-  //include_once QW_PLUGIN_DIR.'/includes/data.defaults.inc';
-  
-  //include_once QW_PLUGIN_DIR.'/includes/data.default_basics.inc';
+
+  // basics
   include_once QW_PLUGIN_DIR.'/includes/basics/display_title.inc';
   include_once QW_PLUGIN_DIR.'/includes/basics/template_styles.inc';
   include_once QW_PLUGIN_DIR.'/includes/basics/row_styles.inc';
@@ -68,7 +67,8 @@ function qw_init_frontend(){
   include_once QW_PLUGIN_DIR.'/includes/basics/page_path.inc';
   include_once QW_PLUGIN_DIR.'/includes/basics/page_template.inc';
   include_once QW_PLUGIN_DIR.'/includes/basics/pager.inc';
-  
+
+  // fields
   include_once QW_PLUGIN_DIR.'/includes/fields/default_fields.inc';
   include_once QW_PLUGIN_DIR.'/includes/fields/post_author.inc';
   include_once QW_PLUGIN_DIR.'/includes/fields/post_author_avatar.inc';
@@ -78,7 +78,7 @@ function qw_init_frontend(){
   include_once QW_PLUGIN_DIR.'/includes/fields/featured_image.inc';
   include_once QW_PLUGIN_DIR.'/includes/fields/callback_field.inc';
   
-  //include_once QW_PLUGIN_DIR.'/includes/data.default_filters.inc';
+  // filters
   include_once QW_PLUGIN_DIR.'/includes/filters/author.inc';
   include_once QW_PLUGIN_DIR.'/includes/filters/callback.inc';
   include_once QW_PLUGIN_DIR.'/includes/filters/post_types.inc';
@@ -93,18 +93,21 @@ function qw_init_frontend(){
   include_once QW_PLUGIN_DIR.'/includes/filters/taxonomies.inc';
   include_once QW_PLUGIN_DIR.'/includes/filters/taxonomy_relation.inc';
   include_once QW_PLUGIN_DIR.'/includes/filters/search.inc';
-  
+
+  // sorts
   include_once QW_PLUGIN_DIR.'/includes/sorts/default_sorts.inc';
 
   // overrides
   include_once QW_PLUGIN_DIR.'/includes/overrides/categories.inc';
   include_once QW_PLUGIN_DIR.'/includes/overrides/tags.inc';
-  //include_once QW_PLUGIN_DIR.'/includes/overrides/taxonomies.inc';
+  include_once QW_PLUGIN_DIR.'/includes/overrides/taxonomies.inc';
 
   // Necessary functions to show a query
   include_once QW_PLUGIN_DIR.'/includes/query.inc';
   include_once QW_PLUGIN_DIR.'/includes/theme.inc';
   include_once QW_PLUGIN_DIR.'/includes/pages.inc';
+  include_once QW_PLUGIN_DIR.'/includes/override.inc';
+  new QW_Override();
   
 }
 function qw_init(){
