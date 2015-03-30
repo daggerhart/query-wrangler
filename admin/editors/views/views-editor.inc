@@ -9,8 +9,6 @@
  * https://github.com/daggerhart/Query-Wrangler/wiki/Template-Wrangler
  */
 
-//__d($options);
-
 ?>
 <div id="qw-query-admin-options-wrap">
 <!-- left column -->

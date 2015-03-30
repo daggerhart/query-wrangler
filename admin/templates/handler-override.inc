@@ -2,7 +2,6 @@
 /*
  * $override: array of default override data, and specific override data
  */
-//__d($override);
 ?>
 <!-- <?php print $override['name']; ?> -->
 <div id="qw-override-<?php print $override['name']; ?>" class="qw-override qw-sortable-item qw-item-form">

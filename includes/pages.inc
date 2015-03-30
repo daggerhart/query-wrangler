@@ -1,25 +1,4 @@
 <?php
-// http://wordpress.org/support/topic/explanation-and-workaround-for-error-404-on-category-pagination?replies=3
-// http://wordpress.org/extend/plugins/category-pagination-fix/
-
-// this works for categories!
-// taken from category-pagination-fix plugin and modified
-function qw_remove_page_from_query_string($query_string)
-{
-  // fix tags
-  if(isset($query_string['tag']) && isset($query_string['paged'])){
-    global $wp_query;
-    $query_string['paged'] = qw_get_page_number($wp_query);
-  }
-  // fix categories
-  if (isset($query_string['name']) && isset($query_string['page']) && $query_string['name'] == 'page') {
-      unset($query_string['name']);
-      unset($query_string['page']);
-  }
-
-  return $query_string;
-}
-add_filter('request', 'qw_remove_page_from_query_string');
 
 // http://codex.wordpress.org/Conditional_Tags
 function qw_get_page_op()

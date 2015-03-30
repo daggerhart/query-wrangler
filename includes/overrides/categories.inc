@@ -34,32 +34,42 @@ function qw_override_categories_pre_save( $options, $query_id ){
 
   // delete all existing relationships
   foreach ( $terms as $term ){
-    $d = $wpdb->delete( $table, array(
+    $wpdb->delete( $table, array(
       'query_id' => $query_id,
       'term_id' => $term->term_id,
     ));
   }
 
   // merge tags
-  if( isset( $options['override']['cats'] ) &&
-      is_array( $options['override']['cats'] ) )
+  if( isset( $options['override']['cats']['values'] ) &&
+      is_array( $options['override']['cats']['values'] ) )
   {
     // new relationships to save
-    $insert_terms = array_keys( $options['override']['cats'] );
+    $insert_terms = array();
+    foreach( $options['override']['cats']['values'] as $term_id => $name ) {
+      if ( term_exists( $term_id, 'category' ) ){
+        $insert_terms[] = $term_id;
+      }
+    }
 
     // loop through all terms and insert them
     foreach($insert_terms as $term_id){
-      $i =
       $wpdb->insert( $table, array(
         'query_id' => $query_id,
         'term_id' => $term_id,
       ));
     }
-    exit;
+
+    // cleanup some redundant data
+    $options['override']['cats'] = $options['override']['cats']['values'];
   }
   return $options;
 }
 
+/**
+ *
+ * @param $override
+ */
 function qw_override_categories_form( $override ){
   $category_ids = get_terms('category', array('fields' => 'ids', 'hide_empty' => 0));
   ?>
@@ -74,9 +84,9 @@ function qw_override_categories_form( $override ){
       <label class="qw-query-checkbox">
         <input class="qw-js-title"
                type="checkbox"
-               name="<?php print $override['form_prefix']; ?>[<?php print $cat_id; ?>]"
+               name="<?php print $override['form_prefix']; ?>[values][<?php print $cat_id; ?>]"
                value="<?php print $cat_name; ?>"
-               <?php checked( isset( $override['values'][ $cat_id ] ) ); ?> />
+               <?php @checked( isset( $override['values'][ $cat_id ] ) ); ?> />
         <?php print $cat_name; ?>
       </label>
     <?php
@@ -86,9 +96,9 @@ function qw_override_categories_form( $override ){
   <?php
 }
 
-function qw_override_categories_get_query(){
-  if ( is_category() && is_archive() ){
-    $term = get_queried_object();
+function qw_override_categories_get_query( $wp_query ){
+  if ( $wp_query->is_category() && $wp_query->is_archive() ){
+    $term = $wp_query->get_queried_object();
 
     $query_id = qw_get_query_by_override_term( $term->term_id );
 

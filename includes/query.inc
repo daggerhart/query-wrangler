@@ -530,7 +530,7 @@ class QW_Query {
   public $is_new = FALSE;
 
   // row from db
-  public $query;
+  public $row;
 
   // generated WP_Query, not the global wp_query
   public $wp_query;
@@ -562,17 +562,17 @@ class QW_Query {
       $this->path = $query->path;
       $this->data = $query->data;
 
+      // TODO deprecate
+      $this->options_override = $options_override;
+      $this->reset_postdata = $reset_postdata;
+
       // retain original info
-      $this->query = $query;
+      $this->row = $query;
     }
     // or make a new blank query
     else {
-      $this->query['data'] = qw_default_query_data();
-      $this->is_new = TRUE;
+      return NULL;
     }
-    
-    $this->options_override = $options_override;
-    $this->reset_postdata = $reset_postdata;
   }
 
   /**
@@ -588,7 +588,6 @@ class QW_Query {
     // get formatted query arguments
     if ( ! $this->args ) {
       $this->args = qw_generate_query_args( $this->options );
-      //__d($this->args);
     }
     return $this;
   }
@@ -631,7 +630,7 @@ class QW_Query {
     $this->wp_query = new WP_Query( $this->args );
 
     // pre_render hook
-    $this->options = apply_filters('qw_pre_render', $this->options);
+    $this->options = apply_filters('qw_pre_render', $this->options, $this->args );
 
     // get the themed content
     $this->output = qw_template_query($this->wp_query, $this->options);
@@ -641,7 +640,7 @@ class QW_Query {
       wp_reset_postdata();
     }
 
-    return $this->output;
+    return $this;
   }
   
   /**
@@ -651,18 +650,18 @@ class QW_Query {
    * @return null
    */
   function get_filter( $key ){
-    if ( isset( $this->query->data['args']['filters'][ $key ] ) ) {
-      return $this->query->data['args']['filters'][ $key ];
+    if ( isset( $this->data['args']['filters'][ $key ] ) ) {
+      return $this->data['args']['filters'][ $key ];
     }
     return null;
   }
 
   function filters(){
-    return $this->query->data['args']['filters'];
+    return $this->data['args']['filters'];
   }
 
   function set_filter( $key, $filter ){
-    $this->query->data['args']['filters'][ $key ] = $filter;
+    $this->data['args']['filters'][ $key ] = $filter;
     return $this;
   }
 
@@ -673,18 +672,18 @@ class QW_Query {
    * @return null
    */
   function get_field( $key ){
-    if ( isset( $this->query->data['display']['field_settings']['fields'][ $key ] ) ) {
-      return $this->query->data['display']['field_settings']['fields'][ $key ];
+    if ( isset( $this->data['display']['field_settings']['fields'][ $key ] ) ) {
+      return $this->data['display']['field_settings']['fields'][ $key ];
     }
     return null;
   }
 
   function fields(){
-    return $this->query->data['display']['field_settings']['fields'];
+    return $this->data['display']['field_settings']['fields'];
   }
 
   function set_field( $key, $field ){
-    $this->query->data['display']['field_settings']['fields'][ $key ] = $field;
+    $this->data['display']['field_settings']['fields'][ $key ] = $field;
     return $this;
   }
 
@@ -695,18 +694,18 @@ class QW_Query {
    * @return null
    */
   function get_sort( $key ){
-    if ( isset( $this->query->data['args']['sorts'][ $key ] ) ) {
-      return $this->query->data['args']['sorts'][ $key ];
+    if ( isset( $this->data['args']['sorts'][ $key ] ) ) {
+      return $this->data['args']['sorts'][ $key ];
     }
     return null;
   }
 
   function sorts(){
-    return $this->query->data['args']['sorts'];
+    return $this->data['args']['sorts'];
   }
 
   function set_sort( $key, $sort ){
-    $this->query->data['args']['sorts'][ $key ] = $sort;
+    $this->data['args']['sorts'][ $key ] = $sort;
     return $this;
   }
 
@@ -717,18 +716,18 @@ class QW_Query {
    * @return null
    */
   function get_override( $key ){
-    if ( isset( $this->query->data['override'][ $key ] ) ) {
-      return $this->query->data['override'][ $key ];
+    if ( isset( $this->data['override'][ $key ] ) ) {
+      return $this->data['override'][ $key ];
     }
     return null;
   }
 
   function overrides(){
-    return $this->query->data['override'];
+    return $this->data['override'];
   }
 
   function set_override( $key, $override ){
-    $this->query->data['override'][ $key ] = $override;
+    $this->data['override'][ $key ] = $override;
     return $this;
   }
 }

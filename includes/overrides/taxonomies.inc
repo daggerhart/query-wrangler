@@ -24,27 +24,45 @@ function qw_override_taxonomies($overrides){
  */
 function qw_override_taxonomies_pre_save( $options, $query_id ) {
 
-  if ( !empty( $options['override'] ) ) {
-    // find overrides for this item
-    foreach ( $options['override'] as $name => $override ){
-      if ( $override['type'] == 'taxonomies' ) {
-        $taxonomies = get_taxonomies(array('public'   => true,), 'objects');
+  if( isset( $options['override']['taxonomies'] ) &&
+      is_array( $options['override']['taxonomies'] ) )
+  {
+    $override = $options['override']['taxonomies'];
+    $taxonomies = get_taxonomies(array('public'   => true,), 'objects');
+    $_qw_override_taxonomies = get_option('_qw_override_taxonomies', array());
 
-        foreach( $taxonomies as $taxonomy ){
-          $wp_option_name ='_qw_override_taxonomies__' . $taxonomy->name;
+    /*
+     * expecting
+     * array(
+     *   '{$taxonomy->name}__{$query_id}' => array(
+     *     'query_id' =>  $query_id,
+     *     'taxonomy' => $taxonomy->name,
+     *   )
+     * )
+     */
+    // loop through all taxonomies so we can know what was not submitted
+    foreach( $taxonomies as $taxonomy ){
+      $key = "{$taxonomy->name}__{$query_id}";
 
-          // see if this taxonomy is meant to be overridden
-          if ( isset( $override[ $taxonomy->name ] ) ) {
-            // need to save overrides somewhere quickly accessible
-            // eg, _qw_override_taxonomies__category = query_id
-            update_option( $wp_option_name, $query_id);
-          }
-          else {
-            delete_option( $wp_option_name );
-          }
-        }
+      // see if this taxonomy checkbox was submitted
+      if ( isset( $override['values'][ $taxonomy->name ] ) ) {
+        $_qw_override_taxonomies[ $key ] = array(
+          'query_id' =>  $query_id,
+          'taxonomy' => $taxonomy->name,
+        );
+      }
+      // otherwise, remove any existing instances of this query
+      else if ( isset( $_qw_override_taxonomies[ $key ]) ) {
+        unset( $_qw_override_taxonomies[ $key ] );
       }
     }
+
+    // need to save overrides somewhere quickly accessible
+    // eg, _qw_override_taxonomies__category = query_id
+    update_option( '_qw_override_taxonomies', $_qw_override_taxonomies);
+
+    // clean up soem redundant data from the form
+    $options['override']['taxonomies'] = $options['override']['taxonomies']['values'];
   }
   return $options;
 }
@@ -62,7 +80,7 @@ function qw_override_taxonomies_form( $override ) {
       <label class="qw-query-checkbox">
         <input class="qw-js-title"
                type="checkbox"
-               name="<?php print $override['form_prefix']; ?>[<?php print $taxonomy->name; ?>]"
+               name="<?php print $override['form_prefix']; ?>[values][<?php print $taxonomy->name; ?>]"
                value="<?php print $taxonomy->name; ?>"
           <?php checked( isset( $override['values'][ $taxonomy->name ] ) ); ?> />
         <?php print $taxonomy->labels->name; ?>
@@ -77,10 +95,20 @@ function qw_override_taxonomies_form( $override ) {
 /**
  *
  */
-function qw_override_taxonomies_get_query(){
-  if ( is_archive() && ( is_tag() || is_category() || is_tag() )) {
-    $term = get_queried_object();
-    $query_id = get_option( '_qw_override_taxonomies__' . $term->taxonomy, FALSE );
+function qw_override_taxonomies_get_query( $wp_query ){
+  if ( $wp_query->is_archive() && ( $wp_query->is_tag() || $wp_query->is_category() || $wp_query->is_tag() )) {
+    $term = $wp_query->get_queried_object();
+    $query_id = FALSE;
+
+    // look for a taxonomies override on this term->taxonomy
+    $_qw_override_taxonomies = get_option( '_qw_override_taxonomies', array() );
+
+    foreach ($_qw_override_taxonomies as $key => $values ){
+      if ( $values['taxonomy'] == $term->taxonomy ) {
+        $query_id = $values['query_id'];
+        break;
+      }
+    }
 
     if ( $query_id ) {
       $type = 'taxonomy_' . $term->taxonomy;

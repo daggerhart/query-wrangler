@@ -79,25 +79,34 @@ class Query_Wrangler_List_Table extends WP_List_Table
                 return ucfirst($item[$column_name]);
             case 'details':
                 $details = '';
+
                 if($item['type'] != 'override') {
-                  $details.='Shortcode options:<br />[query id='.$item['ID'].']<br />[query slug="'.$item['slug'].'"]';
+                    $details.='Shortcode options:<br />[query id='.$item['ID'].']<br />[query slug="'.$item['slug'].'"]';
                 }
+
                 if($item['type'] == 'override'){
-                  global $wpdb;
-                  $terms = $wpdb->get_results("SELECT term_id FROM ".$wpdb->prefix."query_override_terms WHERE query_id = ".$item['ID']);
-                  // build a list of overridden terms
-                  if(is_array($terms)){
-                    $overrides = array();
-                    // loop through terms and provide links
-                    foreach($terms as $term){
-                      if($t = qw_get_term($term->term_id)){
-                        $overrides[] = "<a href='".$t->link."' target='_blank'>".$t->name."</a>";
-                      } else {
-                        $overrides[] = "term: ".$term->term_id." not found";
-                      }
+                    $details = 'Overriding: ';
+
+                    $row = qw_get_query_by_id( $item['ID'] );
+                    if ( isset( $row->data['override'] ) ) {
+                        $all_overrides = qw_all_overrides();
+                        foreach ( $row->data['override'] as $type => $values ) {
+
+                            if ( isset( $all_overrides[ $type ] ) ) {
+                                $override = $all_overrides[ $type ];
+
+                                $details.= $override['title'] . ': ';
+                                $tmp = array();
+
+                                foreach( $values as $key => $value ){
+                                    $tmp[] = $value;
+                                }
+
+                                $details.= implode(' ', $tmp);
+                            }
+                        }
                     }
-                  }
-                  $details.= 'Overriding: '.implode(' | ', $overrides);
+
                 }
                 return $details;
             default:

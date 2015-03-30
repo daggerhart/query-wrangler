@@ -9,21 +9,25 @@
  */
 class QW_Override {
 
+  private $override_query = NULL;
+
   function __construct() {
     if ( ! is_admin() ) {
-      //add_action('parse_query', 'qw_parse_query');
+      add_action('pre_get_posts', array( $this, 'action_pre_get_posts' ) );
       add_action('wp', array( $this, 'action_wp' ) );
     }
   }
 
   /**
-   * WordPress action 'wp'
+   * WordPress action 'pre_get_post'
    *
-   * After the main query has been executed, but no output has been generated
-   * @param $wp
+   * Before the main query is executed, look for an active override.
+   * @param $wp_query
    */
-  function action_wp( $wp ){
-    global $wp_query;
+  function action_pre_get_posts( $wp_query ){
+    if ( !$wp_query->is_main_query() ){
+      return;
+    }
 
     $overrides = qw_all_overrides();
 
@@ -32,13 +36,32 @@ class QW_Override {
       if ( isset( $override['get_query_callback'] ) && is_callable($override['get_query_callback'] ) ) {
 
         // override get_query_callbacks should return a QW_Query object
-        $qw_query = call_user_func( $override['get_query_callback'] );
+        $qw_query = call_user_func( $override['get_query_callback'], $wp_query );
 
         if ( $qw_query && is_a( $qw_query, 'QW_Query' ) ) {
-          // execute the override
-          $this->execute( $qw_query );
+          $this->override_query = $qw_query;
+
+          // go ahead and correct pagination
+          $wp_query->set('posts_per_page', $qw_query->row->data['args']['posts_per_page'] );
+
+          // !first one wins
+          break;
         }
       }
+    }
+  }
+
+  /**
+   * WordPress action 'wp'
+   *
+   * After the main query has been executed but no output has been generated,
+   * execute an override query that was found during pre_get_posts
+   * @param $wp
+   */
+  function action_wp( $wp ){
+    if ( $this->override_query ){
+      // execute the override
+      $this->execute( $this->override_query );
     }
   }
 
@@ -52,39 +75,27 @@ class QW_Override {
   function execute( $qw_query ){
     global $wp_query;
 
-    $themed_query = $qw_query->execute();
+    // process the query and get the output
+    $themed_query = $qw_query->execute()->output;
 
     // The title of the query
     $title = ($qw_query->options['display']['title']) ? $qw_query->options['display']['title'] : $qw_query->name;
 
-
     // Make the post object
     $faux_post = new stdClass();
-    $faux_post->ID           = -42;  // Arbitrary post id
+    $faux_post->ID           =  -42;  // Arbitrary post id
     $faux_post->post_title   =  $title;
     $faux_post->post_content =  $themed_query;
     $faux_post->post_status  = 'publish';
-    $faux_post->post_type    = 'post';
+    $faux_post->post_type    = 'qw-override';
     $faux_post->post_category= array('uncategorized');
     $faux_post->post_excerpt = '';
     $faux_post->ancestors    = array();
 
-
     // hack the gibson
     $wp_query->posts          = array( $faux_post );
-    $wp_query->post           = $faux_post;
+//    $wp_query->post           = $faux_post;
+    $wp_query->found_posts    = 1;
     $wp_query->post_count     = 1;
-    $wp_query->found_posts    = true;
-
-
-//    $wp_query->is_single      = true;
-//    $wp_query->is_posts_page  = true;
-//    $wp_query->is_page        = true;
-//
-//    $wp_query->is_404         = false;
-//    $wp_query->is_post        = false;
-//    $wp_query->is_home        = false;
-//    $wp_query->is_archive     = false;
-//    $wp_query->is_category    = false;
   }
 }

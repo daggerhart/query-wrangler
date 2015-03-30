@@ -76,6 +76,13 @@ Select a category or multiple categories to override.   Save the query, then vis
 
 == Changelog ==
 
+= 1.5.32 = TODO
+
+* Better Overrides
+* Feature: meta_query filter
+* Feature: Override entire taxonomy
+* Minor UI bug fixes with rearranging handler items and field tokens
+
 = 1.5.31 =
 
 * Feature: Fields can now be hidden if empty

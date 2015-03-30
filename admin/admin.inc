@@ -162,9 +162,21 @@ function qw_update_query($post){
  */
 function qw_delete_query($query_id){
   global $wpdb;
-  $table_name = $wpdb->prefix."query_wrangler";
-  $sql = "DELETE FROM ".$table_name." WHERE id = ".$query_id;
-  $wpdb->query($sql);
+  $table = $wpdb->prefix."query_wrangler";
+  $wpdb->delete( $table, array( 'id' => $query_id ) );
+
+  // TODO, delete action
+  $table = $wpdb->prefix."query_override_terms";
+  $wpdb->delete( $table, array( 'query_id' => $query_id ) );
+
+  $_qw_override_taxonomies = get_option( '_qw_override_taxonomies', array() );
+  foreach ( $_qw_override_taxonomies as $key => $values ){
+    if ( $values['query_id'] == $query_id ) {
+      unset( $_qw_override_taxonomies[ $key ] );
+    }
+  }
+
+  update_option( '_qw_override_taxonomies', $_qw_override_taxonomies );
 }
 
 /*

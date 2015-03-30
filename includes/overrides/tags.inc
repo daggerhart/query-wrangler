@@ -30,7 +30,7 @@ function qw_override_tags_pre_save( $options, $query_id ){
   $table = $wpdb->prefix."query_override_terms";
 
   // get a list of term_ids from this taxonomy for pre-save deletion
-  $terms = get_terms( 'category', array( 'hide_empty' => false ) );
+  $terms = get_terms( 'post_tag', array( 'hide_empty' => false ) );
 
   // delete all existing relationships
   foreach ( $terms as $term ){
@@ -41,11 +41,16 @@ function qw_override_tags_pre_save( $options, $query_id ){
   }
 
   // merge tags
-  if( isset( $options['override']['tags'] ) &&
-      is_array( $options['override']['tags'] ) )
+  if( isset( $options['override']['tags']['values'] ) &&
+      is_array( $options['override']['tags']['values'] ) )
   {
-    // new terms to save
-    $insert_terms = array_keys( $options['override']['tags'] );
+    // new relationships to save
+    $insert_terms = array();
+    foreach( $options['override']['tags']['values'] as $term_id => $name ) {
+      if ( term_exists( $term_id, 'post_tag' ) ){
+        $insert_terms[] = $term_id;
+      }
+    }
 
     // loop through all terms and insert them
     foreach($insert_terms as $term_id){
@@ -54,6 +59,9 @@ function qw_override_tags_pre_save( $options, $query_id ){
         'term_id' => $term_id,
       ));
     }
+
+    // cleanup some redundant data
+    $options['override']['tags'] = $options['override']['tags']['values'];
   }
   return $options;
 }
@@ -72,7 +80,7 @@ function qw_override_tags_form( $override ){
       <label class="qw-query-checkbox">
         <input class="qw-js-title"
                type="checkbox"
-               name="<?php print $override['form_prefix']; ?>[<?php print $tag->term_id; ?>]"
+               name="<?php print $override['form_prefix']; ?>[values][<?php print $tag->term_id; ?>]"
                value="<?php print $tag->name; ?>"
               <?php checked( isset( $override['values'][ $tag->term_id ] ) ); ?> />
         <?php print $tag->name; ?>
@@ -87,9 +95,9 @@ function qw_override_tags_form( $override ){
 /**
  * @return bool|QW_Query
  */
-function qw_override_tags_get_query(){
-  if ( is_tag() && is_archive() ) {
-    $term = get_queried_object();
+function qw_override_tags_get_query( $wp_query ){
+  if ( $wp_query->is_tag() && $wp_query->is_archive() ) {
+    $term = $wp_query->get_queried_object();
     $query_id = qw_get_query_by_override_term( $term->term_id );
 
     if ( $query_id ) {
