@@ -160,3 +160,8 @@ li.qw-sortable span.qw-setting-value {
 .ui-widget-overlay {
     position: fixed;
 }
+
+.qw-disabled-add-handler {
+    background: #eee;
+    color: #666;
+}

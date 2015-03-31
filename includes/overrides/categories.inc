@@ -16,6 +16,7 @@ function qw_override_categories($overrides){
 }
 
 /**
+ * Hook into qw_pre_save and add save additional data
  * Save term relationships to the query_override_terms table
  *
  * @param $options
@@ -67,6 +68,7 @@ function qw_override_categories_pre_save( $options, $query_id ){
 }
 
 /**
+ * Settings for this override
  *
  * @param $override
  */
@@ -96,32 +98,32 @@ function qw_override_categories_form( $override ){
   <?php
 }
 
+/**
+ * Determine if this override should be executed
+ * return a QW_Query object if so, otherwise return false;
+ *
+ * @return bool|QW_Query
+ */
 function qw_override_categories_get_query( $wp_query ){
   if ( $wp_query->is_category() && $wp_query->is_archive() ){
     $term = $wp_query->get_queried_object();
-
     $query_id = qw_get_query_by_override_term( $term->term_id );
 
-    if ( $query_id ) {
+    if ( $query_id  &&  $qw_query = qw_get_query( $query_id ) ) {
 
-      $options_override = array(
+      // add the appropriate filter to the query
+      $qw_query->add_handler( 'filter', 'categories', array(
+        'cat_operator' => 'cat',
+        'cats' => array( $term->term_id => $term->name ),
+        ))
         // override the post title
-        'display' => array(
-          'title' => single_term_title( '', false ),
-        ),
-        // add a filter to the query for this term
-        'args' => array(
-          'filters' => array(
-            'categories' => array(
-              'type' => 'categories',
-              'cat_operator' => 'cat',
-              'cats' => array( $term->term_id => $term->name ),
-            )
+        ->override_options( array(
+          'display' => array(
+            'title' => single_term_title( '', false ),
           )
-        )
-      );
+        ));
 
-      return new QW_Query( $query_id, $options_override );
+      return $qw_query;
     }
   }
 

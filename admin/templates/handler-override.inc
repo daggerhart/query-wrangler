@@ -9,15 +9,15 @@
     <?php print $override['title']; ?>
   </span>
   <div class="group">
-    <input class='qw-override-type'
+    <input class='qw-handler-item-type'
            type='hidden'
            name='<?php print $override['form_prefix']; ?>[type]'
            value='<?php print $override['type']; ?>' />
-    <input class='qw-override-hook_key'
+    <input class='qw-handler-item-hook_key'
            type='hidden'
            name='<?php print $override['form_prefix']; ?>[hook_key]'
            value='<?php print $override['hook_key']; ?>' />
-    <input class='qw-override-name'
+    <input class='qw-handler-item-name'
            type='hidden'
            name='<?php print $override['form_prefix']; ?>[name]'
            value='<?php print $override['name']; ?>' />

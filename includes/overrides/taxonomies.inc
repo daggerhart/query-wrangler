@@ -17,6 +17,8 @@ function qw_override_taxonomies($overrides){
 }
 
 /**
+ * Hook into qw_pre_save and add save additional data
+ *
  * @param $options
  * @param $query_id
  *
@@ -68,6 +70,8 @@ function qw_override_taxonomies_pre_save( $options, $query_id ) {
 }
 
 /**
+ * Settings for this override
+ *
  * @param $override
  */
 function qw_override_taxonomies_form( $override ) {
@@ -93,7 +97,10 @@ function qw_override_taxonomies_form( $override ) {
 }
 
 /**
+ * Determine if this override should be executed
+ * return a QW_Query object if so, otherwise return false;
  *
+ * @return bool|QW_Query
  */
 function qw_override_taxonomies_get_query( $wp_query ){
   if ( $wp_query->is_archive() && ( $wp_query->is_tag() || $wp_query->is_category() || $wp_query->is_tag() )) {
@@ -110,31 +117,24 @@ function qw_override_taxonomies_get_query( $wp_query ){
       }
     }
 
-    if ( $query_id ) {
-      $type = 'taxonomy_' . $term->taxonomy;
+    if ( $query_id && $qw_query = qw_get_query( $query_id ) ) {
 
-      $options_override = array(
+      // add the appropriate filter to the query
+      $qw_query->add_handler( 'filter', 'taxonomy_' . $term->taxonomy, array(
+        'terms'    => array( $term->term_id => $term->name ),
+        'operator' => 'IN',
+        'include_children' => true,
+        ))
         // override the post title
-        'display' => array(
-          'title' => single_term_title( '', false ),
-        ),
-        // add a filter to the query for this term
-        'args' => array(
-          'filters' => array(
-            $type  => array(
-              'type'     => $type,
-              'hook_key' => $type,
-              'name'     => $type,
-              'weight'   => 10,
-              'terms'    => array( $term->term_id => $term->name ),
-              'operator' => 'IN',
-              'include_children' => true,
-            ),
-          )
-        )
-      );
+        ->override_options( array(
+          'display' => array(
+            'title' => single_term_title( '', false ),
+          ),
+        ));
 
-      return new QW_Query( $query_id, $options_override );
+      return $qw_query;
     }
   }
+
+  return FALSE;
 }

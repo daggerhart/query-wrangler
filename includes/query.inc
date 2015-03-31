@@ -89,13 +89,10 @@ function qw_generate_query_options($query_id, $options_override = array(), $full
  * Generate the WP query itself
  *
  * @param array $options Query data
- * $param array $options_override can change the options array
  * @return array Query Arguments
  */
 function qw_generate_query_args($options = array())
 {
-  $all_filters = qw_all_filters();
-  $all_sorts = qw_all_sort_options();
   $handlers = qw_preprocess_handlers($options);
   
   $paged = NULL;
@@ -160,15 +157,20 @@ function qw_generate_query_args($options = array())
   return $args;
 }
 
-/*
- *
+/**
+ * Get a query's id by using its slug
  */
 function qw_get_query_by_slug($slug){
   global $wpdb;
   return $wpdb->get_var($wpdb->prepare("SELECT id FROM ".$wpdb->prefix."query_wrangler WHERE `slug` = '%s'",$slug));
 }
 
-// get a single query by its ID
+/**
+ * Get an unserialized query row from the database, using the query's id
+ *
+ * @param $id
+ * @return bool|mixed
+ */
 function qw_get_query_by_id( $id ){
   global $wpdb;
   $table = $wpdb->prefix.'query_wrangler';
@@ -182,7 +184,12 @@ function qw_get_query_by_id( $id ){
   return false;
 }
 
-
+/**
+ * Get a query's id by that is set to override a specific term_id
+ *
+ * @param $term_id
+ * @return bool
+ */
 function qw_get_query_by_override_term( $term_id ){
 
   global $wpdb;
@@ -522,38 +529,77 @@ function qw_default_query_data(){
   );
 }
 
+/**
+ * Get an existing query as QW_Query object
+ *
+ * @param $id
+ * @return null|QW_Query
+ */
+function qw_get_query( $id ){
+  if ( !empty( $id ) ) {
+    $query = new QW_Query( $id );
+
+    if ( $query && is_a( $query, 'QW_Query' ) && ! $query->is_new ) {
+      return $query;
+    }
+  }
+
+  return NULL;
+}
+
+/**
+ * Create a new empty QW_Query
+ */
+function qw_create_query(){
+  return new QW_Query();
+}
+
+/**
+ * Class QW_Query
+ */
 class QW_Query {
-
-  public $id,$name,$slug,$type,$path,$data;
-
-  // query is not in the db
-  public $is_new = FALSE;
 
   // row from db
   public $row;
+
+  // columns from the db
+  public $id, // unique id
+    $name, // human readable title
+    $slug, // unique machine-safe string
+    $type, // ( widget | page | override )
+    $path, // page route
+    $data; // un-parsed query options
+
+  // if TRUE, query id was not found in the db
+  public $is_new = FALSE;
 
   // generated WP_Query, not the global wp_query
   public $wp_query;
 
   // processed values
+  // $options are essentially a copy of the $data array
   public $options;
+
+  // $args is an array of WP_Query() arguments, it is processed from
+  // the $options array and get its values from
+  // filters, sorts, overrides and some basics
   public $args;
 
-  // query execution options
-  public $options_override = array();
-  public $reset_postdata = TRUE;
-  
   // final html output
   public $output;
 
   /**
+   * Get an existing query, or create a new empty query with default values
+   *
    * @param null $id
-   * @param array $options_override
-   * @param bool $reset_postdata
    */
-  function __construct( $id = NULL, $options_override = array(), $reset_postdata = true ){
+  function __construct( $id = NULL ){
     // load by query id
     if ( $id && $query = qw_get_query_by_id( $id ) ){
+
+      // retain original info
+      $this->row = $query;
+
       // copy all the db row info
       $this->id = $id;
       $this->name = $query->name;
@@ -561,90 +607,182 @@ class QW_Query {
       $this->type = $query->type;
       $this->path = $query->path;
       $this->data = $query->data;
-
-      // TODO deprecate
-      $this->options_override = $options_override;
-      $this->reset_postdata = $reset_postdata;
-
-      // retain original info
-      $this->row = $query;
     }
-    // or make a new blank query
     else {
-      return NULL;
+      // new query object with default values
+      $this->is_new = TRUE;
+      $this->data = qw_default_query_data();
+      $this->row['data'] = $this->data;
     }
   }
 
   /**
+   * Execute the entire query process
+   *
+   * @return mixed|string|void
+   */
+  function execute(){
+    $this
+      ->process_options()
+      ->execute_query()
+      ->theme_query();
+
+    return $this;
+  }
+
+  /**
+   * Allow array of option values to replace existing qw_query options.
+   * -- Should be executed before process_options()
+   *
+   * @param $options_override
+   * @return $this
+   */
+  function override_options( $options_override, $full_override = false ){
+    if ( $full_override ) {
+      $this->data = $options_override;
+    }
+    else {
+      // combine data and options_override to get $options
+      $this->data = array_replace_recursive( (array) $this->data, $options_override);
+    }
+
+    return $this;
+  }
+
+  /**
+   * Process the row->data array into options and args
    *
    * @return $this
    */
   function process_options(){
     // get the query options
     if ( ! $this->options ) {
-      $this->options = $this->generate_options( $this->data, $this->options_override );
+      $this->options = $this->data;
+
+      // build query_details
+      $this->options['meta'] = array(
+        'id' => $this->id ,
+        'slug' => $this->slug,
+        'name' => $this->name,
+        'type' => $this->type,
+        'pagination' => isset( $this->options['display']['page']['pager']['active'] ) ? 1 : 0,
+        'header' => $this->options['display']['header'],
+        'footer' => $this->options['display']['footer'],
+        'empty' => $this->options['display']['empty'],
+      );
     }
 
     // get formatted query arguments
     if ( ! $this->args ) {
       $this->args = qw_generate_query_args( $this->options );
     }
+
     return $this;
   }
 
   /**
-   * @param $data
-   * @param $options_override
-   *
-   * @return array
+   * Create the WP_Query()
    */
-  function generate_options( $data, $options_override ) {
-    // combine data and options_override to get $options
-    $options = array_replace_recursive( (array) $data, $options_override);
-  
-    // build query_details
-    $options['meta'] = array();
-    $options['meta']['id'] = $this->id;
-    $options['meta']['slug'] = $this->slug;
-    $options['meta']['name'] = $this->name;
-    $options['meta']['type'] = $this->type;
-    $options['meta']['pagination'] = ( isset($options['display']['page']['pager']['active'])) ? 1 : 0;
-    $options['meta']['header'] = $options['display']['header'];
-    $options['meta']['footer'] = $options['display']['footer'];
-    $options['meta']['empty'] = $options['display']['empty'];
-
-    return $options;
-  }
-
-  /**
-   *
-   * @return mixed|string|void
-   */
-  function execute(){
-    $this->process_options();
-
-    // pre_query hook
-    $this->args = apply_filters('qw_pre_query', $this->args, $this->options);
+  function execute_query(){
+    $this->args = apply_filters( 'qw_pre_query', $this->args, $this->options );
 
     // set the new query
     $this->wp_query = new WP_Query( $this->args );
 
+    return $this;
+  }
+
+  /**
+   * Template the qw_query output
+   */
+  function theme_query(){
     // pre_render hook
     $this->options = apply_filters('qw_pre_render', $this->options, $this->args );
 
     // get the themed content
     $this->output = qw_template_query($this->wp_query, $this->options);
 
-    // Reset Post Data
-    if ( $this->reset_postdata ) {
-      wp_reset_postdata();
+    return $this;
+  }
+
+  /**
+   * Simple wrapper for wp_reset_postdata()
+   */
+  function reset_postdata(){
+    wp_reset_postdata();
+    return $this;
+  }
+
+  /**
+   * Add a new handler item to the query
+   *
+   * @param $handler_type
+   * @param $item_type
+   * @param $values
+   *
+   * @return $this
+   */
+  function add_handler( $handler_type, $item_type, $values ){
+    $all_handlers = qw_all_handlers();
+
+    if ( isset( $all_handlers[ $handler_type ]['all_items'][ $item_type ] ) ) {
+      $handler = $all_handlers[ $handler_type ];
+      $handler_item = $all_handlers[ $handler_type ]['all_items'][ $item_type ];
+
+      // get existing items on the query
+      $existing_items = array();
+      if ( is_callable( $handler['data_callback'] ) ) {
+        $existing_items = call_user_func( $handler['data_callback'], $this->data );
+      }
+
+      // determine the weight and name of the new item based on
+      // items that already exist in the query->data
+      $weight = 0;
+      $name = 0;
+      foreach ( $existing_items as $k => $v ){
+        $weight += 1;
+
+        if ( $v['type'] == $handler_item['type'] ) {
+          $name += 1;
+        }
+      }
+
+      // create our new item
+      $new_item = array(
+        'hook_key' => $handler_item['hook_key'],
+        'type' => $handler_item['type'],
+        'name' => ( $name > 0 ) ? $handler_item['type'] . '_' . $name : $handler_item['type'],
+        'weight' => $weight,
+      );
+
+      // merge in values
+      $new_item = array_replace_recursive( $new_item, $values );
+
+      // set the new item
+      switch( $handler_type ){
+        case 'filter':
+          $this->set_filter( $new_item['name'], $new_item );
+          break;
+
+        case 'sort':
+          $this->set_sort( $new_item['name'], $new_item );
+          break;
+
+        case 'field':
+          $this->set_field( $new_item['name'], $new_item );
+          break;
+
+        case 'override':
+          $this->set_override( $new_item['name'], $new_item );
+          break;
+      }
     }
 
     return $this;
   }
-  
+
   /**
-   * Filters
+   * Filter: get a specific filter from the query data
    *
    * @param $key
    * @return null
@@ -656,17 +794,32 @@ class QW_Query {
     return null;
   }
 
+  /**
+   * Filter: get all filters in the query data
+   *
+   * @return array
+   */
   function filters(){
-    return $this->data['args']['filters'];
+    if ( $this->data['args']['filters'] ) {
+      return $this->data['args']['filters'];
+    }
+    return array();
   }
 
+  /**
+   * Filter: set a specific filter in the query data
+   *
+   * @param $key
+   * @param $filter
+   * @return $this
+   */
   function set_filter( $key, $filter ){
     $this->data['args']['filters'][ $key ] = $filter;
     return $this;
   }
 
   /**
-   * Fields
+   * Field: get a specific field from the query data
    *
    * @param $key
    * @return null
@@ -678,17 +831,32 @@ class QW_Query {
     return null;
   }
 
+  /**
+   * Fields: get all fields from the query data
+   *
+   * @return array
+   */
   function fields(){
-    return $this->data['display']['field_settings']['fields'];
+    if ( $this->data['display']['field_settings']['fields'] ) {
+      return $this->data['display']['field_settings']['fields'];
+    }
+    return array();
   }
 
+  /**
+   * Field: set a specific field in the query data
+   *
+   * @param $key
+   * @param $field
+   * @return $this
+   */
   function set_field( $key, $field ){
     $this->data['display']['field_settings']['fields'][ $key ] = $field;
     return $this;
   }
 
   /**
-   * Sorts
+   * Sort: get a specific sort option from the query data
    *
    * @param $key
    * @return null
@@ -700,17 +868,32 @@ class QW_Query {
     return null;
   }
 
+  /**
+   * Sort: get all sort options from the query data
+   *
+   * @return array
+   */
   function sorts(){
-    return $this->data['args']['sorts'];
+    if ( $this->data['args']['sorts'] ) {
+      return $this->data['args']['sorts'];
+    }
+    return array();
   }
 
+  /**
+   * Sort: set a specific sort in the query data
+   *
+   * @param $key
+   * @param $sort
+   * @return $this
+   */
   function set_sort( $key, $sort ){
     $this->data['args']['sorts'][ $key ] = $sort;
     return $this;
   }
 
   /**
-   * Override
+   * Override: get a specific override from the query data
    *
    * @param $key
    * @return null
@@ -722,10 +905,24 @@ class QW_Query {
     return null;
   }
 
+  /**
+   * Override: get all overrides from the query data
+   *
+   * @return array
+   */
   function overrides(){
-    return $this->data['override'];
+    if ( $this->data['override'] ) {
+      return $this->data['override'];
+    }
+    return array();
   }
 
+  /**
+   * Override: set a specific override in the query data
+   * @param $key
+   * @param $override
+   * @return $this
+   */
   function set_override( $key, $override ){
     $this->data['override'][ $key ] = $override;
     return $this;

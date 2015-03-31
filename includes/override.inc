@@ -11,6 +11,9 @@ class QW_Override {
 
   private $override_query = NULL;
 
+  /**
+   * Hook into WordPress
+   */
   function __construct() {
     if ( ! is_admin() ) {
       add_action('pre_get_posts', array( $this, 'action_pre_get_posts' ) );
@@ -33,7 +36,7 @@ class QW_Override {
 
     // Loop through all override types and let them look for their own active overrides
     foreach ( $overrides as $override ){
-      if ( isset( $override['get_query_callback'] ) && is_callable($override['get_query_callback'] ) ) {
+      if ( isset( $override['get_query_callback'] ) && is_callable( $override['get_query_callback'] ) ) {
 
         // override get_query_callbacks should return a QW_Query object
         $qw_query = call_user_func( $override['get_query_callback'], $wp_query );
@@ -42,7 +45,7 @@ class QW_Override {
           $this->override_query = $qw_query;
 
           // go ahead and correct pagination
-          $wp_query->set('posts_per_page', $qw_query->row->data['args']['posts_per_page'] );
+          $wp_query->set('posts_per_page', $qw_query->data['args']['posts_per_page'] );
 
           // !first one wins
           break;
@@ -73,8 +76,6 @@ class QW_Override {
    * @param $qw_query
    */
   function execute( $qw_query ){
-    global $wp_query;
-
     // process the query and get the output
     $themed_query = $qw_query->execute()->output;
 
@@ -93,9 +94,32 @@ class QW_Override {
     $faux_post->ancestors    = array();
 
     // hack the gibson
+    global $wp_query;
     $wp_query->posts          = array( $faux_post );
 //    $wp_query->post           = $faux_post;
     $wp_query->found_posts    = 1;
     $wp_query->post_count     = 1;
+
+    // allow for page templates
+    if ( $qw_query->options['display']['page']['template-file']  !== '__none__' ) {
+      add_filter( 'template_include', array( $this, 'hijack_template' ), 99 );
+    }
+  }
+
+  /**
+   * Take over the page with a given template file.
+   * Include the template and exit immediately
+   *
+   * @param $template_file
+   * @return string
+   */
+  function hijack_template( $template_file ){
+    $template_file = locate_template( $this->override_query->options['display']['page']['template-file'] );
+
+    if( ! file_exists( $template_file ) ) {
+      $template_file = locate_template( qw_default_template_file() );
+    }
+
+    return $template_file;
   }
 }

@@ -242,7 +242,7 @@ function qw_settings_page()
 /*
  * Create Query Page
  */
-function qw_create_query() {
+function qw_create_query_page() {
   $args = array(
     'title' => 'Create Query',
     'content' => theme('query_create')

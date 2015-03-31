@@ -54,7 +54,7 @@
             <span class="qw-rearrange-title">
               Rearrange
             </span>
-            <span class="qw-add-title" data-handler-type="override" data-form-id="qw-display-add-overrides">
+            <span class="qw-add-title" data-handler-type="override" data-limit-per-type=1 data-form-id="qw-display-add-overrides">
               Add
             </span>
           </div>
@@ -256,7 +256,9 @@
 
   <!-- all overrides -->
   <div id="qw-display-add-overrides" data-handler-type="override">
-    <p class="description">Select overrides to take over.</p>
+    <p class="description">
+      Select overrides to add to this query.
+      Limit 1 per type.</p>
     <div class="qw-checkboxes">
       <?php
       // loop through overrides

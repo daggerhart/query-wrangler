@@ -102,7 +102,7 @@ class Query_Wrangler_List_Table extends WP_List_Table
                                     $tmp[] = $value;
                                 }
 
-                                $details.= implode(' ', $tmp);
+                                $details.= implode(', ', $tmp);
                             }
                         }
                     }

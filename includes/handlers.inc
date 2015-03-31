@@ -11,7 +11,7 @@ function qw_handlers_default($handlers){
     'description' => 'Select Fields to add to this query output.',
     'data_callback' => 'qw_handler_field_data',
     'all_callback' => 'qw_all_fields',
-    // relative to qw-query-options base
+    // relative to base
     'form_prefix' => '[display][field_settings][fields]',
     'wrapper_template' => 'query_field',
   );
@@ -20,7 +20,7 @@ function qw_handlers_default($handlers){
     'description' => 'Select options for sorting the query results.',
     'data_callback' => 'qw_handler_sort_data',
     'all_callback' => 'qw_all_sort_options',
-    // relative to qw-query-options base
+    // relative to base
     'form_prefix' => '[args][sorts]',
     'wrapper_template' => 'query_sort',
   );
@@ -29,7 +29,7 @@ function qw_handlers_default($handlers){
     'description' => 'Select filters to affect the query results.',
     'data_callback' => 'qw_handler_filter_data',
     'all_callback' => 'qw_all_filters',
-    // relative to qw-query-options base
+    // relative to base
     'form_prefix' => '[args][filters]',
     'wrapper_template' => 'query_filter',
   );
@@ -38,7 +38,7 @@ function qw_handlers_default($handlers){
     'description' => 'Select overrides to affect the query results based on the context of where the query is displayed.',
     'data_callback' => 'qw_handler_override_data',
     'all_callback' => 'qw_all_overrides',
-    // relative to qw-query-options base
+    // relative to base
     'form_prefix' => '[override]',
     'wrapper_template' => 'query_override',
   );

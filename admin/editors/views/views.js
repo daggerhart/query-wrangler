@@ -48,14 +48,57 @@
     },
 
     /**
+     * Modify the $form to limit selectable values
+     *
+     * @param $form
+     * @param $wrapper
+     * @param limit
+     */
+    limitHandlerItems: function( $form, $wrapper, limit ){
+      var existing = {};
+
+      $wrapper.find('.qw-handler-item').each(function( index, item ){
+        var type = $(item).find('.qw-handler-item-type').val();
+        if ( existing[ type ] ) {
+          existing[ type ] += 1;
+        }
+        else {
+          existing[ type ] = 1;
+        }
+      });
+
+      $form.find('input[type=checkbox]').each(function( index, checkbox ){
+        var
+          $checkbox = $(checkbox),
+          type = $checkbox.val();
+
+        $checkbox.prop('disabled', false).parent().removeClass('qw-disabled-add-handler');
+
+        if ( existing[ type ] && existing[ type ] >= limit ){
+          $checkbox.prop('disabled', true).parent().addClass('qw-disabled-add-handler');
+        }
+      });
+    },
+
+    /**
      * Dialog box for adding new handler items
      */
     addHandlerItemsDialog: function(){
-      var handler = $(this).data('handler-type');
-      var title   = $(this).closest('.qw-query-admin-options').find('h4:first').text();
-      var id      = $(this).data('form-id');
+      var
+        $button   = $(this),
+        handler   = $button.data('handler-type'),
+        $wrapper  = $button.closest('.qw-query-admin-options'),
+        title     = $wrapper.find('h4:first').text(),
+        id        = $button.data('form-id'),
+        limit     = $button.data('limit-per-type'),
+        $form     = $('#' + id);
 
-      QWViews.openDialog( title , $('#' + id), id, QWViews.addHandlerItems );
+      // overrides should be limited to 1
+      if ( limit ) {
+        QWViews.limitHandlerItems( $form, $wrapper, limit );
+      }
+
+      QWViews.openDialog( title, $form, id, QWViews.addHandlerItems );
     },
 
     /**

@@ -23,7 +23,8 @@ function qw_basic_page_template_form($basic, $display)
   $page_templates = get_page_templates();
   ?>
     <select class='qw-js-title' name="<?php print $basic['form_prefix']; ?>[page][template-file]" id="qw-page-template">
-      <option value="index.php">Default</option>
+      <option value="__none__">None - Allow theme to determine template</option>
+      <option value="index.php">Default - index.php</option>
       <?php
         foreach($page_templates as $name => $file)
         {

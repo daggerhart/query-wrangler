@@ -16,6 +16,7 @@ function qw_override_tags($overrides){
 }
 
 /**
+ * Hook into qw_pre_save and add save additional data*
  * Save term relationships to the query_override_terms table
  *
  * @param $options
@@ -67,6 +68,8 @@ function qw_override_tags_pre_save( $options, $query_id ){
 }
 
 /**
+ * Settings for this override
+ *
  * @param $override
  */
 function qw_override_tags_form( $override ){
@@ -93,6 +96,9 @@ function qw_override_tags_form( $override ){
 }
 
 /**
+ * Determine if this override should be executed
+ * return a QW_Query object if so, otherwise return false;
+ *
  * @return bool|QW_Query
  */
 function qw_override_tags_get_query( $wp_query ){
@@ -100,26 +106,21 @@ function qw_override_tags_get_query( $wp_query ){
     $term = $wp_query->get_queried_object();
     $query_id = qw_get_query_by_override_term( $term->term_id );
 
-    if ( $query_id ) {
+    if ( $query_id && $qw_query = qw_get_query( $query_id ) ) {
 
-      $options_override = array(
-        // override the post title
+      // add the appropriate filter to the query
+      $qw_query->add_handler( 'filter', 'categories', array(
+        'tag_operator' => 'tag__in',
+        'tags' => array( $term->term_id => $term->name ),
+      ))
+      // override the post title
+      ->override_options( array(
         'display' => array(
           'title' => single_term_title( '', false ),
-        ),
-        // add a filter to the query for this term
-        'args' => array(
-          'filters' => array(
-            'tags' => array(
-              'type' => 'tags',
-              'tag_operator' => 'tag__in',
-              'tags' => array( $term->term_id => $term->name ),
-            )
-          )
         )
-      );
+      ));
 
-      return new QW_Query( $query_id, $options_override );
+      return $qw_query;
     }
   }
 
