@@ -34,12 +34,21 @@ function qw_filter_meta_query_form($filter)
       <input class='qw-js-title' type='text' name="<?php print $filter['form_prefix']; ?>[key]" value='<?php print $filter['values']['key']; ?>' />
     </p>
     <p>
-      <label class="qw-label">Meta Value:</label>
-        <input class="qw-meta-value qw-js-title"
-               type="text"
-               size="40"
-               name="<?php print $filter['form_prefix']; ?>[value]"
-               value="<?php print stripcslashes($filter['values']['value']); ?>" />
+      <label class="qw-label">Meta Value 1:</label>
+      <input class="qw-meta-value qw-js-title"
+             type="text"
+             size="40"
+             name="<?php print $filter['form_prefix']; ?>[value][0]"
+             value="<?php print stripcslashes($filter['values']['value'][0]); ?>" />
+    </p>
+    <p>
+      <label class="qw-label">Meta Value 2:</label>
+      <input class="qw-meta-value qw-js-title"
+             type="text"
+             size="40"
+             name="<?php print $filter['form_prefix']; ?>[value][1]"
+             value="<?php print stripcslashes($filter['values']['value'][1]); ?>" />
+      <div>Only use Meta Value 2 when compare is 'IN', 'NOT IN', 'BETWEEN', or 'NOT BETWEEN'.</div>
     </p>
     <p>
       <label class="qw-label">Type:</label>
@@ -69,9 +78,16 @@ function qw_filter_meta_query_form($filter)
 }
 
 function qw_generate_query_args_meta_query(&$args, $filter){
+  if ( !empty($filter['values']['value'][1]) ){
+    $value = $filter['values']['value'];
+  }
+  else {
+    $value = $filter['values']['value'][0];
+  }
+
   $args['meta_query'][] = array(
     'key' => $filter['values']['key'],
-    'value' => $filter['values']['value'],
+    'value' => $value,
     'compare' => $filter['values']['compare'],
     'type' => $filter['values']['type'],
   );

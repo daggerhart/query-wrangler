@@ -120,7 +120,7 @@ function qw_override_taxonomies_get_query( $wp_query ){
     if ( $query_id && $qw_query = qw_get_query( $query_id ) ) {
 
       // add the appropriate filter to the query
-      $qw_query->add_handler( 'filter', 'taxonomy_' . $term->taxonomy, array(
+      $qw_query->add_handler_item( 'filter', 'taxonomy_' . $term->taxonomy, array(
         'terms'    => array( $term->term_id => $term->name ),
         'operator' => 'IN',
         'include_children' => true,

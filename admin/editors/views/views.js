@@ -3,13 +3,13 @@
   QWViews = {
 
     // current open dialog
-    current_dialog: {},
+    current_dialog: null,
 
     // HTML id of current form in dialog
-    current_dialog_id: '',
+    current_dialog_id: null,
 
     // html clone of the form to be displayed
-    current_dialog_backup: '',
+    current_dialog_backup: null,
 
     /**
      * Initialize the views editor theme
@@ -178,7 +178,7 @@
     openDialog: function( dialog_title, element, dialog_id, update_callback ){
       var $element = $(element);
 
-      QWViews.current_dialog_backup = $element.html();
+      QWViews.current_dialog_backup = $element.clone(true);
 
       if ( typeof dialog_id !== 'undefined' ){
         QWViews.current_dialog_id = dialog_id;
@@ -242,14 +242,12 @@
 
       if ( QWViews.current_dialog_id ){
         // replace the dialog contents with its backup
-        $('form#qw-edit-query-form')
-          .find('#' + QWViews.current_dialog_id)
-            .html( QWViews.current_dialog_backup );
+        QWViews.current_dialog_backup.replaceAll( $(element) );
 
         // clear the current dialog info
-        QWViews.current_dialog = {};
-        QWViews.current_dialog_id = '';
-        QWViews.current_dialog_backup = '';
+        QWViews.current_dialog = null;
+        QWViews.current_dialog_id = null;
+        QWViews.current_dialog_backup = null;
       }
     },
 

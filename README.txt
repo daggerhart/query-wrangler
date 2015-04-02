@@ -26,12 +26,10 @@ Supports:
 
 Some examples of how you would use this plugin include:
 
+* Create a list posts with featured images
 * Create a list of pages or posts within a specific category or tag
 * Create an image gallery
 * Modify the way your category pages look
-* Create a category list widget with custom sorting
-
-[Introduction to Query Wrangler](http://www.widgetwrangler.com/forum/query-wrangler/general/intro-query-wrangler "Learn to setup Queries")
 
 
 == Installation ==
@@ -66,7 +64,7 @@ Easy, the code you're looking for is like this.   [query id=2] , where the numbe
 = What are overrides and how do I use them? =
 
 Overrides allow you to alter the display and information given on category and tag pages.
-For a simple example, add a new query and chose the type `override`.  Choose how you want the content to display, then examine the `Override Settings` options.
+For a simple example, add a new query and chose the type `override`.  Choose how you want the content to display, then examine the `Overrides` box.
 Select a category or multiple categories to override.   Save the query, then visit that category page.
 
 
@@ -76,12 +74,15 @@ Select a category or multiple categories to override.   Save the query, then vis
 
 == Changelog ==
 
-= 1.5.32 = TODO
+= 1.5.32 =
 
 * Better Overrides
 * Feature: meta_query filter
 * Feature: Override entire taxonomy
-* Minor UI bug fixes with rearranging handler items and field tokens
+* Feature: Extended callback field to include text parameters
+* Feature: Callback filter
+* UI bug fixes with rearranging handler items and field tokens
+* UI bug fix regarding canceling and new handler items dialog
 
 = 1.5.31 =
 
@@ -290,4 +291,4 @@ Select a category or multiple categories to override.   Save the query, then vis
 
 == Upgrade Notice ==
 
-1.5.31 Sweet new features and minor bug fixes
+1.5.32 Override entire taxonomies, new meta query filter, callback fields now have optional text parameters

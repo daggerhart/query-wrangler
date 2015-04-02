@@ -110,7 +110,7 @@ function qw_generate_query_args($options = array())
   $args['posts_per_page'] = ($options['args']['posts_per_page']) ? $options['args']['posts_per_page']: 5;
   $args['offset']         = ($options['args']['offset']) ? $options['args']['offset']: 0;
   $args['post_status']    = $options['args']['post_status'];
-  $args['ignore_sticky_posts'] = 1;
+  $args['ignore_sticky_posts'] = ($options['args']['ignore_sticky_posts']) ? $options['args']['ignore_sticky_posts']: 0;
 
   $submitted_data = qw_exposed_submitted_data();
   
@@ -722,7 +722,7 @@ class QW_Query {
    *
    * @return $this
    */
-  function add_handler( $handler_type, $item_type, $values ){
+  function add_handler_item( $handler_type, $item_type, $values ){
     $all_handlers = qw_all_handlers();
 
     if ( isset( $all_handlers[ $handler_type ]['all_items'][ $item_type ] ) ) {
@@ -738,12 +738,12 @@ class QW_Query {
       // determine the weight and name of the new item based on
       // items that already exist in the query->data
       $weight = 0;
-      $name = 0;
-      foreach ( $existing_items as $k => $v ){
+      $instances = 0;
+      foreach ( $existing_items as $name => $existing_item ){
         $weight += 1;
 
-        if ( $v['type'] == $handler_item['type'] ) {
-          $name += 1;
+        if ( $existing_item['type'] == $handler_item['type'] ) {
+          $instances += 1;
         }
       }
 
@@ -751,180 +751,47 @@ class QW_Query {
       $new_item = array(
         'hook_key' => $handler_item['hook_key'],
         'type' => $handler_item['type'],
-        'name' => ( $name > 0 ) ? $handler_item['type'] . '_' . $name : $handler_item['type'],
+        'name' => ( $instances > 0 ) ? $handler_item['type'] . '_' . $instances : $handler_item['type'],
         'weight' => $weight,
       );
 
       // merge in values
       $new_item = array_replace_recursive( $new_item, $values );
 
-      // set the new item
-      switch( $handler_type ){
-        case 'filter':
-          $this->set_filter( $new_item['name'], $new_item );
-          break;
-
-        case 'sort':
-          $this->set_sort( $new_item['name'], $new_item );
-          break;
-
-        case 'field':
-          $this->set_field( $new_item['name'], $new_item );
-          break;
-
-        case 'override':
-          $this->set_override( $new_item['name'], $new_item );
-          break;
-      }
+      $this->set_handler_item( $handler_type, $new_item['name'], $new_item );
     }
 
     return $this;
   }
 
   /**
-   * Filter: get a specific filter from the query data
+   * Set the value of a specific handler item
    *
+   * @param $handler_type
    * @param $key
-   * @return null
-   */
-  function get_filter( $key ){
-    if ( isset( $this->data['args']['filters'][ $key ] ) ) {
-      return $this->data['args']['filters'][ $key ];
-    }
-    return null;
-  }
-
-  /**
-   * Filter: get all filters in the query data
+   * @param $value
    *
-   * @return array
-   */
-  function filters(){
-    if ( $this->data['args']['filters'] ) {
-      return $this->data['args']['filters'];
-    }
-    return array();
-  }
-
-  /**
-   * Filter: set a specific filter in the query data
-   *
-   * @param $key
-   * @param $filter
    * @return $this
    */
-  function set_filter( $key, $filter ){
-    $this->data['args']['filters'][ $key ] = $filter;
-    return $this;
-  }
+  function set_handler_item( $handler_type, $key, $value ){
+    switch ($handler_type) {
+      case 'filter':
+        $this->data['args']['filters'][ $key ] = $value;
+        break;
 
-  /**
-   * Field: get a specific field from the query data
-   *
-   * @param $key
-   * @return null
-   */
-  function get_field( $key ){
-    if ( isset( $this->data['display']['field_settings']['fields'][ $key ] ) ) {
-      return $this->data['display']['field_settings']['fields'][ $key ];
+      case 'field':
+        $this->data['display']['field_settings']['fields'][ $key ] = $value;
+        break;
+
+      case 'sort':
+        $this->data['args']['sorts'][ $key ] = $value;
+        break;
+
+      case 'override':
+        $this->data['override'][ $key ] = $value;
+        break;
     }
-    return null;
-  }
 
-  /**
-   * Fields: get all fields from the query data
-   *
-   * @return array
-   */
-  function fields(){
-    if ( $this->data['display']['field_settings']['fields'] ) {
-      return $this->data['display']['field_settings']['fields'];
-    }
-    return array();
-  }
-
-  /**
-   * Field: set a specific field in the query data
-   *
-   * @param $key
-   * @param $field
-   * @return $this
-   */
-  function set_field( $key, $field ){
-    $this->data['display']['field_settings']['fields'][ $key ] = $field;
-    return $this;
-  }
-
-  /**
-   * Sort: get a specific sort option from the query data
-   *
-   * @param $key
-   * @return null
-   */
-  function get_sort( $key ){
-    if ( isset( $this->data['args']['sorts'][ $key ] ) ) {
-      return $this->data['args']['sorts'][ $key ];
-    }
-    return null;
-  }
-
-  /**
-   * Sort: get all sort options from the query data
-   *
-   * @return array
-   */
-  function sorts(){
-    if ( $this->data['args']['sorts'] ) {
-      return $this->data['args']['sorts'];
-    }
-    return array();
-  }
-
-  /**
-   * Sort: set a specific sort in the query data
-   *
-   * @param $key
-   * @param $sort
-   * @return $this
-   */
-  function set_sort( $key, $sort ){
-    $this->data['args']['sorts'][ $key ] = $sort;
-    return $this;
-  }
-
-  /**
-   * Override: get a specific override from the query data
-   *
-   * @param $key
-   * @return null
-   */
-  function get_override( $key ){
-    if ( isset( $this->data['override'][ $key ] ) ) {
-      return $this->data['override'][ $key ];
-    }
-    return null;
-  }
-
-  /**
-   * Override: get all overrides from the query data
-   *
-   * @return array
-   */
-  function overrides(){
-    if ( $this->data['override'] ) {
-      return $this->data['override'];
-    }
-    return array();
-  }
-
-  /**
-   * Override: set a specific override in the query data
-   * @param $key
-   * @param $override
-   * @return $this
-   */
-  function set_override( $key, $override ){
-    $this->data['override'][ $key ] = $override;
     return $this;
   }
 }

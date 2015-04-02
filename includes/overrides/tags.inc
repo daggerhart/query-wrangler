@@ -109,7 +109,7 @@ function qw_override_tags_get_query( $wp_query ){
     if ( $query_id && $qw_query = qw_get_query( $query_id ) ) {
 
       // add the appropriate filter to the query
-      $qw_query->add_handler( 'filter', 'categories', array(
+      $qw_query->add_handler_item( 'filter', 'categories', array(
         'tag_operator' => 'tag__in',
         'tags' => array( $term->term_id => $term->name ),
       ))
