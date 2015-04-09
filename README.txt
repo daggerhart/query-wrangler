@@ -74,6 +74,10 @@ Select a category or multiple categories to override.   Save the query, then vis
 
 == Changelog ==
 
+= 1.5.33 =
+
+* Cleaned up a lot of PHP warnings and notices
+
 = 1.5.32 =
 
 * Better Overrides
@@ -291,4 +295,4 @@ Select a category or multiple categories to override.   Save the query, then vis
 
 == Upgrade Notice ==
 
-1.5.32 Override entire taxonomies, new meta query filter, callback fields now have optional text parameters
+1.5.33 more WP_DEBUG friendly: Removing php warnings and notices
