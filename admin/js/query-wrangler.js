@@ -94,7 +94,8 @@ var QueryWrangler = {};
     getQwData: function(){
       var post_data = {
         action: 'qw_data_ajax',
-        data: 'all_hooks'
+        data: 'all_hooks',
+        queryId:  $('form#qw-edit-query-form').data('query-id')
       };
       QueryWrangler.ajax.post( post_data, function( results ){
         QueryWrangler.data = JSON.parse(results);
@@ -137,6 +138,7 @@ var QueryWrangler = {};
      *
      * @param handler - text name of handler: field, filter, sort
      * @param item_type - handler item type.  a specific name for the handler
+     * @param hook_key - handler item's key
      * @param callback - success callback
      */
     getHandlerItemTemplate: function ( handler, item_type, hook_key, callback ){

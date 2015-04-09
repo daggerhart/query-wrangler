@@ -16,6 +16,9 @@ function qw_filter_meta_value($filters){
 
 function qw_filter_meta_value_form($filter)
 {
+  if ( ! isset( $filter['values']['meta_value'] ) ){
+    $filter['values']['meta_value'] = '';
+  }
   ?><p>
       <textarea name="<?php print $filter['form_prefix']; ?>[meta_value]"
                 class="qw-meta-value qw-js-title"><?php print stripcslashes($filter['values']['meta_value']); ?></textarea>
@@ -24,5 +27,7 @@ function qw_filter_meta_value_form($filter)
 }
 
 function qw_generate_query_args_meta_value(&$args, $filter){
-  $args['meta_value'] = stripslashes($filter['values']['meta_value']);
+  if ( isset( $filter['values']['meta_value'] ) ){
+    $args['meta_value'] = stripslashes($filter['values']['meta_value']);
+  }
 }

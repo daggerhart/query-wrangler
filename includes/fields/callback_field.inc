@@ -67,6 +67,11 @@ function qw_callback_field_form($field)
   //$callback_exists =  ($custom_output_callback && function_exists($custom_output_callback)) ? true : false;
   $include_output_args = (isset($field['values']['include_output_arguments'])) ? 'checked="checked"' : '';
   $include_text_args = (isset($field['values']['include_text_arguments'])) ? 'checked="checked"' : '';
+
+  if ( !isset( $field['values']['parameters'] ) ){
+    $field['values']['parameters'] = array('','','');
+  }
+
   ?>
     <div>
       <p>

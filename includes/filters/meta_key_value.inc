@@ -17,6 +17,16 @@ function qw_filter_meta_key_value($filters){
 
 function qw_filter_meta_key_value_form($filter)
 {
+  if ( !isset( $filter['values']['meta_key'] ) ){
+    $filter['values']['meta_key'] = '';
+  }
+  if ( !isset( $filter['values']['meta_compare'] ) ){
+    $filter['values']['meta_compare'] = '';
+  }
+  if ( !isset( $filter['values']['meta_value'] ) ){
+    $filter['values']['meta_value'] = '';
+  }
+
   $meta_compare = array(
     "="   => "Is equal to",
     "!="  => "Is not equal to",

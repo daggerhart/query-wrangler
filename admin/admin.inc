@@ -287,7 +287,7 @@ function qw_admin_get_current_query_id(){
 }
 
 // Base Json data for query edit page
-function qw_edit_json(){
+function qw_edit_json( $query_id = null ){
   $data = array(
     'allFields' => qw_all_fields(),
     'allStyles' => qw_all_styles(),
@@ -302,7 +302,7 @@ function qw_edit_json(){
   );
 
   // editing a query
-  if ( $row = qw_get_query_by_id( $_GET['edit'] ) ) {
+  if ( $query_id && $row = qw_get_query_by_id( $query_id ) ) {
     $row->options = $row->data;
     $data['query'] = $row;
   }

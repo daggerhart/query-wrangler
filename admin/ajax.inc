@@ -96,11 +96,14 @@ function qw_form_ajax()
  */
 function qw_data_ajax()
 {
-  switch ($_POST['data']){
-    case 'all_hooks':
-      $data = qw_edit_json();
+  if ( isset($_POST['data']) ) {
+    switch ($_POST['data']){
+      case 'all_hooks':
+        $query_id = isset( $_POST['queryId'] ) ? $_POST['queryId'] : null;
+        $data = qw_edit_json( $query_id );
 
-      wp_send_json( $data );
-      break;
+        wp_send_json( $data );
+        break;
+    }
   }
 }

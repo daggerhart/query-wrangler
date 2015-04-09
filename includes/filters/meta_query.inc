@@ -17,6 +17,18 @@ function qw_filter_meta_query($filters){
 
 function qw_filter_meta_query_form($filter)
 {
+  if ( !isset( $filter['values']['key'] ) ){
+    $filter['values']['key'] = '';
+  }
+  if ( !isset( $filter['values']['type'] ) ){
+    $filter['values']['type'] = '';
+  }
+  if ( !isset( $filter['values']['compare'] ) ){
+    $filter['values']['compare'] = '';
+  }
+  if ( !isset( $filter['values']['value'] ) ){
+    $filter['values']['value'] = array('','');
+  }
   $compares = array(
     "=", "!=", "<", "<=", ">", ">=",
     "LIKE", "NOT LIKE",

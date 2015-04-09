@@ -16,6 +16,9 @@ function qw_filter_meta_key($filters){
 
 function qw_filter_meta_key_form($filter)
 {
+  if ( !isset($filter['values']['meta_key']) ){
+    $filter['values']['meta_key'] = '';
+  }
   ?>
     <p>
       <input class='qw-js-title'

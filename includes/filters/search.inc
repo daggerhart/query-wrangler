@@ -24,6 +24,9 @@ function qw_generate_query_args_search(&$args, $filter){
 
 function qw_filter_search_form($filter)
 {
+  if ( !isset( $filter['values']['search'] ) ){
+    $filter['values']['search'] = '';
+  }
   ?>
   <p>
     <input class="qw-js-title"

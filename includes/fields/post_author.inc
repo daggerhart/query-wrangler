@@ -47,7 +47,7 @@ function qw_field_author_form($field)
     'name' => 'Author Name',
     'ID' => 'Author ID',
   );
-  $link_selected = ($field['values']['link_to_author']) ? 'checked="checked"' : '';
+  $link_selected = (isset($field['values']['link_to_author'])) ? 'checked="checked"' : '';
   ?>
     <label class="qw-label">Author Field Settings:</label>
 

@@ -18,12 +18,13 @@ function qw_basic_ignore_sticky_posts($basics){
 
 function qw_basic_ignore_sticky_posts_form($basic, $args)
 {
+  $value = isset($args['ignore_sticky_posts']) ? $args['ignore_sticky_posts'] : 0;
   ?>
     <p class="description"><?php print $basic['description']; ?></p>
     <label><input class="qw-text-short qw-js-title"
                   type="checkbox"
                   name="<?php print $basic['form_prefix']; ?>[ignore_sticky_posts]"
-                  <?php checked($args['ignore_sticky_posts'], 1); ?>
+                  <?php checked($value, 1); ?>
                   value="1" />
         <?php print $basic['title']; ?>
     </label>

@@ -38,13 +38,14 @@ function qw_get_avatar($post, $field){
 function qw_field_author_avatar_form($field)
 {
   $image_sizes = get_intermediate_image_sizes();
-  $link_selected = ($field['values']['link_to_author']) ? 'checked="checked"' : '';
+  $link_selected = (isset($field['values']['link_to_author'])) ? 'checked="checked"' : '';
+  $size = isset($field['values']['size']) ? $field['values']['size'] : '';
   ?>
     <label class="qw-label">Avatar Size: </label>
     <input class='qw-js-title'
            type="text"
            name="<?php print $field['form_prefix']; ?>[size]"
-           value="<?php print $field['values']['size']; ?>" />
+           value="<?php print $size; ?>" />
     (pixel width)
   <p>
     <label class='qw-field-checkbox'>

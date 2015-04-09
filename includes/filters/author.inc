@@ -22,6 +22,12 @@ function qw_filter_author_form($filter){
     "author__in" => "Authors in list of ids",
     "author__not_in" => "Authors Not in list of author ids",
   );
+  if ( !isset( $filter['values']['author_operator'] ) ){
+    $filter['values']['author_operator'] = '';
+  }
+  if ( !isset( $filter['values']['author_values'] ) ){
+    $filter['values']['author_values'] = '';
+  }
   ?>
   <p><strong>Author Options</strong> - show posts that are from:</p>
   <p>
@@ -47,6 +53,13 @@ function qw_filter_author_form($filter){
 
 
 function qw_generate_query_args_author(&$args, $filter){
+  if ( !isset( $filter['values']['author_operator'] ) ){
+    $filter['values']['author_operator'] = '';
+  }
+  if ( !isset( $filter['values']['author_values'] ) ){
+    $filter['values']['author_values'] = '';
+  }
+
   $op = $filter['values']['author_operator'];
   if ($op == "author" || $op == "author_name"){
     $args[$op] = $filter['values']['author_values'];

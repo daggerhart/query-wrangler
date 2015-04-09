@@ -31,7 +31,7 @@ function qw_field_image_attachment_form($field)
     <input class="qw-text-short"
            type="text"
            name='<?php print $field['form_prefix']; ?>[image_display_count]'
-           value="<?php print ($field['values']['image_display_count']) ? $field['values']['image_display_count']: 0;?>" />
+           value="<?php print (isset($field['values']['image_display_count'])) ? $field['values']['image_display_count']: 0;?>" />
     <p>
       <label>
         <input

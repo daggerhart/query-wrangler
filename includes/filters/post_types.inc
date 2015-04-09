@@ -23,6 +23,10 @@ function qw_filter_post_types($filters){
  */
 function qw_filter_post_types_form($filter)
 {
+  if ( ! isset($filter['values']['post_types'] ) ){
+    $filter['values']['post_types'] = array();
+  }
+
   ?>
   <div class="qw-checkboxes">
     <?php
@@ -51,7 +55,9 @@ function qw_filter_post_types_form($filter)
  * Add query args as necessary
  */
 function qw_filter_post_types_args(&$args, $filter){
-  $args['post_type'] = $filter['values']['post_types'];
+  if ( isset( $filter['values']['post_types'] ) ) {
+    $args['post_type'] = $filter['values']['post_types'];
+  }
 }
 
 /*

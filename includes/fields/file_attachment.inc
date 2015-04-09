@@ -55,7 +55,7 @@ function qw_field_file_attachment_form($field)
     <input class="qw-text-short"
            type="text"
            name='<?php print $field['form_prefix']; ?>[file_display_count]'
-           value="<?php print ($field['values']['file_display_count']) ? $field['values']['file_display_count']: 0;?>" />
+           value="<?php print (isset($field['values']['file_display_count'])) ? $field['values']['file_display_count']: 0;?>" />
 
     <p>
       <label class="qw-label">File Display Style:</label>

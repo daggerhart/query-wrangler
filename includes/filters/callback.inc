@@ -26,7 +26,11 @@ function qw_filter_callback($filters){
  * @param $filter
  */
 function qw_filter_callback_form($filter)
-{ ?>
+{
+  if ( !isset($filter['values']['callback']) ){
+    $filter['values']['callback'] = '';
+  }
+  ?>
   <p>
     <input class='qw-js-title'
            type='text'
@@ -48,7 +52,7 @@ function qw_filter_callback_form($filter)
  * @param $filter
  */
 function qw_filter_callback_execute(&$args, $filter){
-  if ( function_exists( $filter['values']['callback'] ) ) {
+  if ( isset( $filter['values']['callback'] ) && function_exists( $filter['values']['callback'] ) ) {
     $args = $filter['values']['callback']( $args, $filter );
   }
 }

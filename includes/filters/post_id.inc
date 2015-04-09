@@ -19,6 +19,15 @@ function qw_filter_post_id($filters){
 
 function qw_filter_post_id_form($filter)
 {
+  if ( !isset( $filter['values']['post_ids'] ) ){
+    $filter['values']['post_ids'] = '';
+  }
+  if ( !isset( $filter['values']['post_ids_callback'] ) ){
+    $filter['values']['post_ids_callback'] = '';
+  }
+  if ( !isset( $filter['values']['compare'] ) ){
+    $filter['values']['compare'] = '';
+  }
   ?>
     <p>
       <label>Provide post_ids as a comma separated list:</label>

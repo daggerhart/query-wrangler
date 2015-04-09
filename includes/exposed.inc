@@ -169,7 +169,7 @@ function qw_exposed_setting_type($filter)
       <?php
         foreach($opts as $value => $title)
         {
-          $selected = ($value == $filter['values']['exposed_settings']['type']) ? 'selected="selected"' : '';
+          $selected = (isset($filter['values']['exposed_settings']['type']) && $value == $filter['values']['exposed_settings']['type']) ? 'selected="selected"' : '';
           ?>
             <option value="<?php print $value; ?>" <?php print $selected; ?> ><?php print $title; ?></option>
           <?php

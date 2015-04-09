@@ -60,7 +60,7 @@ function qw_filter_tags_form($filter)
 }
 
 function qw_generate_query_args_tags(&$args, $filter){
-  if(is_array($filter['values']['tags'])){
+  if ( isset( $filter['values']['tags'] ) && is_array( $filter['values']['tags'] ) ){
     $args[$filter['values']['tag_operator']] = array_keys($filter['values']['tags']);
   }
 }

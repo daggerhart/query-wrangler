@@ -110,7 +110,7 @@ function qw_generate_query_args($options = array())
   $args['posts_per_page'] = ($options['args']['posts_per_page']) ? $options['args']['posts_per_page']: 5;
   $args['offset']         = ($options['args']['offset']) ? $options['args']['offset']: 0;
   $args['post_status']    = $options['args']['post_status'];
-  $args['ignore_sticky_posts'] = ($options['args']['ignore_sticky_posts']) ? $options['args']['ignore_sticky_posts']: 0;
+  $args['ignore_sticky_posts'] = isset($options['args']['ignore_sticky_posts']) ? $options['args']['ignore_sticky_posts']: 0;
 
   $submitted_data = qw_exposed_submitted_data();
   
@@ -140,7 +140,7 @@ function qw_generate_query_args($options = array())
           // else, default to type as WP_Query argument key
           // arguments passed to query
           $args[$item['orderby_key']] = $item['type'];
-          $args[$item['order_key']] = $item['values']['order_value'];
+          $args[$item['order_key']] = isset( $item['values']['order_value'] ) ? $item['values']['order_value'] : 'ASC';
         }
 
         // Process submitted exposed values

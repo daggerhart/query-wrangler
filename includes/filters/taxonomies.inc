@@ -42,7 +42,7 @@ function qw_filter_taxonomies_args(&$args, $filter){
     $args['tax_query'] = array();
   }
   
-  if (is_array($filter['values']['terms'])){
+  if ( isset( $filter['values']['terms'] ) && is_array( $filter['values']['terms'] ) ) {
     $include_children = (isset($filter['values']['include_children'])) ? true : false;
 
     $args['tax_query'][] = array(

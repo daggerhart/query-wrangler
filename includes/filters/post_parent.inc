@@ -25,6 +25,9 @@ function qw_generate_query_args_post_parent(&$args, $filter){
 
 function qw_filter_post_parent_form($filter)
 {
+  if ( !isset( $filter['values']['post_parent'] ) ){
+    $filter['values']['post_parent'] = '';
+  }
   ?>
   <p>
     <input class="qw-js-title"
