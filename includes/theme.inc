@@ -120,8 +120,8 @@ function qw_template_query(&$qw_query, $options)
       'style' => $style['hook_key'],
       'options' => $options,
     );
+
     if (isset($options['display'][$style['settings_key']])){
-      
       $template_args['style_settings'] = $options['display'][$style['settings_key']];
     }
 
@@ -186,6 +186,8 @@ function qw_template_query(&$qw_query, $options)
 function qw_make_posts_rows(&$qw_query, $options){
   $rows = array();
   $i = 0;
+  $current_post_id = get_the_ID();
+
   while($qw_query->have_posts())
   {
     $qw_query->the_post();
@@ -196,6 +198,12 @@ function qw_make_posts_rows(&$qw_query, $options){
     );
     $rows[$i]['row_classes'] = qw_row_classes($i);
     $field_classes = array('query-post-wrapper');
+
+	  // add class for active menu trail
+	  if ( is_singular() && get_the_ID() === $current_post_id ) {
+		  $field_classes[] = 'active-item';
+	  }
+
     $rows[$i]['fields'][$i]['classes'] = implode(" ",$field_classes);
     $rows[$i]['fields'][$i]['output'] = theme('query_display_rows' , $template_args);
     $i++;
@@ -227,6 +235,7 @@ function qw_make_fields_rows(&$qw_query, $options)
   $all_fields = qw_all_fields();
   $rows = array();
   $tokens = array();
+  $current_post_id = get_the_ID();
 
   // loop through each post
   $i = 0;
@@ -251,6 +260,11 @@ function qw_make_fields_rows(&$qw_query, $options)
         // field open
         $field_classes = array('query-field');
         $field_classes[] = 'query-field-'.$field_settings['name'];
+
+	      // add class for active menu trail
+	      if ( is_singular() && get_the_ID() === $current_post_id ) {
+		      $field_classes[] = 'active-item';
+	      }
 
         $rows[$i]['fields'][$field_name]['output'] = '';
         $rows[$i]['fields'][$field_name]['classes'] = implode(" ",$field_classes);
