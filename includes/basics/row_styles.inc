@@ -36,6 +36,8 @@ function qw_default_row_styles($row_styles){
   );
   $row_styles['fields'] = array(
     'title' => 'Fields',
+    'settings_callback' => 'qw_row_style_fields_settings',
+    'settings_key' => 'field',
   );
   return $row_styles;
 }
@@ -52,19 +54,6 @@ function qw_default_row_complete_styles($row_complete_styles){
     'title' => 'Excerpt',
   );
   return $row_complete_styles;
-}
-
-/*
- * Default Row 'Fields' Styles
- */
-function qw_default_row_fields_styles($row_fields_styles){
-  $row_fields_styles['posts'] = array(
-    'title' => 'Posts',
-  );
-  $row_fields_styles['fields'] = array(
-    'title' => 'Fields',
-  );
-  return $row_styles;
 }
 
 function qw_basic_display_row_style_form($basic, $display)
@@ -99,7 +88,7 @@ function qw_basic_display_row_style_form($basic, $display)
             <div id="tab-row-style-settings-<?php print $row_style['hook_key']; ?>" class="qw-query-content">
               <h3 class="qw-setting-header"><?php print $row_style['title']; ?> Settings</h3>
               <div class="qw-setting-group">
-                <?php print $row_style['settings_callback']($row_style); ?>
+                <?php print $row_style['settings_callback']( $row_style, $display ); ?>
               </div>
             </div>
             <?php
@@ -110,20 +99,45 @@ function qw_basic_display_row_style_form($basic, $display)
   <?php
 }
 
-function qw_row_style_posts_settings($row_style)
+function qw_row_style_posts_settings( $row_style, $display )
 {
   ?>
-    <p class="description">Select the amount of the post to be shown.</p>
-    <select class="qw-js-title"
-            name="qw-query-options[display][post_settings][size]">
-      <option value="complete"
-              <?php if(isset($row_style['values']['size']) && $row_style['values']['size'] == "complete") { print 'selected="selected"';} ?>>
-        Complete Post
-      </option>
-      <option value="excerpt"
-              <?php if(isset($row_style['values']['size']) && $row_style['values']['size'] == "excerpt") { print 'selected="selected"';} ?>>
-        Excerpt
-      </option>
-    </select>
-  <?php
+  <p class="description">Select the amount of the post to be shown.</p>
+  <select class="qw-js-title"
+          name="qw-query-options[display][post_settings][size]">
+    <option value="complete"
+      <?php if(isset($row_style['values']['size']) && $row_style['values']['size'] == "complete") { print 'selected="selected"';} ?>>
+      Complete Post
+    </option>
+    <option value="excerpt"
+      <?php if(isset($row_style['values']['size']) && $row_style['values']['size'] == "excerpt") { print 'selected="selected"';} ?>>
+      Excerpt
+    </option>
+  </select>
+<?php
+}
+
+/**
+ * @param $row_style
+ */
+function qw_row_style_fields_settings( $row_style, $display )
+{
+  $query_fields = isset( $display['field_settings']['fields'] ) ? $display['field_settings']['fields'] : array();
+  $all_fields = qw_all_fields();
+  ?>
+  <p class="description">Group by field</p>
+  <select class="qw-js-title"
+          name="qw-query-options[display][field_settings][group_by_field]">
+    <option value="__none__"> - None - </option>
+    <?php
+      if ( ! empty( $query_fields ) ){
+        foreach ( $query_fields as $field_name => $field ){
+          ?>
+          <option value="<?php print esc_attr( $field_name ); ?>"><?php print $all_fields[ $field['hook_key'] ]['title']; ?> </option>
+          <?php
+        }
+      }
+    ?>
+  </select>
+<?php
 }
