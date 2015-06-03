@@ -3,7 +3,7 @@ Contributors: daggerhart
 Donate link: http://www.daggerhart.com/
 Tags: query, pages, widget, admin, widgets, administration, manage, views, loop
 Requires at least: 3
-Tested up to: 4.1.1
+Tested up to: 4.2.2
 Stable tag: trunk
 
 Query Wrangler provides an intuitive interface for creating complex WP queries as shortcodes and widgets. UI based on Drupal Views.
@@ -73,6 +73,11 @@ Select a category or multiple categories to override.   Save the query, then vis
 1. Drupal Views Editor Theme
 
 == Changelog ==
+
+= 1.5.34 =
+
+* Feature: "active-item" class on rows whose post is currently being viewed.
+* Feature: Group by field in Row Style > Field Settings (requires saving the query before choosing)
 
 = 1.5.33 =
 
@@ -295,4 +300,4 @@ Select a category or multiple categories to override.   Save the query, then vis
 
 == Upgrade Notice ==
 
-1.5.33 more WP_DEBUG friendly: Removing php warnings and notices
+1.5.34 Features: Group by field setting, "active-item" class on rows whose post is being viewed
