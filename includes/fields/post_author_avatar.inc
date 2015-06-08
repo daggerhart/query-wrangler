@@ -27,7 +27,7 @@ function qw_get_avatar($post, $field){
     $output = '<a href="'.get_author_posts_url($post->post_author).'">'.get_avatar($post->post_author, $field['size']).'</a>';
   }
   else {
-    $output = get_avatar($post->post_author, $field['values']['size']);
+    $output = get_avatar($post->post_author, $field['size']);
   }
   return $output;
 }
@@ -37,7 +37,6 @@ function qw_get_avatar($post, $field){
  */
 function qw_field_author_avatar_form($field)
 {
-  $image_sizes = get_intermediate_image_sizes();
   $link_selected = (isset($field['values']['link_to_author'])) ? 'checked="checked"' : '';
   $size = isset($field['values']['size']) ? $field['values']['size'] : '';
   ?>
