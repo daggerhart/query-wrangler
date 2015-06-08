@@ -251,8 +251,8 @@ function qw_init_edit_theme(){
 
 // CSS
 function qw_admin_css(){
-  //print '<link rel="stylesheet" type="text/css" href="'.QW_PLUGIN_URL.'/admin/css/jquery-ui.css" />';
-  print '<link rel="stylesheet" type="text/css" href="'.QW_PLUGIN_URL.'/admin/css/query-wrangler.css" />';
+  print '<link rel="stylesheet" type="text/css" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.21/themes/smoothness/jquery-ui.css">
+  <link rel="stylesheet" type="text/css" href="'.QW_PLUGIN_URL.'/admin/css/query-wrangler.css" />';
 }
 // admin list page
 function qw_admin_list_js(){
