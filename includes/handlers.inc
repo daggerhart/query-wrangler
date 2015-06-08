@@ -141,7 +141,7 @@ function qw_preprocess_handlers($options){
         // copy type, hook_key, and weight to top level of array
         $this_item['name'] = $name;
         $this_item['type'] = !empty( $values['type'] ) ? $values['type'] : $name;
-        $this_item['weight'] = !empty( $values['weight'] ) ? $values['weight'] : 1;
+        $this_item['weight'] = !empty( $values['weight'] ) ? $values['weight'] : 0;
         $this_item['hook_key'] = $hook_key;
         $this_item['form_prefix'] = QW_FORM_PREFIX . $handler['form_prefix'].'['.$name.']';
 
