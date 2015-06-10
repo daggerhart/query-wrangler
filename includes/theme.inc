@@ -271,6 +271,11 @@ function qw_make_fields_rows(&$qw_query, $options)
       if ( is_singular() && get_the_ID() === $current_post_id ) {
         $field_classes[] = 'active-item';
       }
+      
+      // add additional classes defined in the field settings
+      if ( isset( $field_settings['classes'] ) && !empty( $field_settings['classes'] ) ){
+        $field_classes[] = $field_settings['classes'];
+      }
 
       $row['fields'][ $field_name ]['output'] = '';
       $row['fields'][ $field_name ]['classes'] = implode(" ",$field_classes);

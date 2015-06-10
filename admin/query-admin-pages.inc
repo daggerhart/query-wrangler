@@ -197,7 +197,8 @@ function qw_edit_query_form(){
 
   // admin wrapper arguments
   $admin_args = array(
-    'title' => 'Edit query <em>'.$edit_args['query_name'].'</em> <sup>'.$row->slug.'</sup>',
+    'title' => 'Edit query <em>'.$edit_args['query_name'].'</em>',
+    'description' => '[query slug="'.$row->slug.'"]',
     // content is the query_edit page
     'content' => theme('query_edit_wrapper', $edit_wrapper_args )
   );

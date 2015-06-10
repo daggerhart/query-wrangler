@@ -178,6 +178,9 @@ a.toplevel_page_query-wrangler {
 .qw-text-short {
   width: 48px;
 }
+.qw-field-wrapper {
+    padding: 8px 0;
+}
 .ui-dialog .ui-dialog-titlebar-close span {
     margin: -8px 0 0 -8px;
 }

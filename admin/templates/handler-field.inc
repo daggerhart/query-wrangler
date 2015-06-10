@@ -6,6 +6,7 @@
   $exclude_display_selected = (isset($field['values']['exclude_display'])) ? 'checked="checked"' : '';
   $apply_the_content        = (isset($field['values']['apply_the_content'])) ? 'checked="checked"': '';
   $hide_if_empty            = (isset($field['values']['hide_if_empty'])) ? 'checked="checked"': '';
+  $classes                  = (isset($field['values']['classes'])) ? $field['values']['classes'] : '';
 ?>
 <div id="qw-field-<?php print $field['name']; ?>" class="qw-field qw-sortable-item qw-item-form">
   <span class="qw-setting-header">
@@ -139,6 +140,17 @@
             </ul>
           </div>
         </div>
+      </div>
+      
+      <!-- additional field classes -->
+      <div class="qw-field-wrapper">
+        <label class='qw-field'>
+          <strong>Additional Classes</strong><br />
+          <input type='text'
+                 name='<?php print $field['form_prefix']; ?>[classes]'
+                 value='<?php print $classes; ?>' />
+        </label>
+        <p class="description">Additional CSS classes to add to the field during output. Separate multiple classes with spaces.</p>
       </div>
     </div>
 
