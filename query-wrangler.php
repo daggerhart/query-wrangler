@@ -76,6 +76,7 @@ function qw_init_frontend(){
   include_once QW_PLUGIN_DIR.'/includes/fields/file_attachment.inc';
   include_once QW_PLUGIN_DIR.'/includes/fields/image_attachment.inc';
   include_once QW_PLUGIN_DIR.'/includes/fields/meta_value.inc';
+  include_once QW_PLUGIN_DIR.'/includes/fields/meta_value_new.inc';
   include_once QW_PLUGIN_DIR.'/includes/fields/featured_image.inc';
   include_once QW_PLUGIN_DIR.'/includes/fields/callback_field.inc';
   
