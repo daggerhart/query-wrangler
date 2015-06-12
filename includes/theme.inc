@@ -281,7 +281,8 @@ function qw_make_fields_rows(&$qw_query, $options)
       $row['fields'][ $field_name ]['classes'] = implode(" ",$field_classes);
 
       // get field details from all fields list
-      $field_defaults = $all_fields[$field_settings['type']];
+      $hook_key = qw_get_hook_key( $all_fields, $field_settings );
+      $field_defaults = $all_fields[$hook_key];
 
       // merge default data with values
       $field = array_merge($field_defaults, $field_settings);

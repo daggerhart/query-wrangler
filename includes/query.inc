@@ -380,8 +380,11 @@ function qw_unserialize($serial_str) {
  */
 function qw_get_hook_key($all, $single)
 {
+  // default to new custom_field (meta_value_new)
+  $hook_key = 'custom_field';
+
   // see if hook key is set
-  if (!empty($single['hook_key'])){
+  if ( ! empty( $single['hook_key'] ) && isset( $all[ $single['hook_key'] ] ) ){
     $hook_key = $single['hook_key'];
   }
   // look for type as key
@@ -389,8 +392,8 @@ function qw_get_hook_key($all, $single)
   {
     foreach ($all as $key => $item)
     {
-      if($single['type'] == $all[$key]['type']){
-        $hook_key = $all[$key]['hook_key'];
+      if ( $single['type'] == $item['type'] ) {
+        $hook_key = $item['hook_key'];
         break;
       }
       else if($single['type'] == $key){
