@@ -74,6 +74,12 @@ Select a category or multiple categories to override.   Save the query, then vis
 
 == Changelog ==
 
+= 1.5.35 =
+
+* Bug fix: missing jQuery ui css
+* Bug fix: not-linked avatar field
+* Bug fix: first field weight
+
 = 1.5.34 =
 
 * Feature: "active-item" class on rows whose post is currently being viewed.
@@ -300,4 +306,4 @@ Select a category or multiple categories to override.   Save the query, then vis
 
 == Upgrade Notice ==
 
-1.5.34 Features: Group by field setting, "active-item" class on rows whose post is being viewed
+1.5.35 Multiple bug fixes including jQuery UI css

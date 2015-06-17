@@ -9,7 +9,7 @@ Plugin URI:        http://daggerhart.com
 Description:       Query Wrangler provides an intuitive interface for creating complex WP queries as pages or widgets. Based on Drupal Views.
 Author:            Jonathan Daggerhart
 Author URI:        http://daggerhart.com
-Version:           1.5.35dev
+Version:           1.5.35
 
 ******************************************************************
 
@@ -75,8 +75,8 @@ function qw_init_frontend(){
   include_once QW_PLUGIN_DIR.'/includes/fields/post_author_avatar.inc';
   include_once QW_PLUGIN_DIR.'/includes/fields/file_attachment.inc';
   include_once QW_PLUGIN_DIR.'/includes/fields/image_attachment.inc';
-  //include_once QW_PLUGIN_DIR.'/includes/fields/meta_value.inc';
-  include_once QW_PLUGIN_DIR.'/includes/fields/meta_value_new.inc';
+  include_once QW_PLUGIN_DIR.'/includes/fields/meta_value.inc';
+  //include_once QW_PLUGIN_DIR.'/includes/fields/meta_value_new.inc';
   include_once QW_PLUGIN_DIR.'/includes/fields/featured_image.inc';
   include_once QW_PLUGIN_DIR.'/includes/fields/callback_field.inc';
   
