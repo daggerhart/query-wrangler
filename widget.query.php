@@ -24,7 +24,7 @@ class Query_Wrangler_Widget extends WP_Widget {
   /**
    * Widget setup.
    */
-  function Query_Wrangler_Widget()
+  function __construct()
   {
     // Widget settings. 
     $widget_ops = array( 'classname' => 'query-wrangler-widget', 'description' => __('A Query Wrangler Widget', 'qw-widget') );
