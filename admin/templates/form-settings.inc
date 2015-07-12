@@ -43,11 +43,35 @@
 
     <tr>
       <th>
-        <label>Show Silent Meta</label>
+        <label>Show Silent Meta fields</label>
       </th>
       <td>
         <input type="checkbox" name="qw-show-silent-meta" <?php checked($show_silent_meta, "on"); ?> />
         <p class="description">Show custom meta fields that are normally hidden.</p>
+      </td>
+    </tr>
+
+    <tr>
+      <th>
+        <label>Meta Value field handler</label>
+      </th>
+      <td>
+        <p class="description">Choose the way meta_value fields are handled.</p>
+        <select name="qw-meta-value-field-handler">
+          <?php
+          foreach($meta_value_field_options as $value => $text)
+          { ?>
+            <option value="<?php print $value; ?>" <?php selected( $value, $meta_value_field_handler ); ?>>
+              <?php print $text; ?>
+            </option>
+          <?php
+          }
+          ?>
+        </select>
+        <ul>
+          <li>Default - each meta_key is treated as a unique field in the UI.</li>
+          <li>New - a generic "Custom field" is available in the UI, and you must provide it the meta key.</li>
+        </ul>
       </td>
     </tr>
   </table>

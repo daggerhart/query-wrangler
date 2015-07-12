@@ -75,11 +75,19 @@ function qw_init_frontend(){
   include_once QW_PLUGIN_DIR.'/includes/fields/post_author_avatar.inc';
   include_once QW_PLUGIN_DIR.'/includes/fields/file_attachment.inc';
   include_once QW_PLUGIN_DIR.'/includes/fields/image_attachment.inc';
-  include_once QW_PLUGIN_DIR.'/includes/fields/meta_value.inc';
-  //include_once QW_PLUGIN_DIR.'/includes/fields/meta_value_new.inc';
   include_once QW_PLUGIN_DIR.'/includes/fields/featured_image.inc';
   include_once QW_PLUGIN_DIR.'/includes/fields/callback_field.inc';
-  
+
+  // meta value field as a setting
+  $meta_value_handler = (int) get_option( 'qw_meta_value_field_handler', 0 );
+
+  if ( $meta_value_handler === 1 ){
+    include_once QW_PLUGIN_DIR.'/includes/fields/meta_value_new.inc';
+  }
+  else {
+    include_once QW_PLUGIN_DIR.'/includes/fields/meta_value.inc';
+  }
+
   // filters
   include_once QW_PLUGIN_DIR.'/includes/filters/author.inc';
   include_once QW_PLUGIN_DIR.'/includes/filters/callback.inc';

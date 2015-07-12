@@ -212,16 +212,18 @@ function qw_edit_query_form(){
   print theme('admin_wrapper', $admin_args);
 }
 
-/*
+/**
  * Settings!
  */
 function qw_save_settings($post){
-  $live_preview = ($post['qw-live-preview']) ? $post['qw-live-preview']: 0;
-  $show_silent_meta = ($post['qw-show-silent-meta']) ? $post['qw-show-silent-meta']: 0;
+  $live_preview = (isset($post['qw-live-preview'])) ? $post['qw-live-preview']: 0;
+  $show_silent_meta = (isset($post['qw-show-silent-meta'])) ? $post['qw-show-silent-meta']: 0;
+
   update_option('qw_edit_theme', $post['qw-theme']);
   update_option('qw_widget_theme_compat', $post['qw-widget-theme-compat']);
   update_option('qw_live_preview', $live_preview);
   update_option('qw_show_silent_meta', $show_silent_meta);
+  update_option('qw_meta_value_field_handler', $post['qw-meta-value-field-handler']);
 }
 function qw_settings_page()
 {
@@ -231,6 +233,11 @@ function qw_settings_page()
     'widget_theme_compat' => get_option('qw_widget_theme_compat'),
     'live_preview' => get_option('qw_live_preview'),
     'show_silent_meta' => get_option('qw_show_silent_meta'),
+    'meta_value_field_handler' => get_option('qw_meta_value_field_handler', 0 ),
+    'meta_value_field_options' => array(
+      0 => 'Default handler',
+      1 => 'New handler (beta)',
+    ),
   );
   $args = array(
     'title' => 'Query Wrangler Settings',
