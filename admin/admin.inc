@@ -270,6 +270,7 @@ function qw_admin_js(){
                   QW_VERSION, true);
   wp_enqueue_script('jquery-ui-core', false, array('jquery'));
   wp_enqueue_script('jquery-ui-accordion');
+  wp_enqueue_script('jquery-ui-autocomplete');
   wp_enqueue_script('jquery-ui-dialog');
   wp_enqueue_script('jquery-ui-sortable');
   wp_enqueue_script('qw-admin-js',
@@ -338,4 +339,32 @@ function qw_check_version()
     // set our version numer
     update_option('qw_plugin_version', QW_VERSION);
   }
+}
+
+add_action( 'wp_ajax_qw_meta_key_autocomplete', 'qw_meta_key_autocomplete' );
+
+/**
+ * Ajax callback for meta_key autocomplete
+ */
+function qw_meta_key_autocomplete(){
+  if ( isset( $_POST['qw_meta_key_autocomplete'] ) ){
+    $meta_key = sanitize_text_field( $_POST['qw_meta_key_autocomplete'] );
+    global $wpdb;
+    $query = $wpdb->prepare( "SELECT DISTINCT(`meta_key`) FROM {$wpdb->postmeta} WHERE `meta_key` LIKE '%s' LIMIT 15", '%'.$meta_key.'%' );
+    $results = $wpdb->get_col( $query );
+
+
+    //foreach ($query)
+    wp_send_json(array(
+      'success' => true,
+      'values' => $results,
+    ));
+
+    if ( $results ){
+    }
+    else {
+
+    }
+  }
+  exit;
 }

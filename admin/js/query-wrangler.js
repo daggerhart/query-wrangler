@@ -33,6 +33,12 @@ var QueryWrangler = {};
         QueryWrangler.ajax.getPreview();
       }
 
+      // provide meta_value_field key suggestions
+      //$('body').on( 'keyup', '.qw-meta-value-key-autocomplete', QueryWrangler.ajax.meta_value_key_autocomplete );
+      $('.qw-meta-value-key-autocomplete').autocomplete({
+        source: QueryWrangler.ajax.metaValueKeySearch
+      });
+
       // preview data accordions
       $('#query-details').accordion({
         header: '> div > .qw-setting-header',
@@ -99,6 +105,22 @@ var QueryWrangler = {};
       };
       QueryWrangler.ajax.post( post_data, function( results ){
         QueryWrangler.data = JSON.parse(results);
+      });
+    },
+
+    /**
+     * jQuery ui autocomplete{ source: } callback for meta_keys
+     */
+    metaValueKeySearch: function( request, response ){
+      QueryWrangler.ajax.post({
+          action: 'qw_meta_key_autocomplete',
+          qw_meta_key_autocomplete: request.term
+        },
+        // success callback
+        function( result ){
+        if ( typeof result.values !== 'undefined' ) {
+          response( result.values );
+        }
       });
     },
 

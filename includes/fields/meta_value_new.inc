@@ -40,7 +40,10 @@ function qw_meta_value_new_form_callback($field){
   $image_styles = get_intermediate_image_sizes();
   ?>
   <div>
-    <label>Meta Key:</label> <input type="text" name="<?php print $field['form_prefix']; ?>[meta_key]" value="<?php print $meta_key; ?>" />
+    <label for="<?php print $field['form_prefix']; ?>[meta_key]">Meta Key:</label>
+    <input type="text"
+           class="qw-meta-value-key-autocomplete"
+           name="<?php print $field['form_prefix']; ?>[meta_key]" value="<?php print $meta_key; ?>" />
     <p class="description">The custom field name / meta key that identifies the field.</p>
   </div>
   <div>

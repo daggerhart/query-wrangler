@@ -69,8 +69,8 @@
           ?>
         </select>
         <ul>
-          <li>Default - each meta_key is treated as a unique field in the UI.</li>
-          <li>New - a generic "Custom field" is available in the UI, and you must provide it the meta key.</li>
+          <li><b>Default</b> - each meta_key is treated as a unique field in the UI.</li>
+          <li><b>New</b> - a generic "Custom field" is available in the UI, and you must provide it the meta key.</li>
         </ul>
       </td>
     </tr>

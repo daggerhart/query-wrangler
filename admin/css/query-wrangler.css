@@ -184,3 +184,6 @@ a.toplevel_page_query-wrangler {
 .ui-dialog .ui-dialog-titlebar-close span {
     margin: -8px 0 0 -8px;
 }
+.ui-autocomplete {
+	z-index: 999999;
+}
