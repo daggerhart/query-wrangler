@@ -2,7 +2,7 @@
 Contributors: daggerhart
 Donate link: http://www.daggerhart.com/
 Tags: query, pages, widget, admin, widgets, administration, manage, views, loop
-Requires at least: 3
+Requires at least: 4
 Tested up to: 4.2.2
 Stable tag: trunk
 
@@ -73,6 +73,10 @@ Select a category or multiple categories to override.   Save the query, then vis
 1. Drupal Views Editor Theme
 
 == Changelog ==
+
+= 1.5.36 =
+
+* Feature: New meta_value field handler as a setting. Autocomplete on the field.
 
 = 1.5.35 =
 
@@ -307,4 +311,4 @@ Select a category or multiple categories to override.   Save the query, then vis
 
 == Upgrade Notice ==
 
-1.5.35 Multiple bug fixes including jQuery UI css.  Fields can now define additional classes
+1.5.36 New Meta Value field handler as a setting.
