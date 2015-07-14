@@ -190,8 +190,6 @@
 
       var args = {
         modal: true,
-        width: ($(window).width() * 0.7),
-        height: ($(window).height() * 0.8),
         title: dialog_title,
         resizable: false,
 
