@@ -156,6 +156,9 @@ li.qw-sortable span.qw-setting-value {
 .ui-dialog .qw-weight {}
 .ui-dialog {
     z-index: 9991;
+	left: 8%;
+	max-width: 85%;
+	min-width: 85%;
 }
 .ui-widget-overlay {
     position: fixed;
@@ -164,4 +167,9 @@ li.qw-sortable span.qw-setting-value {
 .qw-disabled-add-handler {
     background: #eee;
     color: #666;
+}
+
+.qw-setting input[type=text] {
+	width: 100%;
+	max-width: 650px;
 }
