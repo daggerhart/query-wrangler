@@ -263,6 +263,11 @@ function qw_make_fields_rows(&$qw_query, $options)
     // loop through each field
     foreach($display['field_settings']['fields'] as $field_name => $field_settings)
     {
+      if ( ! isset( $field_settings['empty_field_content_enabled'] ) ){
+        $field_settings['empty_field_content_enabled'] = false;
+        $field_settings['empty_field_content'] = '';
+      }
+
       // field open
       $field_classes = array('query-field');
       $field_classes[] = 'query-field-'.$field_settings['name'];
@@ -306,6 +311,14 @@ function qw_make_fields_rows(&$qw_query, $options)
 
       // remember if any value was found
       $row['is_empty'] = empty($row['fields'][ $field_name ]['output']);
+
+      if ( $row['is_empty'] &&
+           $field_settings['empty_field_content_enabled'] &&
+           $field_settings['empty_field_content'] )
+      {
+        $row['fields'][ $field_name ]['output'] = $field_settings['empty_field_content'];
+        $row['is_empty'] = false;
+      }
 
       // add token for replace
       $tokens['{{'.$field_name.'}}'] = $row['fields'][ $field_name ]['output'];

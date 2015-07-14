@@ -7,6 +7,8 @@
   $apply_the_content        = (isset($field['values']['apply_the_content'])) ? 'checked="checked"': '';
   $hide_if_empty            = (isset($field['values']['hide_if_empty'])) ? 'checked="checked"': '';
   $classes                  = (isset($field['values']['classes'])) ? $field['values']['classes'] : '';
+  $empty_field_content      = (isset($field['values']['empty_field_content'])) ? $field['values']['empty_field_content'] : '';
+  $empty_field_content_enabled = (isset($field['values']['empty_field_content_enabled'])) ? $field['values']['empty_field_content_enabled'] : '';
 ?>
 <div id="qw-field-<?php print $field['name']; ?>" class="qw-field qw-sortable-item qw-item-form">
   <span class="qw-setting-header">
@@ -151,6 +153,43 @@
                  value='<?php print $classes; ?>' />
         </label>
         <p class="description">Additional CSS classes to add to the field during output. Separate multiple classes with spaces.</p>
+      </div>
+    </div>
+
+    <!-- enable empty field content -->
+    <div class="qw-options-group">
+      <div class="qw-options-group-title">
+        <label class='qw-field-checkbox'>
+          <input type='checkbox'
+                 name='<?php print $field['form_prefix']; ?>[empty_field_content_enabled]'
+            <?php print $empty_field_content_enabled; ?> />
+          Rewrite empty result text
+        </label>
+      </div>
+      <div class="qw-options-group-content qw-field-options-hidden">
+        <!-- empty field content -->
+        <label class='qw-field'>
+          <textarea name='<?php print $field['form_prefix']; ?>[empty_field_content]'
+                    class="qw-field-textarea"><?php print qw_textarea($empty_field_content); ?></textarea>
+        </label>
+        <p class="description">Field settings will apply to this content.</p>
+        <div class="qw-field-tokens">
+          <p>
+            Available replacement tokens.  These tokens will be replaced with the processed results of their fields.
+          </p>
+          <ul class="qw-field-tokens-list">
+            <?php
+            if(isset($tokens) && is_array($tokens))
+            {
+              foreach($tokens as $token)
+              { ?>
+                <li><?php print $token; ?></li>
+              <?php
+              }
+            }
+            ?>
+          </ul>
+        </div>
       </div>
     </div>
 
