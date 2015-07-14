@@ -7,6 +7,8 @@
   $apply_the_content        = (isset($field['values']['apply_the_content'])) ? 'checked="checked"': '';
   $hide_if_empty            = (isset($field['values']['hide_if_empty'])) ? 'checked="checked"': '';
   $classes                  = (isset($field['values']['classes'])) ? $field['values']['classes'] : '';
+  $empty_field_content      = (isset($field['values']['empty_field_content'])) ? $field['values']['empty_field_content'] : '';
+  $empty_field_content_enabled = (isset($field['values']['empty_field_content_enabled'])) ? $field['values']['empty_field_content_enabled'] : '';
 ?>
 <div id="qw-field-<?php print $field['name']; ?>" class="qw-field qw-sortable-item qw-item-form">
   <span class="qw-setting-header">
@@ -101,7 +103,7 @@
         }
       ?>
 
-    <!-- link -->
+    <!-- hide_if_empty -->
     <label class='qw-field-checkbox'>
       <input type='checkbox'
              name='<?php print $field['form_prefix']; ?>[hide_if_empty]'
@@ -141,7 +143,7 @@
           </div>
         </div>
       </div>
-      
+
       <!-- additional field classes -->
       <div class="qw-field-wrapper">
         <label class='qw-field'>
@@ -151,6 +153,26 @@
                  value='<?php print $classes; ?>' />
         </label>
         <p class="description">Additional CSS classes to add to the field during output. Separate multiple classes with spaces.</p>
+      </div>
+    </div>
+
+    <!-- enable empty field content -->
+    <div class="qw-options-group">
+      <div class="qw-options-group-title">
+        <label class='qw-field-checkbox'>
+          <input type='checkbox'
+                 name='<?php print $field['form_prefix']; ?>[empty_field_content_enabled]'
+            <?php print $empty_field_content_enabled; ?> />
+          Hide field if empty
+        </label>
+      </div>
+      <div class="qw-options-group-content qw-field-options-hidden">
+        <!-- empty field content -->
+        <label class='qw-field'>
+          <strong>Empty field content</strong><br />
+          <textarea name='<?php print $field['form_prefix']; ?>[empty_field_content]'><?php print qw_textarea($empty_field_content); ?></textarea>
+        </label>
+        <p class="description"></p>
       </div>
     </div>
 

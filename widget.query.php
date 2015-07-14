@@ -33,7 +33,7 @@ class Query_Wrangler_Widget extends WP_Widget {
     $control_ops = array( 'id_base' => 'query-wrangler-widget' );
     
     // Create the widget. 
-    $this->WP_Widget( 'query-wrangler-widget', __('QW Widget', 'querywranglerwidget'), $widget_ops, $control_ops );
+    parent::__construct( 'query-wrangler-widget', __('Query Wrangler Widget', 'querywranglerwidget'), $widget_ops, $control_ops );
   }
   
   /**
