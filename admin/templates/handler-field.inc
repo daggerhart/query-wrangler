@@ -21,7 +21,7 @@
   </span>
 
   <div class="group">
-    <input class='qw-field-type'
+    <input class='qw-field-type '
            type='hidden'
            name='<?php print $field['form_prefix']; ?>[type]'
            value='<?php print $field['type']; ?>' />
@@ -56,7 +56,7 @@
 
     <div class='qw-field-options'>
       <!-- exclude display -->
-      <label class='qw-field-checkbox'>
+      <label class='qw-field-checkbox qw-field-row'>
         <input type='checkbox'
                name='<?php print $field['form_prefix']; ?>[exclude_display]'
                <?php print $exclude_display_selected; ?> />
@@ -64,7 +64,7 @@
       </label>
 
       <!-- link -->
-      <label class='qw-field-checkbox'>
+      <label class='qw-field-checkbox qw-field-row'>
         <input type='checkbox'
                name='<?php print $field['form_prefix']; ?>[link]'
                <?php print $link_selected; ?> />
@@ -72,7 +72,7 @@
       </label>
 
       <!-- label -->
-      <div class="qw-options-group">
+      <div class="qw-options-group qw-field-row">
         <div class="qw-options-group-title">
           <label class='qw-field-checkbox'>
             <input type='checkbox'
@@ -93,18 +93,18 @@
       <?php
         if ( isset($field['content_options']) && $field['content_options'] ) {
           ?>
-          <label class='qw-field-checkbox'>
+          <label class='qw-field-checkbox qw-field-row'>
             <input type='checkbox'
                    name='<?php print $field['form_prefix']; ?>[apply_the_content]'
               <?php print $apply_the_content; ?> />
-            Apply "the_content" filter to this field.
+            Apply "the_content" filter to this field
           </label>
           <?php
         }
       ?>
 
     <!-- hide_if_empty -->
-    <label class='qw-field-checkbox'>
+    <label class='qw-field-checkbox qw-field-row'>
       <input type='checkbox'
              name='<?php print $field['form_prefix']; ?>[hide_if_empty]'
         <?php print $hide_if_empty; ?> />
@@ -112,13 +112,13 @@
     </label>
 
       <!-- rewrite output -->
-      <div class="qw-options-group">
+      <div class="qw-options-group qw-field-row">
         <div class="qw-options-group-title">
           <label class='qw-field-checkbox'>
             <input type='checkbox'
                    name='<?php print $field['form_prefix']; ?>[rewrite_output]'
                    <?php print $rewrite_output_selected; ?> />
-            Rewrite the output of this field.
+            Rewrite the output of this field
           </label>
         </div>
         <div class="qw-options-group-content qw-field-options-hidden">
@@ -145,7 +145,7 @@
       </div>
 
       <!-- additional field classes -->
-      <div class="qw-field-wrapper">
+      <div class="qw-field-wrapper qw-field-row">
         <label class='qw-field'>
           <strong>Additional Classes</strong><br />
           <input type='text'
@@ -157,7 +157,7 @@
     </div>
 
     <!-- enable empty field content -->
-    <div class="qw-options-group">
+    <div class="qw-options-group qw-field-row">
       <div class="qw-options-group-title">
         <label class='qw-field-checkbox'>
           <input type='checkbox'
