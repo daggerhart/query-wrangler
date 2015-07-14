@@ -74,6 +74,10 @@ Select a category or multiple categories to override.   Save the query, then vis
 
 == Changelog ==
 
+= 1.5.37 =
+
+* PHP updated for WP 4.3
+
 = 1.5.36 =
 
 * Feature: New meta_value field handler as a setting. Autocomplete on the field.
@@ -311,4 +315,4 @@ Select a category or multiple categories to override.   Save the query, then vis
 
 == Upgrade Notice ==
 
-1.5.36 New Meta Value field handler as a setting.
+1.5.37 PHP updated for WP 4.3
