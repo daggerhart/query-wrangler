@@ -9,21 +9,21 @@
  */
 ?>
 <div class="query-unformatted query-<?php print $slug; ?>">
-  <?php foreach($rows as $row): ?>
+	<?php foreach ( $rows as $row ): ?>
 
-    <div class="<?php print $row['row_classes']; ?>">
-      <?php if ($row['fields']) : ?>
+		<div class="<?php print $row['row_classes']; ?>">
+			<?php if ( $row['fields'] ) : ?>
 
-        <?php foreach($row['fields'] as $field): ?>
-          <?php if(isset($field['output'])): ?>
-            <div class="<?php print $field['classes']; ?>">
-              <?php print $field['output']; ?>
-            </div>
-          <?php endif; ?>
-        <?php endforeach; ?>
+				<?php foreach ( $row['fields'] as $field ): ?>
+					<?php if ( isset( $field['output'] ) ): ?>
+						<div class="<?php print $field['classes']; ?>">
+							<?php print $field['output']; ?>
+						</div>
+					<?php endif; ?>
+				<?php endforeach; ?>
 
-      <?php endif; ?>
-    </div>
+			<?php endif; ?>
+		</div>
 
-  <?php endforeach; ?>
+	<?php endforeach; ?>
 </div>

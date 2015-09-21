@@ -1,13 +1,13 @@
-jQuery(document).ready(function(){
+jQuery( document ).ready( function () {
 
   // delete confirm
-  jQuery('.qw-delete-query, .tablenav #doaction').click(function(){
-    var ask = confirm('Are you sure you want to delete?');
-    if (ask) {
+  jQuery( '.qw-delete-query, .tablenav #doaction' ).click( function () {
+    var ask = confirm( 'Are you sure you want to delete?' );
+    if ( ask ) {
       return true;
     }
-    else{
+    else {
       return false;
     }
-  });
-});
+  } );
+} );
