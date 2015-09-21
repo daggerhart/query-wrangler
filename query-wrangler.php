@@ -120,50 +120,43 @@ function qw_init_frontend() {
 
 }
 
-function qw_init() {
-	qw_init_frontend();
+function qw_admin_init() {
+	if ( get_option( 'qw_live_preview' ) === FALSE ) {
+		add_option( 'qw_live_preview', 'on' );
+	}
 
-	// admin only
-	if ( is_admin() ) {
-		if ( get_option( 'qw_live_preview' ) === FALSE ) {
-			add_option( 'qw_live_preview', 'on' );
+	include_once QW_PLUGIN_DIR . '/admin/admin.php';
+	include_once QW_PLUGIN_DIR . '/admin/query-admin-pages.php';
+	include_once QW_PLUGIN_DIR . '/admin/ajax.php';
+	include_once QW_PLUGIN_DIR . '/admin/default_editors.php';
+
+	//add_action( 'wp_ajax_nopriv_qw_form_ajax', 'qw_form_ajax' );
+	add_action( 'wp_ajax_qw_form_ajax', 'qw_form_ajax' );
+	add_action( 'wp_ajax_qw_data_ajax', 'qw_data_ajax' );
+	add_action( 'admin_head', 'qw_admin_css' );
+
+	// js
+	if ( isset( $_GET['page'] ) && $_GET['page'] == 'query-wrangler' ) {
+		// edit page & not on export page
+		if ( ! empty( $_GET['edit'] ) &&
+		     empty( $_GET['export'] )
+		) {
+			add_filter( 'wp_enqueue_scripts', 'qw_admin_js', 0 );
+			add_action( 'admin_enqueue_scripts', 'qw_admin_js' );
+			qw_init_edit_theme();
 		}
-		include_once QW_PLUGIN_DIR . '/admin/admin.php';
-		include_once QW_PLUGIN_DIR . '/admin/query-admin-pages.php';
-		include_once QW_PLUGIN_DIR . '/admin/ajax.php';
-		include_once QW_PLUGIN_DIR . '/admin/default_editors.php';
 
-		//add_action( 'wp_ajax_nopriv_qw_form_ajax', 'qw_form_ajax' );
-		add_action( 'wp_ajax_qw_form_ajax', 'qw_form_ajax' );
-		add_action( 'wp_ajax_qw_data_ajax', 'qw_data_ajax' );
-
-		// js
-		if ( isset( $_GET['page'] ) && $_GET['page'] == 'query-wrangler' ) {
-			// edit page & not on export page
-			if ( ! empty( $_GET['edit'] ) &&
-			     empty( $_GET['export'] )
-			) {
-				add_filter( 'wp_enqueue_scripts', 'qw_admin_js', 0 );
-				add_action( 'admin_enqueue_scripts', 'qw_admin_js' );
-				qw_init_edit_theme();
-			}
-
-			// list page
-			if ( empty( $_GET['edit'] ) ) {
-				add_action( 'admin_enqueue_scripts', 'qw_admin_list_js' );
-			}
+		// list page
+		if ( empty( $_GET['edit'] ) ) {
+			add_action( 'admin_enqueue_scripts', 'qw_admin_list_js' );
 		}
 	}
 }
 
-if ( ! is_admin() ) {
-	add_action( 'init', 'qw_init' );
-}
-add_action( 'admin_init', 'qw_init', 900 );
-add_action( 'admin_init', 'qw_check_version', 901 ); // in query-admin.php
-add_action( 'admin_head', 'qw_admin_css' ); // in query-admin.php
-// add menu very last so we don't get replaced by another menu item
+add_action( 'init', 'qw_init_frontend' );
 add_action( 'admin_menu', 'qw_menu', 9999 );
+add_action( 'admin_init', 'qw_admin_init' );
+add_action( 'admin_init', 'qw_check_version', 901 );
 
 /*
  * All my hook_menu implementations
