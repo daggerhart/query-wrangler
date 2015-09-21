@@ -57,7 +57,7 @@ function qw_handlers_templates($templates){
   foreach($handlers as $type => $handler){
     // wrapper edit form
     $templates[ $handler['wrapper_template'] ] = array(
-      'files' => 'admin/templates/handler-'.$type.'.inc',
+      'files' => 'admin/templates/handler-'.$type.'.php',
       'default_path' => QW_PLUGIN_DIR,
     );
 

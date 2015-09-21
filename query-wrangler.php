@@ -45,78 +45,78 @@ include_once QW_PLUGIN_DIR.'/widget.query.php';
 function qw_init_frontend(){
   // include Template Wrangler
   if(!function_exists('theme')){
-    include_once QW_PLUGIN_DIR.'/template-wrangler.inc';
+    include_once QW_PLUGIN_DIR.'/template-wrangler.php';
   }
   // Wordpress hooks
-  include_once QW_PLUGIN_DIR.'/includes/hooks.inc';
-  include_once QW_PLUGIN_DIR.'/includes/exposed.inc';
-  include_once QW_PLUGIN_DIR.'/includes/handlers.inc';
-  include_once QW_PLUGIN_DIR.'/includes/shortcodes.inc';
+  include_once QW_PLUGIN_DIR.'/includes/hooks.php';
+  include_once QW_PLUGIN_DIR.'/includes/exposed.php';
+  include_once QW_PLUGIN_DIR.'/includes/handlers.php';
+  include_once QW_PLUGIN_DIR.'/includes/shortcodes.php';
 
   // basics
-  include_once QW_PLUGIN_DIR.'/includes/basics/display_title.inc';
-  include_once QW_PLUGIN_DIR.'/includes/basics/template_styles.inc';
-  include_once QW_PLUGIN_DIR.'/includes/basics/row_styles.inc';
-  include_once QW_PLUGIN_DIR.'/includes/basics/posts_per_page.inc';
-  include_once QW_PLUGIN_DIR.'/includes/basics/post_status.inc';
-  include_once QW_PLUGIN_DIR.'/includes/basics/offset.inc';
-  include_once QW_PLUGIN_DIR.'/includes/basics/header.inc';
-  include_once QW_PLUGIN_DIR.'/includes/basics/footer.inc';
-  include_once QW_PLUGIN_DIR.'/includes/basics/empty.inc';
-  include_once QW_PLUGIN_DIR.'/includes/basics/wrapper_settings.inc';
-  include_once QW_PLUGIN_DIR.'/includes/basics/page_path.inc';
-  include_once QW_PLUGIN_DIR.'/includes/basics/page_template.inc';
-  include_once QW_PLUGIN_DIR.'/includes/basics/pager.inc';
-  include_once QW_PLUGIN_DIR.'/includes/basics/ignore_sticky_posts.inc';
+  include_once QW_PLUGIN_DIR.'/includes/basics/display_title.php';
+  include_once QW_PLUGIN_DIR.'/includes/basics/template_styles.php';
+  include_once QW_PLUGIN_DIR.'/includes/basics/row_styles.php';
+  include_once QW_PLUGIN_DIR.'/includes/basics/posts_per_page.php';
+  include_once QW_PLUGIN_DIR.'/includes/basics/post_status.php';
+  include_once QW_PLUGIN_DIR.'/includes/basics/offset.php';
+  include_once QW_PLUGIN_DIR.'/includes/basics/header.php';
+  include_once QW_PLUGIN_DIR.'/includes/basics/footer.php';
+  include_once QW_PLUGIN_DIR.'/includes/basics/empty.php';
+  include_once QW_PLUGIN_DIR.'/includes/basics/wrapper_settings.php';
+  include_once QW_PLUGIN_DIR.'/includes/basics/page_path.php';
+  include_once QW_PLUGIN_DIR.'/includes/basics/page_template.php';
+  include_once QW_PLUGIN_DIR.'/includes/basics/pager.php';
+  include_once QW_PLUGIN_DIR.'/includes/basics/ignore_sticky_posts.php';
 
   // fields
-  include_once QW_PLUGIN_DIR.'/includes/fields/default_fields.inc';
-  include_once QW_PLUGIN_DIR.'/includes/fields/post_author.inc';
-  include_once QW_PLUGIN_DIR.'/includes/fields/post_author_avatar.inc';
-  include_once QW_PLUGIN_DIR.'/includes/fields/file_attachment.inc';
-  include_once QW_PLUGIN_DIR.'/includes/fields/image_attachment.inc';
-  include_once QW_PLUGIN_DIR.'/includes/fields/featured_image.inc';
-  include_once QW_PLUGIN_DIR.'/includes/fields/callback_field.inc';
+  include_once QW_PLUGIN_DIR.'/includes/fields/default_fields.php';
+  include_once QW_PLUGIN_DIR.'/includes/fields/post_author.php';
+  include_once QW_PLUGIN_DIR.'/includes/fields/post_author_avatar.php';
+  include_once QW_PLUGIN_DIR.'/includes/fields/file_attachment.php';
+  include_once QW_PLUGIN_DIR.'/includes/fields/image_attachment.php';
+  include_once QW_PLUGIN_DIR.'/includes/fields/featured_image.php';
+  include_once QW_PLUGIN_DIR.'/includes/fields/callback_field.php';
 
   // meta value field as a setting
   $meta_value_handler = (int) get_option( 'qw_meta_value_field_handler', 0 );
 
   if ( $meta_value_handler === 1 ){
-    include_once QW_PLUGIN_DIR.'/includes/fields/meta_value_new.inc';
+    include_once QW_PLUGIN_DIR.'/includes/fields/meta_value_new.php';
   }
   else {
-    include_once QW_PLUGIN_DIR.'/includes/fields/meta_value.inc';
+    include_once QW_PLUGIN_DIR.'/includes/fields/meta_value.php';
   }
 
   // filters
-  include_once QW_PLUGIN_DIR.'/includes/filters/author.inc';
-  include_once QW_PLUGIN_DIR.'/includes/filters/callback.inc';
-  include_once QW_PLUGIN_DIR.'/includes/filters/post_types.inc';
-  include_once QW_PLUGIN_DIR.'/includes/filters/post_id.inc';
-  include_once QW_PLUGIN_DIR.'/includes/filters/meta_key.inc';
-  include_once QW_PLUGIN_DIR.'/includes/filters/meta_key_value.inc';
-  include_once QW_PLUGIN_DIR.'/includes/filters/meta_query.inc';
-  include_once QW_PLUGIN_DIR.'/includes/filters/meta_value.inc';
-  include_once QW_PLUGIN_DIR.'/includes/filters/tags.inc';
-  include_once QW_PLUGIN_DIR.'/includes/filters/categories.inc';
-  include_once QW_PLUGIN_DIR.'/includes/filters/post_parent.inc';
-  include_once QW_PLUGIN_DIR.'/includes/filters/taxonomies.inc';
-  include_once QW_PLUGIN_DIR.'/includes/filters/taxonomy_relation.inc';
-  include_once QW_PLUGIN_DIR.'/includes/filters/search.inc';
+  include_once QW_PLUGIN_DIR.'/includes/filters/author.php';
+  include_once QW_PLUGIN_DIR.'/includes/filters/callback.php';
+  include_once QW_PLUGIN_DIR.'/includes/filters/post_types.php';
+  include_once QW_PLUGIN_DIR.'/includes/filters/post_id.php';
+  include_once QW_PLUGIN_DIR.'/includes/filters/meta_key.php';
+  include_once QW_PLUGIN_DIR.'/includes/filters/meta_key_value.php';
+  include_once QW_PLUGIN_DIR.'/includes/filters/meta_query.php';
+  include_once QW_PLUGIN_DIR.'/includes/filters/meta_value.php';
+  include_once QW_PLUGIN_DIR.'/includes/filters/tags.php';
+  include_once QW_PLUGIN_DIR.'/includes/filters/categories.php';
+  include_once QW_PLUGIN_DIR.'/includes/filters/post_parent.php';
+  include_once QW_PLUGIN_DIR.'/includes/filters/taxonomies.php';
+  include_once QW_PLUGIN_DIR.'/includes/filters/taxonomy_relation.php';
+  include_once QW_PLUGIN_DIR.'/includes/filters/search.php';
 
   // sorts
-  include_once QW_PLUGIN_DIR.'/includes/sorts/default_sorts.inc';
+  include_once QW_PLUGIN_DIR.'/includes/sorts/default_sorts.php';
 
   // overrides
-  include_once QW_PLUGIN_DIR.'/includes/overrides/categories.inc';
-  include_once QW_PLUGIN_DIR.'/includes/overrides/tags.inc';
-  include_once QW_PLUGIN_DIR.'/includes/overrides/taxonomies.inc';
+  include_once QW_PLUGIN_DIR.'/includes/overrides/categories.php';
+  include_once QW_PLUGIN_DIR.'/includes/overrides/tags.php';
+  include_once QW_PLUGIN_DIR.'/includes/overrides/taxonomies.php';
 
   // Necessary functions to show a query
-  include_once QW_PLUGIN_DIR.'/includes/query.inc';
-  include_once QW_PLUGIN_DIR.'/includes/theme.inc';
-  include_once QW_PLUGIN_DIR.'/includes/pages.inc';
-  include_once QW_PLUGIN_DIR.'/includes/override.inc';
+  include_once QW_PLUGIN_DIR.'/includes/query.php';
+  include_once QW_PLUGIN_DIR.'/includes/theme.php';
+  include_once QW_PLUGIN_DIR.'/includes/pages.php';
+  include_once QW_PLUGIN_DIR.'/includes/override.php';
   new QW_Override();
   
 }
@@ -129,10 +129,10 @@ function qw_init(){
     if (get_option('qw_live_preview') === FALSE){
       add_option('qw_live_preview', 'on');
     }
-    include_once QW_PLUGIN_DIR . '/admin/admin.inc';
-    include_once QW_PLUGIN_DIR.'/admin/query-admin-pages.inc';
-    include_once QW_PLUGIN_DIR.'/admin/ajax.inc';
-    include_once QW_PLUGIN_DIR.'/admin/default_editors.inc';
+    include_once QW_PLUGIN_DIR . '/admin/admin.php';
+    include_once QW_PLUGIN_DIR.'/admin/query-admin-pages.php';
+    include_once QW_PLUGIN_DIR.'/admin/ajax.php';
+    include_once QW_PLUGIN_DIR.'/admin/default_editors.php';
 
     //add_action( 'wp_ajax_nopriv_qw_form_ajax', 'qw_form_ajax' );
     add_action( 'wp_ajax_qw_form_ajax', 'qw_form_ajax' );

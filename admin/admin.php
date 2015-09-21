@@ -5,13 +5,13 @@ add_action('tw_templates', 'qw_admin_templates');
 function qw_admin_templates( $templates ){
   // preview query
   $templates['query_preview'] = array(
-    'files' => 'admin/templates/preview-json.inc',
+    'files' => 'admin/templates/preview-json.php',
     'default_path' => QW_PLUGIN_DIR,
     'arguments' => array('options' => NULL),
   );
   // edit query wrapper template
   $templates['query_edit_wrapper'] = array(
-    'files' => 'admin/templates/form-editor.inc',
+    'files' => 'admin/templates/form-editor.php',
     'default_path' => QW_PLUGIN_DIR,
     'arguments' => array(
       'theme' => get_option('qw_edit_theme', QW_DEFAULT_THEME),
@@ -19,22 +19,22 @@ function qw_admin_templates( $templates ){
   );
   // create query template
   $templates['query_create'] = array(
-    'files' => 'admin/templates/form-create.inc',
+    'files' => 'admin/templates/form-create.php',
     'default_path' => QW_PLUGIN_DIR,
   );
   // import query template
   $templates['query_import'] = array(
-    'files' => 'admin/templates/form-import.inc',
+    'files' => 'admin/templates/form-import.php',
     'default_path' => QW_PLUGIN_DIR,
   );
   // import query template
   $templates['query_settings'] = array(
-    'files' => 'admin/templates/form-settings.inc',
+    'files' => 'admin/templates/form-settings.php',
     'default_path' => QW_PLUGIN_DIR,
   );
   // export query template
   $templates['query_export'] = array(
-    'files' => 'admin/templates/form-export.inc',
+    'files' => 'admin/templates/form-export.php',
     'default_path' => QW_PLUGIN_DIR,
     'arguments' => array(
       'query_id' => 0,
@@ -44,7 +44,7 @@ function qw_admin_templates( $templates ){
   // generic admin page wrapper
   $templates['admin_wrapper'] = array(
     'files' => array(
-      'admin/templates/page-admin-wrapper.inc',
+      'admin/templates/page-admin-wrapper.php',
     ),
     'default_path' => QW_PLUGIN_DIR,
     'arguments' => array(
@@ -55,13 +55,13 @@ function qw_admin_templates( $templates ){
 
   // editor theme template
   $templates['query_edit'] = array(
-    'files' => 'admin/editors/[theme]/[theme]-editor.inc',
+    'files' => 'admin/editors/[theme]/[theme]-editor.php',
     'default_path' => QW_PLUGIN_DIR,
     'arguments' => array(
       'theme' => get_option('qw_edit_theme', QW_DEFAULT_THEME),
     ),
   );
-  // handlers.inc will add handler wrapper templates
+  // handlers.php will add handler wrapper templates
 
   return $templates;
 }

@@ -293,7 +293,7 @@ function theme_link($href, $text){
 // how to include template-wrangler in a plugin
 // include Template Wrangler
 if(!function_exists('theme')){
-  include_once QW_PLUGIN_DIR.'/template-wrangler.inc';
+  include_once QW_PLUGIN_DIR.'/template-wrangler.php';
 }
 
 // example template hook

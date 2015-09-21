@@ -56,7 +56,7 @@ function qw_page_handler(){
   }
   // else we need a list of queries
   else {
-    include QW_PLUGIN_DIR . '/admin/templates/page-query-list.inc';
+    include QW_PLUGIN_DIR . '/admin/templates/page-query-list.php';
     qw_list_queries_form();
   }
 }

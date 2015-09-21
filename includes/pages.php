@@ -110,7 +110,7 @@ function qw_execute_query_page(){
   {
     // include Template Wrangler
     if(!function_exists('theme')){
-      include_once QW_PLUGIN_DIR.'/template-wrangler.inc';
+      include_once QW_PLUGIN_DIR.'/template-wrangler.php';
     }
 
     // take into account trailing slash
