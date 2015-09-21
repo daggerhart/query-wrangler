@@ -74,6 +74,13 @@ Select a category or multiple categories to override.   Save the query, then vis
 
 == Changelog ==
 
+= 1.5.38 =
+
+* Upkeep: Renaming .inc files to .php
+* Upkeep: Changing source whitespace
+* Bug fix: Better restriction for admin_head hook
+* Feature: new row classes query-row-first, query-row-last
+
 = 1.5.37 =
 
 * PHP updated for WP 4.3
@@ -315,4 +322,4 @@ Select a category or multiple categories to override.   Save the query, then vis
 
 == Upgrade Notice ==
 
-1.5.37 PHP updated for WP 4.3
+1.5.38 Minor upkeep, admin_head hook fix, and new rows classes for first and last rows.
