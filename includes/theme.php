@@ -184,6 +184,7 @@ function qw_make_posts_rows( &$qw_query, $options ) {
 	$groups          = array();
 	$i               = 0;
 	$current_post_id = get_the_ID();
+	$last_row = $qw_query->post_count - 1;
 
 	while ( $qw_query->have_posts() ) {
 		$qw_query->the_post();
@@ -194,7 +195,7 @@ function qw_make_posts_rows( &$qw_query, $options ) {
 		);
 
 		$row           = array(
-			'row_classes' => qw_row_classes( $i ),
+			'row_classes' => qw_row_classes( $i, $last_row ),
 		);
 		$field_classes = array( 'query-post-wrapper' );
 
@@ -247,13 +248,14 @@ function qw_make_fields_rows( &$qw_query, $options ) {
 	}
 
 	// loop through each post
+	$last_row = $qw_query->post_count - 1;
 	$i = 0;
 	while ( $qw_query->have_posts() ) {
 		$qw_query->the_post();
 		//
 		$this_post = $qw_query->post;
 		$row       = array(
-			'row_classes' => qw_row_classes( $i ),
+			'row_classes' => qw_row_classes( $i, $last_row ),
 		);
 
 		// loop through each field
@@ -425,10 +427,17 @@ function qw_make_groups_rows( $groups, $group_by_field_name = NULL ) {
 /*
  * Make theme row classes
  */
-function qw_row_classes( $i ) {
+function qw_row_classes( $i, $last_row ) {
 	$row_classes   = array( 'query-row' );
 	$row_classes[] = ( $i % 2 ) ? 'query-row-odd' : 'query-row-even';
 	$row_classes[] = 'query-row-' . $i;
+
+	if ( $i === 0 ){
+		$row_classes[] = 'query-row-first';
+	}
+	else if ( $i === $last_row ){
+		$row_classes[] = 'query-row-last';
+	}
 
 	return implode( " ", $row_classes );
 }
