@@ -86,7 +86,7 @@ function qw_edit_query_form() {
 	}
 
 	$options     = $row->data;
-	$display     = array_map( 'stripslashes_deep', $options['display'] );
+	$display     = isset( $options['display'] ) ? array_map( 'stripslashes_deep', $options['display'] ) : array();
 	$image_sizes = get_intermediate_image_sizes();
 	$file_styles = qw_all_file_styles();
 
@@ -183,7 +183,7 @@ function qw_edit_query_form() {
 
 	// overrides
 	if ( $row->type == 'override' ) {
-		$edit_args['query_override_type'] = $row->override_type;
+		$edit_args['query_override_type'] =  isset( $row->override_type ) ? $row->override_type : null;
 	}
 
 	$edit_wrapper_args = array(
