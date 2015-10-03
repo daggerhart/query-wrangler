@@ -108,6 +108,7 @@ function qw_init_frontend() {
 
 	// overrides
 	include_once QW_PLUGIN_DIR . '/includes/overrides/categories.php';
+	include_once QW_PLUGIN_DIR . '/includes/overrides/post_type_archive.php';
 	include_once QW_PLUGIN_DIR . '/includes/overrides/tags.php';
 	include_once QW_PLUGIN_DIR . '/includes/overrides/taxonomies.php';
 

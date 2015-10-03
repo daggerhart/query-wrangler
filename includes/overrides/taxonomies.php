@@ -3,6 +3,7 @@
 // add default overrides to the filter
 add_filter( 'qw_overrides', 'qw_override_taxonomies' );
 add_filter( 'qw_pre_save', 'qw_override_taxonomies_pre_save', 10, 2 );
+add_action( 'qw_delete_query', 'qw_override_taxonomies_delete_query' );
 
 function qw_override_taxonomies( $overrides ) {
 
@@ -69,6 +70,22 @@ function qw_override_taxonomies_pre_save( $options, $query_id ) {
 	}
 
 	return $options;
+}
+
+/**
+ * QW hook 'qw_delete_query'
+ *
+ * @param $query_id
+ */
+function qw_override_taxonomies_delete_query( $query_id ){
+	$_qw_override_taxonomies = get_option( '_qw_override_taxonomies', array() );
+	foreach ( $_qw_override_taxonomies as $key => $values ) {
+		if ( $values['query_id'] == $query_id ) {
+			unset( $_qw_override_taxonomies[ $key ] );
+		}
+	}
+
+	update_option( '_qw_override_taxonomies', $_qw_override_taxonomies );
 }
 
 /**

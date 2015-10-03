@@ -168,19 +168,13 @@ function qw_delete_query( $query_id ) {
 	$table = $wpdb->prefix . "query_wrangler";
 	$wpdb->delete( $table, array( 'id' => $query_id ) );
 
-	// TODO, delete action
+	do_action( 'qw_delete_query', $query_id );
+
+	// @todo - move this somewhere that subscribes to the action
 	$table = $wpdb->prefix . "query_override_terms";
 	$wpdb->delete( $table, array( 'query_id' => $query_id ) );
-
-	$_qw_override_taxonomies = get_option( '_qw_override_taxonomies', array() );
-	foreach ( $_qw_override_taxonomies as $key => $values ) {
-		if ( $values['query_id'] == $query_id ) {
-			unset( $_qw_override_taxonomies[ $key ] );
-		}
-	}
-
-	update_option( '_qw_override_taxonomies', $_qw_override_taxonomies );
 }
+
 
 /*
  * Export a query into code
