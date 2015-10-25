@@ -125,9 +125,14 @@ function qw_template_query( &$qw_query, $options ) {
 		// the content of the widget is the result of the query
 		if ( $options['display']['row_style'] == "posts" ) {
 			$template_args['rows'] = qw_make_posts_rows( $qw_query, $options );
-		} // setup row template arguments
+		}
+		// setup row template arguments
 		else if ( $options['display']['row_style'] == "fields" ) {
 			$template_args['rows'] = qw_make_fields_rows( $qw_query, $options );
+		}
+		// template_part rows
+		else if ( $options['display']['row_style'] == "template_part" ) {
+			$template_args['rows'] = qw_make_template_part_rows( $qw_query, $options );
 		}
 
 		// template the query rows
@@ -207,6 +212,48 @@ function qw_make_posts_rows( &$qw_query, $options ) {
 		$row['fields'][ $i ]['classes'] = implode( " ", $field_classes );
 		$row['fields'][ $i ]['output']  = theme( 'query_display_rows',
 			$template_args );
+		$row['fields'][ $i ]['content'] = $row['fields'][ $i ]['output'];
+
+		// can't really group posts row style
+		$groups[ $i ][ $i ] = $row;
+		$i ++;
+	}
+
+	$rows = qw_make_groups_rows( $groups );
+
+	return $rows;
+}
+
+/*
+ *
+ */
+function qw_make_template_part_rows( &$qw_query, $options ) {
+	$groups          = array();
+	$i               = 0;
+	$current_post_id = get_the_ID();
+	$last_row = $qw_query->post_count - 1;
+
+	while ( $qw_query->have_posts() ) {
+		$qw_query->the_post();
+		$path = $options['display']['template_part_settings']['path'];
+		$name = $options['display']['template_part_settings']['name'];
+
+		$row = array(
+			'row_classes' => qw_row_classes( $i, $last_row ),
+		);
+		$field_classes = array( 'query-post-wrapper' );
+
+		// add class for active menu trail
+		if ( is_singular() && get_the_ID() === $current_post_id ) {
+			$field_classes[] = 'active-item';
+		}
+
+		ob_start();
+			get_template_part( $path, $name );
+		$output = ob_get_clean();
+
+		$row['fields'][ $i ]['classes'] = implode( " ", $field_classes );
+		$row['fields'][ $i ]['output'] = $output;
 		$row['fields'][ $i ]['content'] = $row['fields'][ $i ]['output'];
 
 		// can't really group posts row style

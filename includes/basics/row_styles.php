@@ -40,6 +40,11 @@ function qw_default_row_styles( $row_styles ) {
 		'settings_callback' => 'qw_row_style_fields_settings',
 		'settings_key'      => 'field',
 	);
+	$row_styles['template_part'] = array(
+		'title'             => 'Template Part',
+		'settings_callback' => 'qw_row_style_template_part_settings',
+		'settings_key'      => 'template_part',
+	);
 
 	return $row_styles;
 }
@@ -150,4 +155,23 @@ function qw_row_style_fields_settings( $row_style, $display ) {
 		?>
 	</select>
 <?php
+}
+
+/**
+ * @param $row_style
+ */
+function qw_row_style_template_part_settings( $row_style, $display ) {
+	$path = isset( $row_style['values']['path'] ) ? $row_style['values']['path'] : '';
+	$name = isset( $row_style['values']['name'] ) ? $row_style['values']['name'] : '';
+	?>
+	Path:
+	<input type="text"
+	       name="qw-query-options[display][template_part_settings][path]"
+	       value="<?php echo esc_attr($path); ?>">
+
+	Name:
+	<input type="text"
+	       name="qw-query-options[display][template_part_settings][name]"
+	       value="<?php echo esc_attr($name); ?>">
+	<?php
 }
