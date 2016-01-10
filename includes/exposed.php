@@ -7,7 +7,7 @@ function qw_generate_exposed_handlers( $options ) {
 	if ( $exposed = qw_process_exposed_handlers( $options ) ) {
 		$output = array( 'sorts' => '', 'filters' => '' );
 		// loop through sorts and filters
-		if ( is_array( $exposed['sorts'] ) ) {
+		if ( isset( $exposed['sorts'] ) && is_array( $exposed['sorts'] ) ) {
 			// loop through each exposed item
 			foreach ( $exposed['sorts'] as $name => $item ) {
 				// show the exposed form
@@ -19,7 +19,7 @@ function qw_generate_exposed_handlers( $options ) {
 		}
 
 		// loop through sorts and filters
-		if ( is_array( $exposed['filters'] ) ) {
+		if ( isset( $exposed['filters'] ) && is_array( $exposed['filters'] ) ) {
 			// loop through each exposed item
 			foreach ( $exposed['filters'] as $name => $item ) {
 				// show the exposed form
