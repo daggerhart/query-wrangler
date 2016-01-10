@@ -214,6 +214,12 @@ function qw_filter_taxonomies_exposed_form_terms_select( $filter, $terms ) {
 	// handle submitted values
 	if ( isset( $filter['values']['submitted'] ) ) {
 		$filter['values']['terms'] = $filter['values']['submitted'];
+
+		// select boxes submit as single values
+		if ( !is_array( $filter['values']['terms'] ) ){
+			$filter['values']['terms'] = array( $filter['values']['terms'] );
+		}
+
 	}
 
 	?>
@@ -221,8 +227,7 @@ function qw_filter_taxonomies_exposed_form_terms_select( $filter, $terms ) {
 		<select name="<?php print $filter['exposed_key']; ?>">
 			<?php
 			foreach ( $terms as $term ) {
-				$term_selected = ( in_array( $term->term_id,
-					$filter['values']['terms'] ) ) ? 'selected="selected"' : '';
+				$term_selected = ( in_array( $term->term_id, $filter['values']['terms'] ) ) ? 'selected="selected"' : '';
 				?>
 				<option
 					value="<?php print $term->term_id; ?>"<?php print $term_selected; ?> >

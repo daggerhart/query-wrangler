@@ -148,7 +148,7 @@ function qw_generate_query_args( $options = array() ) {
 
 				// Process submitted exposed values
 				// exposed items
-				if ( isset( $item['values']['is_exposed'] ) && function_exists( $item['exposed_process'] ) ) {
+				if ( isset( $item['values']['is_exposed'], $submitted_data[ $item['exposed_key'] ] ) && function_exists( $item['exposed_process'] ) ) {
 					$value = $submitted_data[ $item['exposed_key'] ];
 					$item['exposed_process']( $args, $item, $value );
 				}
