@@ -25,11 +25,10 @@
 <div id="query-preview" class="qw-query-option">
 	<div id="query-preview-controls" class="query-preview-inactive">
 		<label>
-			<?php $live_preview_checked = ( get_option( 'qw_live_preview',
-				TRUE ) ) ? 'checked="checked"' : ""; ?>
+			<?php $live_preview = QW_Settings::get_instance()->get( 'live_preview'); ?>
 			<input id="live-preview"
 			       type="checkbox"
-				<?php print $live_preview_checked; ?> />
+				<?php checked( $live_preview, 'on' ); ?> />
 			Live Preview
 		</label>
 

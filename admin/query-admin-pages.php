@@ -78,6 +78,8 @@ function qw_admin_redirect( $query_id = NULL, $page = 'query-wrangler' ) {
  * Query Edit Page
  */
 function qw_edit_query_form() {
+	$settings = QW_Settings::get_instance();
+
 	if ( $query_id = qw_admin_get_current_query_id() ) {
 		$row = qw_get_query_by_id( $query_id );
 	}
@@ -90,10 +92,7 @@ function qw_edit_query_form() {
 	$image_sizes = get_intermediate_image_sizes();
 	$file_styles = qw_all_file_styles();
 
-	$theme = get_option( 'qw_edit_theme', QW_DEFAULT_THEME );
-	if ( $theme == "" ) {
-		$theme = QW_DEFAULT_THEME;
-	}
+	$theme = $settings->get('edit_theme');
 
 	// preprocess existing handlers
 	$handlers = qw_preprocess_handlers( $options );
@@ -213,31 +212,32 @@ function qw_edit_query_form() {
  * Settings!
  */
 function qw_save_settings( $post ) {
-	$live_preview     = ( isset( $post['qw-live-preview'] ) ) ? $post['qw-live-preview'] : 0;
-	$show_silent_meta = ( isset( $post['qw-show-silent-meta'] ) ) ? $post['qw-show-silent-meta'] : 0;
+	$widget_theme_compat = isset( $post['qw-widget-theme-compat'] ) ? $post['qw-widget-theme-compat'] : '';
+	$live_preview = ( isset( $post['qw-live-preview'] ) ) ? $post['qw-live-preview'] : '';
+	$show_silent_meta = ( isset( $post['qw-show-silent-meta'] ) ) ? $post['qw-show-silent-meta'] : '';
+	$meta_value_field_handler = ( isset( $post['qw-meta-value-field-handler'] ) ) ? $post['qw-meta-value-field-handler'] : '';
+	$shortcode_compat = isset( $post['qw-shortcode-compat'] ) ? $post['qw-shortcode-compat'] : '';
 
-	update_option( 'qw_edit_theme', $post['qw-theme'] );
-	update_option( 'qw_widget_theme_compat', $post['qw-widget-theme-compat'] );
-	update_option( 'qw_live_preview', $live_preview );
-	update_option( 'qw_show_silent_meta', $show_silent_meta );
-	update_option( 'qw_meta_value_field_handler',
-		$post['qw-meta-value-field-handler'] );
+	$settings = QW_Settings::get_instance();
+	$settings->set( 'edit_theme', $post['qw-theme'] );
+	$settings->set( 'widget_theme_compat',$widget_theme_compat );
+	$settings->set( 'live_preview', $live_preview );
+	$settings->set( 'show_silent_meta', $show_silent_meta );
+	$settings->set( 'meta_value_field_handler', $meta_value_field_handler );
+	$settings->set( 'shortcode_compat', $shortcode_compat );
+	$settings->save();
 }
 
 function qw_settings_page() {
+	$settings = QW_Settings::get_instance();
 	$settings_args = array(
-		'theme'                    => get_option( 'qw_edit_theme' ),
 		'edit_themes'              => qw_all_edit_themes(),
-		'widget_theme_compat'      => get_option( 'qw_widget_theme_compat' ),
-		'live_preview'             => get_option( 'qw_live_preview' ),
-		'show_silent_meta'         => get_option( 'qw_show_silent_meta' ),
-		'meta_value_field_handler' => get_option( 'qw_meta_value_field_handler',
-			0 ),
 		'meta_value_field_options' => array(
 			0 => 'Default handler',
 			1 => 'New handler (beta)',
 		),
 	);
+	$settings_args = array_merge( $settings_args, $settings->values );
 	$args          = array(
 		'title'   => 'Query Wrangler Settings',
 		'content' => theme( 'query_settings', $settings_args )
@@ -264,7 +264,7 @@ function qw_create_query_page() {
 function qw_export_page() {
 	global $wpdb;
 	$table = $wpdb->prefix . 'query_wrangler';
-	$row   = $wpdb->get_row( 'SELECT name FROM ' . $table . ' WHERE id = ' . $_GET['export'] );
+	$row   = $wpdb->get_row( $wpdb->prepare( 'SELECT name FROM ' . $table . ' WHERE id = %d ', $_GET['export'] ) );
 
 	$args = array(
 		'title'   => 'Export Query: <em>' . $row->name . '</em>',

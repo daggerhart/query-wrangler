@@ -3,6 +3,10 @@
 add_action( 'tw_templates', 'qw_admin_templates' );
 
 function qw_admin_templates( $templates ) {
+
+	$settings = QW_Settings::get_instance();
+	$theme = $settings->get( 'edit_theme', QW_DEFAULT_THEME );
+
 	// preview query
 	$templates['query_preview'] = array(
 		'files'        => 'admin/templates/preview-json.php',
@@ -14,7 +18,7 @@ function qw_admin_templates( $templates ) {
 		'files'        => 'admin/templates/form-editor.php',
 		'default_path' => QW_PLUGIN_DIR,
 		'arguments'    => array(
-			'theme' => get_option( 'qw_edit_theme', QW_DEFAULT_THEME ),
+			'theme' => $theme,
 		),
 	);
 	// create query template
@@ -58,7 +62,7 @@ function qw_admin_templates( $templates ) {
 		'files'        => 'admin/editors/[theme]/[theme]-editor.php',
 		'default_path' => QW_PLUGIN_DIR,
 		'arguments'    => array(
-			'theme' => get_option( 'qw_edit_theme', QW_DEFAULT_THEME ),
+			'theme' => $theme,
 		),
 	);
 
@@ -236,7 +240,8 @@ function qw_textarea( $value ) {
  */
 function qw_init_edit_theme() {
 	$themes  = qw_all_edit_themes();
-	$current = get_option( 'qw_edit_theme' );
+	$current = QW_Settings::get_instance()->get( 'edit_theme' );
+
 	if ( isset( $themes[ $current ] ) ) {
 		$theme = $themes[ $current ];
 	} else {

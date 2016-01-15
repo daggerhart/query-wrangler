@@ -15,11 +15,12 @@ class QW_Override {
 	/**
 	 * Hook into WordPress
 	 */
-	function __construct() {
+	public static function register() {
+		$self = new self();
+
 		if ( ! is_admin() ) {
-			add_action( 'pre_get_posts',
-				array( $this, 'action_pre_get_posts' ) );
-			add_action( 'wp', array( $this, 'action_wp' ) );
+			add_action( 'pre_get_posts', array( $self, 'action_pre_get_posts' ) );
+			add_action( 'wp', array( $self, 'action_wp' ) );
 		}
 	}
 

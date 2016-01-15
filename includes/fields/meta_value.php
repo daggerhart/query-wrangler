@@ -7,7 +7,7 @@ add_filter( 'qw_fields', 'qw_field_meta_value' );
  * Add field to qw_fields
  */
 function qw_field_meta_value( $fields ) {
-	$show_silent_meta = get_option( 'qw_show_silent_meta', FALSE );
+	$show_silent_meta = QW_Settings::get_instance()->get( 'show_silent_meta', FALSE );
 
 	// add meta keys to field list
 	$meta = qw_get_meta_keys();

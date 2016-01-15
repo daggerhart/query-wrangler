@@ -48,40 +48,38 @@ class Query_Wrangler_Widget extends WP_Widget {
 	 * How to display the widget on the screen.
 	 */
 	function widget( $args, $instance ) {
-		extract( $args );
 		$output           = '';
 		$options_override = array();
+		$settings = QW_Settings::get_instance();
 
 		if ( isset( $instance['qw-widget'] ) && ! empty( $instance['qw-widget'] ) ) {
 
 			// shortcode args
 			if ( isset( $instance['qw-shortcode-args'] ) && ! empty( $instance['qw-shortcode-args'] ) ) {
-				if ( stripos( $instance['qw-shortcode-args'],
-						'{{' ) !== FALSE
-				) {
+				if ( stripos( $instance['qw-shortcode-args'], '{{' ) !== FALSE ) {
 					$instance['qw-shortcode-args'] = qw_contextual_tokens_replace( $instance['qw-shortcode-args'] );
 				}
 				$options_override['shortcode_args'] = html_entity_decode( $instance['qw-shortcode-args'] );
 			}
 
-			$options        = qw_generate_query_options( $instance['qw-widget'] );
-			$widget_content = qw_execute_query( $instance['qw-widget'],
-				$options_override );
+			$options = qw_generate_query_options( $instance['qw-widget'] );
+			$widget_content = qw_execute_query( $instance['qw-widget'], $options_override );
 
 			// pre_render hook
 			$options = apply_filters( 'qw_pre_render', $options );
 
-			$theme_compat = get_option( 'qw_widget_theme_compat', FALSE );
-
 			$show_title = ( isset( $instance['qw-show-widget-title'] ) && ! empty( $instance['qw-show-widget-title'] ) );
-			$title      = ( $show_title && $options['display']['title'] ) ? $before_title . $options['display']['title'] . $after_title : '';
+			$title      = ( $show_title && $options['display']['title'] ) ? $args['before_title'] . $options['display']['title'] . $args['after_title'] : '';
 
-			if ( $theme_compat ) {
-				$output = $before_widget;
 
-				$output .= $title . $widget_content . $after_widget;
+			if ( $settings->get( 'widget_theme_compat' ) ) {
+				$output = $args['before_widget'] .
+				            $title .
+				            $widget_content .
+				          $args['after_widget'];
 
-			} else {
+			}
+			else {
 				$output = $title . $widget_content;
 			}
 		}

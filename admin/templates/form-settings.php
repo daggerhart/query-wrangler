@@ -97,5 +97,18 @@
 				</ul>
 			</td>
 		</tr>
+
+		<tr>
+			<th>
+				<label>Shortcode compatibility</label>
+			</th>
+			<td>
+				<input type="checkbox"
+				       name="qw-shortcode-compat" <?php checked( $shortcode_compat, "on" ); ?> />
+
+				<p class="description">Change the shortcode keyword from <code>query</code> to <code>qw_query</code>, to avoid conflicts with other plugins.
+					<br />Example usage, <code>[query slug="my-test"]</code></p>
+			</td>
+		</tr>
 	</table>
 </form>
