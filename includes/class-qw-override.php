@@ -92,7 +92,7 @@ class QW_Override {
 
 		// Make the post object
 		$faux_post                = new stdClass();
-		$faux_post->ID            = - 42;  // Arbitrary post id
+		$faux_post->ID            = -42;  // Arbitrary post id
 		$faux_post->post_title    = $title;
 		$faux_post->post_content  = $themed_query;
 		$faux_post->post_status   = 'publish';
@@ -110,9 +110,7 @@ class QW_Override {
 
 		// allow for page templates
 		if ( $qw_query->options['display']['page']['template-file'] !== '__none__' ) {
-			add_filter( 'template_include',
-				array( $this, 'hijack_template' ),
-				99 );
+			add_filter( 'template_include', array( $this, 'hijack_template' ), 99 );
 		}
 	}
 
