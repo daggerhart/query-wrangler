@@ -80,9 +80,15 @@ class Query_Wrangler_List_Table extends WP_List_Table {
 				return ucfirst( $item[ $column_name ] );
 			case 'details':
 				$details = '';
+				$settings = QW_Settings::get_instance();
 
 				if ( $item['type'] != 'override' ) {
-					$details .= 'Shortcode options:<br />[query id=' . $item['ID'] . ']<br />[query slug="' . $item['slug'] . '"]';
+					if ( $settings->get('shortcode_compat') ){
+						$details .= 'Shortcode options:<br />[qw_query id=' . $item['ID'] . ']<br />[qw_query slug="' . $item['slug'] . '"]';
+					}
+					else {
+						$details .= 'Shortcode options:<br />[query id=' . $item['ID'] . ']<br />[query slug="' . $item['slug'] . '"]';
+					}
 				}
 
 				if ( $item['type'] == 'override' ) {
