@@ -102,14 +102,14 @@ class Query_Wrangler_List_Table extends WP_List_Table {
 							if ( isset( $all_overrides[ $type ] ) ) {
 								$override = $all_overrides[ $type ];
 
-								$details .= $override['title'] . ': ';
-								$tmp = array();
+								$details .= '<br>'.$override['title'] . ': ';
 
-								foreach ( $values as $key => $value ) {
-									$tmp[] = $value;
+								if ( is_array( $values['values'] ) ) {
+									$details.= implode( ", ", $values['values'] );
 								}
-
-								$details .= implode( ', ', $tmp );
+								else {
+									$details.= ", ". $values['values'];
+								}
 							}
 						}
 					}
