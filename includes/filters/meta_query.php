@@ -96,7 +96,7 @@ function qw_filter_meta_query_form( $filter ) {
       <select class='qw-js-title' name="<?php print $filter['form_prefix']; ?>[compare]">
       <?php
 	foreach ( $compares as $compare ) { ?>
-		<option value="<?php print $compare; ?>" <?php selected( $type,
+		<option value="<?php print $compare; ?>" <?php selected( $compare,
 			$filter['values']['compare'] ); ?>><?php print $compare; ?></option>
 	<?php
 	}
