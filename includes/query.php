@@ -118,6 +118,11 @@ function qw_generate_query_args( $options = array() ) {
 	$args['post_status']         = $options['args']['post_status'];
 	$args['ignore_sticky_posts'] = isset( $options['args']['ignore_sticky_posts'] ) ? $options['args']['ignore_sticky_posts'] : 0;
 
+	// having any offset will break pagination
+	if ( $args['paged'] > 1 ){
+		unset( $args['offset'] );
+	}
+
 	$submitted_data = qw_exposed_submitted_data();
 
 	foreach ( $handlers as $handler_type => $handler ) {
