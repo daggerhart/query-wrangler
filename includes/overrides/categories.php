@@ -63,9 +63,6 @@ function qw_override_categories_pre_save( $options, $query_id ) {
 					'term_id'  => $term_id,
 				) );
 		}
-
-		// cleanup some redundant data
-		$options['override']['cats'] = $options['override']['cats']['values'];
 	}
 
 	return $options;
@@ -92,7 +89,7 @@ function qw_override_categories_form( $override ) {
 				       type="checkbox"
 				       name="<?php print $override['form_prefix']; ?>[values][<?php print $cat_id; ?>]"
 				       value="<?php print $cat_name; ?>"
-					<?php @checked( isset( $override['values'][ $cat_id ] ) ); ?> />
+					<?php checked( isset( $override['values']['values'][ $cat_id ] ) ); ?> />
 				<?php print $cat_name; ?>
 			</label>
 		<?php

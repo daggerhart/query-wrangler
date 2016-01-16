@@ -63,9 +63,6 @@ function qw_override_tags_pre_save( $options, $query_id ) {
 					'term_id'  => $term_id,
 				) );
 		}
-
-		// cleanup some redundant data
-		$options['override']['tags'] = $options['override']['tags']['values'];
 	}
 
 	return $options;
@@ -88,7 +85,7 @@ function qw_override_tags_form( $override ) {
 				       type="checkbox"
 				       name="<?php print $override['form_prefix']; ?>[values][<?php print $tag->term_id; ?>]"
 				       value="<?php print $tag->name; ?>"
-					<?php checked( isset( $override['values'][ $tag->term_id ] ) ); ?> />
+					<?php checked( isset( $override['values']['values'][ $tag->term_id ] ) ); ?> />
 				<?php print $tag->name; ?>
 			</label>
 		<?php
