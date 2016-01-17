@@ -86,7 +86,7 @@ function qw_init_frontend() {
 	// meta value field as a setting
 	$meta_value_handler = $settings->get( 'meta_value_field_handler', 0 );
 
-	if ( $meta_value_handler === 1 ) {
+	if ( $meta_value_handler == 1 ) {
 		include_once QW_PLUGIN_DIR . '/includes/fields/meta_value_new.php';
 	} else {
 		include_once QW_PLUGIN_DIR . '/includes/fields/meta_value.php';
