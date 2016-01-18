@@ -386,7 +386,7 @@ function qw_make_fields_rows( &$qw_query, $options ) {
 
 			// apply labels to full style fields
 			if ( isset( $field_settings['has_label'] ) &&
-			     $display['type'] != 'full' &&
+			     $display['row_style'] != 'posts' &&
 			     $display['style'] != 'table'
 			) {
 				$row['fields'][ $field_name ]['output'] = '<label class="query-label">' . $field_settings['label'] . '</label> ' . $row['fields'][ $field_name ]['output'];

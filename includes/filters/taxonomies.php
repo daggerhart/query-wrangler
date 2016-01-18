@@ -288,6 +288,10 @@ function qw_filter_taxonomies_exposed_limit_values( $filter, $terms ) {
 			}
 		}
 	}
+	else {
+		$limited = $terms;
+	}
+
 	return $limited;
 }
 
