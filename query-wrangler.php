@@ -9,7 +9,7 @@ Plugin URI:        http://daggerhart.com
 Description:       Query Wrangler provides an intuitive interface for creating complex WP queries as pages or widgets. Based on Drupal Views.
 Author:            Jonathan Daggerhart
 Author URI:        http://daggerhart.com
-Version:           1.5.39
+Version:           1.5.40
 
 ******************************************************************
 
@@ -30,7 +30,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 // some useful definitions
-define( 'QW_VERSION', 1.539 );
+define( 'QW_VERSION', 1.540 );
 define( 'QW_PLUGIN_DIR', dirname( __FILE__ ) );
 define( 'QW_PLUGIN_URL', plugins_url( '', __FILE__ ) );
 define( 'QW_DEFAULT_THEME', 'views' );
@@ -84,11 +84,10 @@ function qw_init_frontend() {
 	include_once QW_PLUGIN_DIR . '/includes/fields/callback_field.php';
 
 	// meta value field as a setting
-	$meta_value_handler = $settings->get( 'meta_value_field_handler', 0 );
-
-	if ( $meta_value_handler == 1 ) {
+	if ( $settings->get( 'meta_value_field_handler', 0 ) ) {
 		include_once QW_PLUGIN_DIR . '/includes/fields/meta_value_new.php';
-	} else {
+	}
+	else {
 		include_once QW_PLUGIN_DIR . '/includes/fields/meta_value.php';
 	}
 
@@ -129,7 +128,7 @@ function qw_init_frontend() {
 function qw_admin_init() {
 	$settings = QW_Settings::get_instance();
 
-	if ( $settings->get( 'qw_live_preview' ) === FALSE ) {
+	if ( $settings->get( 'qw_live_preview', FALSE ) === FALSE ) {
 		add_option( 'qw_live_preview', 'on' );
 	}
 

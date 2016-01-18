@@ -74,6 +74,11 @@ Select a category or multiple categories to override.   Save the query, then vis
 
 == Changelog ==
 
+= 1.5.40 =
+
+* Bug fix: New meta field setting compared too strictly
+* Bug fix: Exposed Taxonomy filter not showing values when unlimited.
+
 = 1.5.39 =
 
 * Bug fix: Pagination
@@ -331,4 +336,4 @@ Select a category or multiple categories to override.   Save the query, then vis
 
 == Upgrade Notice ==
 
-1.5.39 Multiple bug fixes, shortcode compatibility
+1.5.40 Fixes taxonomy exposed filter
