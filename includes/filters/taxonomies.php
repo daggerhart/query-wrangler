@@ -191,6 +191,8 @@ function qw_filter_taxonomies_exposed_form( $filter, $values ) {
 	$filter['values']['submitted'] = $values;
 	$terms = array();
 	$t = get_terms( $filter['taxonomy']->name, array( 'hide_empty' => FALSE ) );
+	// handle limited options
+	$t = qw_filter_taxonomies_exposed_limit_values( $filter, $t );
 	qw_sort_terms_hierarchically( $t, $terms );
 
 	switch ( $filter['values']['exposed_settings']['type'] ) {
@@ -208,9 +210,6 @@ function qw_filter_taxonomies_exposed_form( $filter, $values ) {
  * Exposed terms as select box
  */
 function qw_filter_taxonomies_exposed_form_terms_select( $filter, $terms ) {
-	// handle limited options
-	$terms = qw_filter_taxonomies_exposed_limit_values( $filter, $terms );
-
 	// handle submitted values
 	if ( isset( $filter['values']['submitted'] ) ) {
 		$filter['values']['terms'] = $filter['values']['submitted'];
@@ -226,19 +225,40 @@ function qw_filter_taxonomies_exposed_form_terms_select( $filter, $terms ) {
 	<div class="query-select">
 		<select name="<?php print $filter['exposed_key']; ?>">
 			<?php
-			foreach ( $terms as $term ) {
-				$term_selected = ( in_array( $term->term_id, $filter['values']['terms'] ) ) ? 'selected="selected"' : '';
-				?>
-				<option
-					value="<?php print $term->term_id; ?>"<?php print $term_selected; ?> >
-					<?php print $term->name; ?>
-				</option>
-			<?php
-			}
+			qw_filter_taxonomies_exposed_form_terms_options($filter,$terms)
 			?>
 		</select>
 	</div>
 <?php
+}
+
+/*
+ * Select box options recursion
+ */
+function qw_filter_taxonomies_exposed_form_terms_options($filter,$terms,$level = 0){
+	// handle submitted values
+	if ( isset( $filter['values']['submitted'] ) ) {
+		$filter['values']['terms'] = $filter['values']['submitted'];
+
+		// select boxes submit as single values
+		if ( !is_array( $filter['values']['terms'] ) ){
+			$filter['values']['terms'] = array( $filter['values']['terms'] );
+		}
+
+	}
+
+	foreach ( $terms as $term ) {
+		$term_selected = ( in_array( $term->term_id, $filter['values']['terms'] ) ) ? 'selected="selected"' : '';
+		?>
+		<option
+			value="<?php print $term->term_id; ?>"<?php print $term_selected; ?> >
+			<?php print $term->name; ?>
+		</option>
+	<?php
+		if ( ! empty( $term->children ) ) {
+			qw_filter_taxonomies_exposed_form_terms_options( $filter, $term->children, ($level + 1) );
+		}
+	}
 }
 
 /*
@@ -249,8 +269,6 @@ function qw_filter_taxonomies_exposed_form_terms_checkboxes(
 	$terms,
 	$wrapper_class = ""
 ) {
-	// handle limited options
-	$terms = qw_filter_taxonomies_exposed_limit_values( $filter, $terms );
 
 	?>
 	<div class="query-checkboxes <?php print $wrapper_class;?>">
@@ -284,12 +302,14 @@ function qw_filter_taxonomies_exposed_limit_values( $filter, $terms ) {
 	if ( isset( $filter['values']['exposed_limit_values'] ) && is_array( $filter['values']['terms'] ) ) {
 		foreach ( $terms as $k => $term ) {
 			if ( isset( $filter['values']['terms'][ $term->term_id ] ) ) {
-				$limited[ $k ] = $term;
+				$limited[ $term->term_id ] = $term;
 			}
 		}
 	}
 	else {
-		$limited = $terms;
+		foreach($terms as $k => $term){
+			$limited[ $term->term_id ] = $term;
+		}
 	}
 
 	return $limited;
@@ -308,6 +328,11 @@ function qw_sort_terms_hierarchically(
 	Array &$into,
 	$parentId = 0
 ) {
+	if(0 == $parentId){
+		//used to limit the number of expensive loops for orphans
+		$cats_copy = $cats;
+	}
+
 	foreach ( $cats as $i => $cat ) {
 		if ( $cat->parent == $parentId ) {
 			$into[ $cat->term_id ] = $cat;
@@ -318,5 +343,21 @@ function qw_sort_terms_hierarchically(
 	foreach ( $into as $topCat ) {
 		$topCat->children = array();
 		qw_sort_terms_hierarchically( $cats, $topCat->children, $topCat->term_id );
+	}
+
+	//handle terms that are orphans based on limited values
+	if(0 == $parentId && count($cats) > 0){
+		while(count($cats) > 0){
+			foreach($cats as $term_id => $cat){
+				if(isset($cats_copy[$cat->parent])){
+					continue;
+				}
+
+				$cat->children = array();
+				$into[$cat->term_id] = $cat;
+				unset($cats[$cat->term_id]);
+				qw_sort_terms_hierarchically( $cats, $cat->children, $cat->term_id );
+			}
+		}
 	}
 }
