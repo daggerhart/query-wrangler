@@ -47,6 +47,9 @@ include_once QW_PLUGIN_DIR . '/widget.query.php';
 function qw_init_frontend() {
 	$settings = QW_Settings::get_instance();
 
+	// some additional functions to support php 5.2-
+	include_once QW_PLUGIN_DIR . '/includes/php-polyfill.php';
+
 	// include Template Wrangler
 	if ( ! function_exists( 'theme' ) ) {
 		include_once QW_PLUGIN_DIR . '/template-wrangler.php';
