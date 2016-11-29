@@ -39,6 +39,9 @@ function qw_execute_the_callback( $post, $field, $tokens ) {
 				if ( empty( $v ) ) {
 					unset( $callback_params[ $k ] );
 				}
+				else {
+					$callback_params[ $k ] = qw_contextual_tokens_replace( $v );
+				}
 			}
 
 			$returned = call_user_func_array( $field['custom_output_callback'],
@@ -68,9 +71,13 @@ function qw_callback_field_form( $field ) {
 	//$callback_exists =  ($custom_output_callback && function_exists($custom_output_callback)) ? true : false;
 	$include_output_args = ( isset( $field['values']['include_output_arguments'] ) ) ? 'checked="checked"' : '';
 	$include_text_args   = ( isset( $field['values']['include_text_arguments'] ) ) ? 'checked="checked"' : '';
+	$defaults = array( '', '', '', '', '' );
 
 	if ( ! isset( $field['values']['parameters'] ) ) {
-		$field['values']['parameters'] = array( '', '', '' );
+		$field['values']['parameters'] = $defaults;
+	}
+	else {
+		$field['values']['parameters'] = array_replace( $defaults, $field['values']['parameters'] );
 	}
 
 	?>
@@ -130,6 +137,20 @@ function qw_callback_field_form( $field ) {
 			<input class='qw-js-title' type="text" size=30
 			       name="<?php print $field['form_prefix']; ?>[parameters][2]"
 			       value="<?php print esc_attr( $field['values']['parameters'][2] ); ?>"/>
+		</p>
+
+		<p>
+			<label class="qw-label">Parameter 4:</label>
+			<input class='qw-js-title' type="text" size=30
+			       name="<?php print $field['form_prefix']; ?>[parameters][3]"
+			       value="<?php print esc_attr( $field['values']['parameters'][3] ); ?>"/>
+		</p>
+
+		<p>
+			<label class="qw-label">Parameter 5:</label>
+			<input class='qw-js-title' type="text" size=30
+			       name="<?php print $field['form_prefix']; ?>[parameters][4]"
+			       value="<?php print esc_attr( $field['values']['parameters'][4] ); ?>"/>
 		</p>
 	</div>
 <?php
