@@ -85,7 +85,7 @@ function qw_insert_new_query( $post ) {
 		'name' => $post['qw-name'],
 		'slug' => sanitize_title( $post['qw-name'] ),
 		'type' => $post['qw-type'],
-		'path' => ( $post['page-path'] ) ? urlencode( $post['page-path'] ) : NULL,
+		'path' => isset( $post['page-path'] ) ? urlencode( $post['page-path'] ) : NULL,
 		'data' => qw_serialize( qw_default_query_data() ),
 	);
 
@@ -140,7 +140,7 @@ function qw_update_query( $post ) {
 	$new_data = qw_serialize( $options );
 
 	// update for pages
-	if ( $options['display']['page']['path'] ) {
+	if ( isset( $options['display']['page']['path'] ) ) {
 		$page_path = ( $options['display']['page']['path'] ) ? $options['display']['page']['path'] : '';
 
 		// handle opening slash

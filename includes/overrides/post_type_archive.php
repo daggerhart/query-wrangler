@@ -27,6 +27,10 @@ function qw_override_post_type_archive( $overrides ) {
  * @return mixed
  */
 function qw_override_post_type_archive_pre_save( $options, $query_id ) {
+	if ( ! isset( $options['override'] ) ) {
+		return $options;
+	}
+
 	if ( ! is_array( $options['override'] ) ){
 		return $options;
 	}
