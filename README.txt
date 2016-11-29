@@ -3,7 +3,7 @@ Contributors: daggerhart
 Donate link: http://www.daggerhart.com/
 Tags: query, pages, widget, admin, widgets, administration, manage, views, loop
 Requires at least: 4
-Tested up to: 4.4.1
+Tested up to: 4.6.1
 Stable tag: trunk
 
 Query Wrangler provides an intuitive interface for creating complex WP queries as shortcodes and widgets. UI based on Drupal Views.
@@ -73,6 +73,14 @@ Select a category or multiple categories to override.   Save the query, then vis
 1. Drupal Views Editor Theme
 
 == Changelog ==
+= 1.5.41 =
+
+* Feature: Contextual tokens allowed in callback text parameters
+* Change: Now using json for export & import to avoid eval. Warning, his will make existing saved exports useless.
+* Bug fix: Providing simple array polyfills for PHP5.2-
+* Bug fix: Some php notices on query creation & save
+* Bug fix: Query data doesn't appear to save. Unserialize method was sometimes failing when loading a query in the editor.
+* Bug fix: Allow nested limited terms in filters
 
 = 1.5.40 =
 
@@ -336,4 +344,4 @@ Select a category or multiple categories to override.   Save the query, then vis
 
 == Upgrade Notice ==
 
-1.5.40 Fixes taxonomy exposed filter
+1.5.41 Contextual tokens in callback parameters, multiple bug fixes, new json export/import
