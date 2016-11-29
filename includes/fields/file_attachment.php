@@ -86,7 +86,7 @@ function qw_theme_file( $post, $field ) {
 
 	$files = qw_get_post_files( $post->ID );
 	if ( is_array( $files ) ) {
-		$output = '';
+		$output = array();
 		$i      = 0;
 		foreach ( $files as $file ) {
 			if ( ( $count == 0 || ( $i < $count ) ) && substr( $file->post_mime_type,
@@ -95,25 +95,25 @@ function qw_theme_file( $post, $field ) {
 			) {
 				switch ( $style ) {
 					case 'url':
-						$output .= wp_get_attachment_url( $file->ID );
+						$output[] = wp_get_attachment_url( $file->ID );
 						break;
 
 					case 'link':
 						// complete file name
 						$file_name = explode( "/", $file->guid );
 						$file_name = $file_name[ count( $file_name ) - 1 ];
-						$output .= '<a href="' . wp_get_attachment_url( $file->ID ) . '" class="query-file-link">' . $file_name . '</a>';
+						$output[] = '<a href="' . wp_get_attachment_url( $file->ID ) . '" class="query-file-link">' . $file_name . '</a>';
 						break;
 
 					case 'link_url':
-						$output .= '<a href="' . wp_get_attachment_url( $file->ID ) . '" class="query-file-link">' . $file->guid . '</a>';
+						$output[] = '<a href="' . wp_get_attachment_url( $file->ID ) . '" class="query-file-link">' . $file->guid . '</a>';
 						break;
 				}
 			}
 			$i ++;
 		}
 
-		return $output;
+		return "<span class='qw-file-attachment'>".implode( "</span><span class='qw-file-attachment'>", $output ) ."</span>";
 	}
 }
 

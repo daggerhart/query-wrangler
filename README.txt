@@ -77,6 +77,7 @@ Select a category or multiple categories to override.   Save the query, then vis
 
 * Feature: Contextual tokens allowed in callback text parameters
 * Change: Now using json for export & import to avoid eval. Warning, his will make existing saved exports useless.
+* Change: HTML span tag around file attachments for styling
 * Bug fix: Providing simple array polyfills for PHP5.2-
 * Bug fix: Some php notices on query creation & save
 * Bug fix: Query data doesn't appear to save. Unserialize method was sometimes failing when loading a query in the editor.
