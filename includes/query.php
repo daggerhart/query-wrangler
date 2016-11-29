@@ -372,11 +372,9 @@ function qw_serialize( $array ) {
  */
 function qw_unserialize( $serial_str ) {
 	$array = array();
-	// TODO preg_replace \e deprecated - use preg_replace_callback
-	$serial_str = @preg_replace( '!s:(\d+):"(.*?)";!se',
-		"'s:'.strlen('$2').':\"$2\";'",
-		$serial_str );
-	$array      = unserialize( $serial_str );
+	// TODO determine if there are still issues with quotes in serialized strings
+	//$serial_str = @preg_replace( '!s:(\d+):"(.*?)";!se', "'s:'.strlen('$2').':\"$2\";'", $serial_str );
+	$array      = maybe_unserialize( $serial_str );
 	if ( is_array( $array ) ) {
 		// stripslashes twice for science
 		$array = array_map( 'stripslashes_deep', $array );
