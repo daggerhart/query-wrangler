@@ -192,11 +192,12 @@ function qw_query_export( $query_id ) {
 
 	$row = $wpdb->get_row( $sql, ARRAY_A );
 	unset( $row['id'] );
-	// unserealize the stored data
-	$row['data'] = qw_unserialize( $row['data'] );
-	$export      = var_export( $row, 1 );
+	// unserialize the stored data
+	$row['data'] = unserialize( $row['data'] );
+	$row['data'] = qw_query_escape_export( $row['data'] );
 
-	return "\$query = " . $export . ";";
+	$export = wp_json_encode( $row, JSON_PRETTY_PRINT );
+	return $export;
 }
 
 /*
@@ -207,7 +208,9 @@ function qw_query_import( $post ) {
 	global $wpdb;
 	$table = $wpdb->prefix . "query_wrangler";
 
-	eval( stripslashes( $post['import-query'] ) );
+	$post['import-query'] = stripslashes( $post['import-query'] );
+	$query = json_decode( $post['import-query'], TRUE );
+	$query['data'] = qw_query_decode_import( $query['data'] );
 
 	if ( $post['import-name'] ) {
 		$query['name'] = $post['import-name'];
@@ -217,6 +220,46 @@ function qw_query_import( $post ) {
 	$wpdb->insert( $table, $query );
 
 	return $wpdb->insert_id;
+}
+
+/**
+ * Helper to handle HTMl inside of json export
+ *
+ * @param $data
+ *
+ * @return mixed
+ */
+function qw_query_escape_export( $data ){
+	if ( isset( $data['display']['field_settings']['fields'] ) ) {
+		$fields = &$data['display']['field_settings']['fields'];
+
+		foreach( $fields as $field_name => $field ) {
+			$fields[ $field_name ]['custom_output'] = htmlspecialchars( $field['custom_output'], ENT_QUOTES, 'UTF-8', false );
+			$fields[ $field_name ]['empty_field_content'] = htmlspecialchars( $field['empty_field_content'], ENT_QUOTES, 'UTF-8', false );
+		}
+	}
+
+	return $data;
+}
+
+/**
+ * Helper to handle HTMl inside of json import
+ *
+ * @param $data
+ *
+ * @return mixed
+ */
+function qw_query_decode_import( $data ){
+	if ( isset( $data['display']['field_settings']['fields'] ) ) {
+		$fields = &$data['display']['field_settings']['fields'];
+
+		foreach( $fields as $field_name => $field ) {
+			$fields[ $field_name ]['custom_output'] = htmlspecialchars_decode( $field['custom_output'] );
+			$fields[ $field_name ]['empty_field_content'] = htmlspecialchars_decode( $field['empty_field_content'] );
+		}
+	}
+
+	return $data;
 }
 
 /*
