@@ -326,28 +326,30 @@ function qw_get_term( $term, $by = 'id', $return_type = OBJECT ) {
 	global $wpdb;
 	switch ( $by ) {
 		case 'id':
-			$where = 't.term_id = ' . $term;
+			$where = 't.term_id = %d';
 			break;
 
 		case 'slug':
-			$where = 't.slug = "' . $term . '"';
+			$where = 't.slug = %s';
 			break;
 	}
 
 	$sql = "SELECT
             t.term_id,t.name,t.slug,t.term_group,tax.taxonomy,tax.description,tax.parent,tax.count
-          FROM " . $wpdb->prefix . "terms as t
-          LEFT JOIN " . $wpdb->prefix . "term_taxonomy as tax ON t.term_id = tax.term_id
-          WHERE " . $where;
-	$t   = $wpdb->get_row( $sql, $return_type );
+          FROM {$wpdb->terms} as t
+          LEFT JOIN {$wpdb->term_taxonomy} as tax ON t.term_id = tax.term_id
+          WHERE {$where}";
 
-	if ( $t->term_id ) {
+	$term = $wpdb->get_row( $wpdb->prepare($sql, $term), $return_type );
+
+	if ( $term->term_id ) {
 		// http://web.archiveorange.com/archive/v/XZYvyS8D7kDM3sQgrvJF
-		$t->link = get_term_link( (int) $t->term_id, $t->taxonomy );
+		$term->link = get_term_link( (int) $term->term_id, $term->taxonomy );
 
 		// return term if found
-		return $t;
-	} else {
+		return $term;
+	}
+	else {
 		return FALSE;
 	}
 }
@@ -371,10 +373,8 @@ function qw_serialize( $array ) {
  * Custom: Fix unserialize problem with quotation marks
  */
 function qw_unserialize( $serial_str ) {
-	$array = array();
-	// TODO determine if there are still issues with quotes in serialized strings
-	//$serial_str = @preg_replace( '!s:(\d+):"(.*?)";!se', "'s:'.strlen('$2').':\"$2\";'", $serial_str );
-	$array      = maybe_unserialize( $serial_str );
+	$array = maybe_unserialize( $serial_str );
+
 	if ( is_array( $array ) ) {
 		// stripslashes twice for science
 		$array = array_map( 'stripslashes_deep', $array );

@@ -149,16 +149,15 @@ function qw_update_query( $post ) {
 			$page_path = ltrim( $page_path, '/' );
 		}
 
-		$sql = "UPDATE " . $table_name . " SET data = %s, path = %s WHERE id = %d LIMIT 1";
-		$wpdb->query( $wpdb->prepare( $sql,
+		$wpdb->query( $wpdb->prepare( "UPDATE {$table_name} SET data = %s, path = %s WHERE id = %d LIMIT 1",
 			$new_data,
 			$page_path,
 			$query_id ) );
 	} // update for widgets
 	else {
-		$sql = "UPDATE " . $table_name . " SET data = %s WHERE id = %d LIMIT 1";
-		$t   = $wpdb->prepare( $sql, $new_data, $query_id );
-		$wpdb->query( $t );
+		$wpdb->query( $wpdb->prepare( "UPDATE {$table_name} SET data = %s WHERE id = %d LIMIT 1", 
+			$new_data, 
+			$query_id ) );
 	}
 }
 
@@ -188,9 +187,11 @@ function qw_delete_query( $query_id ) {
 function qw_query_export( $query_id ) {
 	global $wpdb;
 	$table_name = $wpdb->prefix . "query_wrangler";
-	$sql        = "SELECT id,name,slug,type,path,data FROM " . $table_name . " WHERE id = " . $query_id;
 
-	$row = $wpdb->get_row( $sql, ARRAY_A );
+	$row = $wpdb->get_row( $wpdb->prepare( "SELECT `id`,`name`,`slug`,`type`,`path`,`data` FROM {$table_name} WHERE `id` = %d",
+		$query_id ),
+		ARRAY_A );
+
 	unset( $row['id'] );
 	// unserialize the stored data
 	$row['data'] = unserialize( $row['data'] );
@@ -403,21 +404,15 @@ function qw_meta_key_autocomplete() {
 	if ( isset( $_POST['qw_meta_key_autocomplete'] ) ) {
 		$meta_key = sanitize_text_field( $_POST['qw_meta_key_autocomplete'] );
 		global $wpdb;
-		$query   = $wpdb->prepare( "SELECT DISTINCT(`meta_key`) FROM {$wpdb->postmeta} WHERE `meta_key` LIKE '%s' LIMIT 15",
-			'%' . $meta_key . '%' );
-		$results = $wpdb->get_col( $query );
 
-
+		$results = $wpdb->get_col( $wpdb->prepare( "SELECT DISTINCT(`meta_key`) FROM {$wpdb->postmeta} WHERE `meta_key` LIKE '%s' LIMIT 15",
+			'%' . $meta_key . '%' ) );
+		
 		//foreach ($query)
 		wp_send_json( array(
 			'success' => TRUE,
 			'values'  => $results,
 		) );
-
-		if ( $results ) {
-		} else {
-
-		}
 	}
 	exit;
 }
