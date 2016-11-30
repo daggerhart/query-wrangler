@@ -85,6 +85,7 @@ function qw_init_frontend() {
 	include_once QW_PLUGIN_DIR . '/includes/fields/image_attachment.php';
 	include_once QW_PLUGIN_DIR . '/includes/fields/featured_image.php';
 	include_once QW_PLUGIN_DIR . '/includes/fields/callback_field.php';
+	include_once QW_PLUGIN_DIR . '/includes/fields/taxonomy_terms.php';
 
 	// meta value field as a setting
 	if ( $settings->get( 'meta_value_field_handler', 0 ) ) {
