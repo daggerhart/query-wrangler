@@ -398,7 +398,12 @@ class Query_Wrangler_List_Table extends WP_List_Table {
 		$order   = ( ! empty( $_REQUEST['order'] ) ) ? $_REQUEST['order'] : 'asc'; //If no order, default to asc
 
 		$sql  = "SELECT id as ID, type, name, slug, path
-                FROM " . $wpdb->prefix . "query_wrangler
+                FROM " . $wpdb->prefix . "query_wrangler";
+        if(isset($_REQUEST['s']) && '' != trim($_REQUEST['s'])){
+			$sql .= $wpdb->prepare( "
+			WHERE name LIKE %s",'%'.$_REQUEST['s'].'%');
+        }
+        $sql .= "
                 ORDER BY " . $orderby . " " . $order;
 		$data = $wpdb->get_results( $sql, ARRAY_A );
 
@@ -475,6 +480,11 @@ function qw_list_queries_form() {
 			<h2>Query Wrangler <a class="add-new-h2"
 			                      href="admin.php?page=qw-create">Add New</a>
 			</h2>
+
+			<form id="search-queries-filter" method="get">
+				<input type="hidden" name="page" value="<?php echo esc_attr($_REQUEST['page']); ?>"/>
+				<?php $ListTable->search_box( 'Search', 'post' ); ?>
+			</form>
 
 			<!-- Forms are NOT created automatically, so you need to wrap the table in one to use features like bulk actions -->
 			<form id="queries-filter" method="get">
