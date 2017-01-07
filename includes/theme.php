@@ -420,8 +420,16 @@ function qw_make_fields_rows( &$qw_query, $options ) {
 		$group_hash = md5( $i );
 
 		// if set, hash the output of the group_by_field
-		if ( $group_by_field_name && isset( $row['fields'][ $group_by_field_name ] ) ) {
-			$group_hash = md5( $row['fields'][ $group_by_field_name ]['content'] );
+		if ( $group_by_field_name && isset( $row['fields'][ $group_by_field_name ] ) )
+		{
+			// strip tags from group by field
+			if ( !empty( $display['field_settings']['strip_group_by_field'] ) ) {
+				$row['fields'][ $group_by_field_name ]['content'] = strip_tags( $row['fields'][ $group_by_field_name ]['content'] );
+			}
+
+			$group_by_field_content = $row['fields'][ $group_by_field_name ]['content'];
+
+			$group_hash = md5( $group_by_field_content );
 		}
 
 		$groups[ $group_hash ][ $i ] = $row;

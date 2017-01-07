@@ -137,23 +137,40 @@ function qw_row_style_posts_settings( $row_style, $display ) {
  */
 function qw_row_style_fields_settings( $row_style, $display ) {
 	$query_fields = isset( $display['field_settings']['fields'] ) ? $display['field_settings']['fields'] : array();
+	$group_by = !empty( $display['field_settings']['group_by_field'] ) ? $display['field_settings']['group_by_field'] : false;
+	$strip = !empty( $display['field_settings']['strip_group_by_field'] ) ? true : false;
 	$all_fields   = qw_all_fields();
 	?>
-	<p class="description">Group by field</p>
-	<select class="qw-js-title"
-	        name="qw-query-options[display][field_settings][group_by_field]">
-		<option value="__none__"> - None -</option>
-		<?php
-		if ( ! empty( $query_fields ) ) {
-			foreach ( $query_fields as $field_name => $field ) {
-				?>
-				<option
-					value="<?php print esc_attr( $field_name ); ?>"><?php print $all_fields[ $field['hook_key'] ]['title']; ?> </option>
+	<p>
+		<label>Group by field</label>
+		<select class="qw-js-title"
+		        name="qw-query-options[display][field_settings][group_by_field]">
+			<option value="__none__"> - None -</option>
 			<?php
+			if ( ! empty( $query_fields ) ) {
+				foreach ( $query_fields as $field_name => $field ) {
+					?>
+					<option
+						value="<?php print esc_attr( $field_name ); ?>"
+						<?php selected( $field_name, $group_by ); ?>><?php print $all_fields[ $field['hook_key'] ]['title']; ?> </option>
+					<?php
+				}
 			}
-		}
-		?>
-	</select>
+			?>
+		</select>
+	</p>
+	<p>
+		<input type="hidden"
+		       name="qw-query-options[display][field_settings][strip_group_by_field]"
+		       value="">
+		<label>
+			<input type="checkbox"
+			       name="qw-query-options[display][field_settings][strip_group_by_field]"
+			       value="1"
+			       <?php checked( $strip ); ?>
+			> - Strip tags from Group by field
+		</label>
+	</p>
 <?php
 }
 
