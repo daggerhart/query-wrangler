@@ -194,14 +194,14 @@ function qw_edit_query_form() {
 	// admin wrapper arguments
 	$admin_args = array(
 		'title'       => 'Edit query <em>' . $edit_args['query_name'] . '</em>',
-		'description' => '[query slug="' . $row->slug . '"]',
+		'description' => '<code>[query slug="' . $row->slug . '"]</code> -or- <code>[query id="'.$query_id.'"]</code>',
 		// content is the query_edit page
 		'content'     => theme( 'query_edit_wrapper', $edit_wrapper_args )
 	);
 
 	// shortcode compatibility
 	if ( $settings->get('shortcode_compat') ){
-		$admin_args['description'] = '[qw_query slug="' . $row->slug . '"]';
+		$admin_args['description'] = '<code>[qw_query slug="' . $row->slug . '"]</code> -or- <code>[qw_query id="'.$query_id.'"]</code>';
 	}
 
 	// add view link for pages
