@@ -394,17 +394,33 @@ class Query_Wrangler_List_Table extends WP_List_Table {
 		 * ---------------------------------------------------------------------
 		 **********************************************************************/
 		global $wpdb;
-		$orderby = ( ! empty( $_REQUEST['orderby'] ) ) ? $_REQUEST['orderby'] : 'name'; //If no sort, default to title
-		$order   = ( ! empty( $_REQUEST['order'] ) ) ? $_REQUEST['order'] : 'asc'; //If no order, default to asc
 
-		$sql  = "SELECT id as ID, type, name, slug, path
-                FROM " . $wpdb->prefix . "query_wrangler";
-        if(isset($_REQUEST['s']) && '' != trim($_REQUEST['s'])){
-			$sql .= $wpdb->prepare( "
-			WHERE name LIKE %s",'%'.$_REQUEST['s'].'%');
-        }
-        $sql .= "
-                ORDER BY " . $orderby . " " . $order;
+		$sql = "SELECT `id` as `ID`, `type`, `name`, `slug`, `path` FROM {$wpdb->prefix}query_wrangler";
+		$args = array();
+
+		if ( !empty( $_REQUEST['s'] ) ){
+			$sql.= " WHERE `name` LIKE %s";
+			$args[] = '%' . $wpdb->esc_like( trim( $_REQUEST['s'] ) ) . '%';
+		}
+
+		// whitelist orderby
+		$orderby = 'name';
+		if ( ! empty( $_REQUEST['orderby'] ) &&
+		     in_array( $_REQUEST['orderby'], array('name', 'type') ) ){
+			$orderby = $_REQUEST['orderby'];
+		}
+
+		// whitelist order
+		$order = 'ASC';
+		if ( ! empty( $_REQUEST['order'] ) && strtolower( $_REQUEST['order'] ) == 'desc' ){
+			$order = 'DESC';
+		}
+
+        $sql.= " ORDER BY %s {$order}";
+		$args[] = $orderby;
+
+		$sql = $wpdb->prepare( $sql, $args );
+
 		$data = $wpdb->get_results( $sql, ARRAY_A );
 
 
