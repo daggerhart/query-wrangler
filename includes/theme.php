@@ -364,7 +364,7 @@ function qw_make_fields_rows( &$qw_query, $options ) {
 				$row['is_empty']                        = FALSE;
 			}
 
-			// add token for replace
+			// add token for initial replacement
 			$tokens[ '{{' . $field_name . '}}' ] = $row['fields'][ $field_name ]['output'];
 
 			// look for rewrite output
@@ -400,6 +400,9 @@ function qw_make_fields_rows( &$qw_query, $options ) {
 				// apply shortcodes to field output
 				$row['fields'][ $field_name ]['output'] = do_shortcode( $row['fields'][ $field_name ]['output'] );
 			}
+
+			// update the token for replacement by later fields
+			$tokens[ '{{' . $field_name . '}}' ] = $row['fields'][ $field_name ]['output'];
 
 			// save a copy of the field output in case it is excluded, but we need it later
 			$row['fields'][ $field_name ]['content'] = $row['fields'][ $field_name ]['output'];
