@@ -81,6 +81,7 @@ Select a category or multiple categories to override.   Save the query, then vis
 * Bug fix: Maintain token settings in later fields
 * Bug fix: Query data doesn't unserialize correctly in some environments
 * Bug fix: Query wasn't retaining Group by field in editor
+* Bug fix: JSON export may not load correctly
 
 = 1.5.41 =
 

@@ -194,7 +194,7 @@ function qw_query_export( $query_id ) {
 
 	unset( $row['id'] );
 	// unserialize the stored data
-	$row['data'] = unserialize( $row['data'] );
+	$row['data'] = qw_unserialize( $row['data'] );
 	$row['data'] = qw_query_escape_export( $row['data'] );
 
 	$export = wp_json_encode( $row, JSON_PRETTY_PRINT );
