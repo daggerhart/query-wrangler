@@ -99,7 +99,7 @@ class QW_Shortcodes {
 
 		if ( isset( $options['shortcode_args'] ) ) {
 			$shortcode_args = wp_parse_args( $options['shortcode_args'] );
-			$query_args     = array_merge_recursive( (array) $query_args,
+			$query_args     = array_replace_recursive( (array) $query_args,
 					$shortcode_args );
 		}
 
