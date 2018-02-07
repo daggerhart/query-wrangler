@@ -83,7 +83,7 @@ function qw_edit_query_form() {
 	if ( $query_id = qw_admin_get_current_query_id() ) {
 		$row = qw_get_query_by_id( $query_id );
 	}
-	if ( ! $row ) {
+	if ( empty( $row ) ) {
 		return;
 	}
 

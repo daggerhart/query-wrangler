@@ -75,7 +75,7 @@ function qw_generate_query_options(
 		$options = $options_override;
 	} else {
 		// combine options
-		$options = array_merge_recursive( (array) $options, $options_override );
+		$options = array_replace_recursive( (array) $options, $options_override );
 	}
 
 	// build query_details
