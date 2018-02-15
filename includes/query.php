@@ -377,7 +377,7 @@ function qw_unserialize( $serial_str ) {
 
 	// if the string failed to unserialize, we may have a quotation problem
 	if ( !is_array( $data ) ) {
-		$serial_str = @preg_replace( '!s:(\d+):"(.*?)";!se', "'s:'.strlen('$2').':\"$2\";'", $serial_str );
+		$serial_str = preg_replace_callback('!s:(\d+):"(.*?)";!s', 'qw_unserialize_extra_fix_callback', $serial_str);
 		$data = maybe_unserialize( $serial_str );
 	}
 
@@ -396,6 +396,19 @@ function qw_unserialize( $serial_str ) {
 	$default['args']['posts_per_page'] = 1;
 
 	return $default;
+}
+
+/**
+ * Attempt to fix issues with quotation marks in a serialized string.
+ * This is a replacement for the previous preg_replace approach that used the
+ * 'e' flag. The 'e' flag was removed in php 7.
+ *
+ * @param $matches
+ *
+ * @return string
+ */
+function qw_unserialize_extra_fix_callback($matches) {
+	return 's:' . strlen($matches[2]) . ':"' . $matches[2] . '";';
 }
 
 /*
