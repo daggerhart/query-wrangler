@@ -82,7 +82,7 @@ function qw_insert_new_query( $post ) {
 	$table_name = $wpdb->prefix . "query_wrangler";
 
 	$values = array(
-		'name' => $post['qw-name'],
+        'name' => sanitize_text_field(stripslashes($post['qw-name'])),
 		'slug' => sanitize_title( $post['qw-name'] ),
 		'type' => $post['qw-type'],
 		'path' => isset( $post['page-path'] ) ? urlencode( $post['page-path'] ) : NULL,
