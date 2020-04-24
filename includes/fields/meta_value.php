@@ -9,10 +9,10 @@ add_filter( 'qw_fields', 'qw_field_meta_value' );
 function qw_field_meta_value( $fields ) {
 	$show_silent_meta = QW_Settings::get_instance()->get( 'show_silent_meta', FALSE );
 	// Create a unique cache name
-	$_cache_name = md5([
+	$_cache_name = md5(json_encode([
 			$fields,
 			$show_silent_meta
-	]);
+	]));
 	// Check if we have any cache for this
 	if (false === ($fields = \wp_cache_get($_cache_name, $_cache_name))) {
 		// add meta keys to field list
