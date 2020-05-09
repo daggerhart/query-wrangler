@@ -119,7 +119,7 @@ function qw_basic_pager_form( $basic, $display ) {
  * @param object $qw_query Object
  * @return HTML processed pager
  */
-function qw_make_pager( $pager, &$qw_query ) {
+function qw_make_pager( $pager, $qw_query ) {
 	$pager_themed = '';
 	$pagers       = qw_all_pager_types();
 
@@ -143,7 +143,7 @@ function qw_make_pager( $pager, &$qw_query ) {
  * @param array $pager Query options for pager
  * @param object $qw_query Object
  */
-function qw_theme_pager_default( $pager, &$qw_query ) {
+function qw_theme_pager_default( $pager, $qw_query ) {
 	// help figure out the current page
 	$exposed_path_array = explode( '?', $_SERVER['REQUEST_URI'] );
 	$path_array         = explode( '/page/', $exposed_path_array[0] );
