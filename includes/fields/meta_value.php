@@ -8,32 +8,39 @@ add_filter( 'qw_fields', 'qw_field_meta_value' );
  */
 function qw_field_meta_value( $fields ) {
 	$show_silent_meta = QW_Settings::get_instance()->get( 'show_silent_meta', FALSE );
+	// Create a unique cache name
+	$_cache_name = md5(json_encode([
+			$fields,
+			$show_silent_meta
+	]));
+	// Check if we have any cache for this
+	if (false === ($fields = \wp_cache_get($_cache_name, $_cache_name))) {
+		// add meta keys to field list
+		$meta = qw_get_meta_keys();
+		foreach ( $meta as $key ) {
+			$field_key = 'meta_' . str_replace( " ", "_", $key );
 
-	// add meta keys to field list
-	$meta = qw_get_meta_keys();
-	foreach ( $meta as $key ) {
-		$field_key = 'meta_' . str_replace( " ", "_", $key );
+			$key_is_not_silent = ( substr( $key, 0, 1 ) != '_' && substr( $key,
+					0,
+					3 ) != 'ww-' && substr( $key, 0, 3 ) != 'ww_' );
 
-		$key_is_not_silent = ( substr( $key, 0, 1 ) != '_' && substr( $key,
-				0,
-				3 ) != 'ww-' && substr( $key, 0, 3 ) != 'ww_' );
+			// show all keys if show_silent_meta is true
+			// otherwise, show any key that is not silent
+			if ( $show_silent_meta || $key_is_not_silent ) {
+				$fields[ $field_key ] = array(
+					'title'            => 'Custom Field: ' . $key,
+					'description'      => 'Custom Field data with key: ' . $key,
+					'output_callback'  => 'qw_display_post_meta_value',
+					'output_arguments' => TRUE,
+					'meta_key'         => $key,
+					'form_callback'    => 'qw_meta_value_form_callback',
+					'content_options'  => TRUE,
+				);
 
-		// show all keys if show_silent_meta is true
-		// otherwise, show any key that is not silent
-		if ( $show_silent_meta || $key_is_not_silent ) {
-			$fields[ $field_key ] = array(
-				'title'            => 'Custom Field: ' . $key,
-				'description'      => 'Custom Field data with key: ' . $key,
-				'output_callback'  => 'qw_display_post_meta_value',
-				'output_arguments' => TRUE,
-				'meta_key'         => $key,
-				'form_callback'    => 'qw_meta_value_form_callback',
-				'content_options'  => TRUE,
-			);
-
+			}
 		}
+		\wp_cache_set($_cache_name, $fields, $_cache_name, 900); // 15 min cache
 	}
-
 	return $fields;
 }
 
