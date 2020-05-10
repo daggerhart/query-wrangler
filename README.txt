@@ -74,6 +74,12 @@ Select a category or multiple categories to override.   Save the query, then vis
 
 == Changelog ==
 
+= 1.5.46 =
+
+* Bug fix: removing debugging function.
+* Bug fix: Pagination vs offset. WP_Query doesn't handle this, so we do it manually.
+* Bug fix: Caching for expensive meta keys query on large sites.
+
 = 1.5.45 =
 
 * Bug fix: Pagination vs offset. WP_Query doesn't handle this, so we do it manually.
@@ -366,4 +372,4 @@ Select a category or multiple categories to override.   Save the query, then vis
 
 == Upgrade Notice ==
 
-1.5.45 Fix for queries that are offset and paginated.
+1.5.46 Fix for queries that are offset and paginated.

@@ -20,8 +20,7 @@ function qw_execute_query(
 
 	// pre_query hook
 	$args = apply_filters( 'qw_pre_query', $args, $options );
-d($options);
-d($args);
+
 	// set the new query
 	$qw_query = new WP_Query( $args );
 

@@ -9,12 +9,11 @@ add_filter( 'qw_fields', 'qw_field_meta_value' );
 function qw_field_meta_value( $fields ) {
 	$show_silent_meta = QW_Settings::get_instance()->get( 'show_silent_meta', FALSE );
 	// Create a unique cache name
-	$_cache_name = md5(json_encode([
-			$fields,
-			$show_silent_meta
-	]));
+	$_cache_name = md5(json_encode($fields));
 	// Check if we have any cache for this
-	if (false === ($fields = \wp_cache_get($_cache_name, $_cache_name))) {
+	$meta_fields = get_transient( $_cache_name );
+	if ( !$meta_fields ) {
+		$meta_fields = [];
 		// add meta keys to field list
 		$meta = qw_get_meta_keys();
 		foreach ( $meta as $key ) {
@@ -27,7 +26,7 @@ function qw_field_meta_value( $fields ) {
 			// show all keys if show_silent_meta is true
 			// otherwise, show any key that is not silent
 			if ( $show_silent_meta || $key_is_not_silent ) {
-				$fields[ $field_key ] = array(
+				$meta_fields[ $field_key ] = array(
 					'title'            => 'Custom Field: ' . $key,
 					'description'      => 'Custom Field data with key: ' . $key,
 					'output_callback'  => 'qw_display_post_meta_value',
@@ -39,8 +38,9 @@ function qw_field_meta_value( $fields ) {
 
 			}
 		}
-		\wp_cache_set($_cache_name, $fields, $_cache_name, 900); // 15 min cache
+		set_transient( $_cache_name, $meta_fields, 900 );
 	}
+	$fields = array_merge($fields, $meta_fields);
 	return $fields;
 }
 
