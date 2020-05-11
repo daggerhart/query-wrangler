@@ -107,28 +107,30 @@ function qw_override_categories_form( $override ) {
  */
 function qw_override_categories_get_query( $wp_query ) {
 	if ( $wp_query->is_category() && $wp_query->is_archive() ) {
-		$term     = $wp_query->get_queried_object();
-		$query_id = qw_get_query_by_override_term( $term->term_id );
+        $term = $wp_query->get_queried_object();
+        if ($term instanceof \WP_Term) {
+            $query_id = qw_get_query_by_override_term($term->term_id);
 
-		if ( $query_id && $qw_query = qw_get_query( $query_id ) ) {
+            if ($query_id && $qw_query = qw_get_query($query_id)) {
 
-			// add the appropriate filter to the query
-			$qw_query->add_handler_item( 'filter',
-				'categories',
-				array(
-					'cat_operator' => 'cat',
-					'cats'         => array( $term->term_id => $term->name ),
-				) )
-				// override the post title
-				     ->override_options( array(
-					'display' => array(
-						'title' => single_term_title( '', FALSE ),
-					)
-				) );
+                // add the appropriate filter to the query
+                $qw_query->add_handler_item('filter',
+                    'categories',
+                    array(
+                        'cat_operator' => 'cat',
+                        'cats'         => array($term->term_id => $term->name),
+                    ))
+                    // override the post title
+                    ->override_options(array(
+                        'display' => array(
+                            'title' => single_term_title('', false),
+                        )
+                    ));
 
-			return $qw_query;
-		}
-	}
+                return $qw_query;
+            }
+        }
+    }
 
 	return FALSE;
 }
