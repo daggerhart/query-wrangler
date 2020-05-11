@@ -118,10 +118,17 @@ function qw_generate_query_args( $options = array() ) {
 	$args['post_status']         = $options['args']['post_status'];
 	$args['ignore_sticky_posts'] = isset( $options['args']['ignore_sticky_posts'] ) ? $options['args']['ignore_sticky_posts'] : 0;
 
-	// WP_Query ignores 'paged' if 'offset' is provided.
-	// Create offset pagination ourselves.
-	if ( $args['paged'] > 1 && $args['offset'] && $args['posts_per_page'] > 0) {
-		$args['offset'] = $args['offset'] + (($args['paged'] - 1) * $args['posts_per_page']);
+	// Handle normal pagination vs offset pagination.
+	if ( $args['paged'] > 1 ) {
+		if ( $args['offset'] > 0 && $args['posts_per_page'] > 0 ) {
+			// Create offset pagination ourselves.
+			$args['offset'] = $args['offset'] + (($args['paged'] - 1) * $args['posts_per_page']);
+		}
+		else {
+			// WP_Query ignores 'paged' if 'offset' is provided.
+			// Having any offset will break pagination.
+			unset( $args['offset'] );
+		}
 	}
 
 	$submitted_data = qw_exposed_submitted_data();
