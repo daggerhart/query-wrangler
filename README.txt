@@ -74,7 +74,7 @@ Select a category or multiple categories to override.   Save the query, then vis
 
 == Changelog ==
 
-= 1.5.47 =
+= 1.5.48 =
 
 * Bug fix: Fix regression with pagination vs offset.
 
@@ -376,4 +376,4 @@ Select a category or multiple categories to override.   Save the query, then vis
 
 == Upgrade Notice ==
 
-1.5.47 More fixes for queries that are offset and paginated.
+1.5.48 More fixes for queries that are offset and paginated.
