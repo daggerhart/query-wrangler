@@ -7,12 +7,17 @@ ob_start();
 // get the query options, force override
 $options = qw_generate_query_options( $query_id, $options, TRUE );
 
-do_action_ref_array( 'qw_pre_preview', array( &$options ) );
-
 // get formatted query arguments
 $args = qw_generate_query_args( $options );
+
+// pre_query hook
+$args = apply_filters( 'qw_pre_query', $args, $options );
+
 // set the new query
 $wp_query = new WP_Query( $args );
+
+// pre_render hook
+$options = apply_filters( 'qw_pre_render', $options, $wp_query );
 
 // get the themed content
 print qw_template_query( $wp_query, $options );

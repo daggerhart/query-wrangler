@@ -25,7 +25,7 @@ function qw_execute_query(
 	$qw_query = new WP_Query( $args );
 
 	// pre_render hook
-	$options = apply_filters( 'qw_pre_render', $options );
+	$options = apply_filters( 'qw_pre_render', $options, $qw_query );
 
 	// get the themed content
 	$themed = qw_template_query( $qw_query, $options );

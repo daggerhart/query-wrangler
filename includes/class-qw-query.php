@@ -144,7 +144,7 @@ class QW_Query {
 	 */
 	function theme_query() {
 		// pre_render hook
-		$this->options = apply_filters( 'qw_pre_render', $this->options, $this->args );
+		$this->options = apply_filters( 'qw_pre_render', $this->options, $this->wp_query );
 
 		// get the themed content
 		$this->output = qw_template_query( $this->wp_query, $this->options );
