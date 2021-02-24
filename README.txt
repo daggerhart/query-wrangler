@@ -3,7 +3,7 @@ Contributors: daggerhart
 Donate link: https://www.daggerhart.com/
 Tags: query, pages, widget, admin, widgets, administration, manage, views, loop
 Requires at least: 4
-Tested up to: 5.4.1
+Tested up to: 5.6.2
 Stable tag: trunk
 
 Query Wrangler provides an intuitive interface for creating complex WP queries as shortcodes and widgets. UI based on Drupal Views.
@@ -73,6 +73,10 @@ Select a category or multiple categories to override.   Save the query, then vis
 1. Drupal Views Editor Theme
 
 == Changelog ==
+
+= 1.5.49 =
+
+* Feature: Setting to hide header or footer when no results are found.
 
 = 1.5.48 =
 
@@ -270,22 +274,22 @@ Select a category or multiple categories to override.   Save the query, then vis
 * Fix: Shortcode & Widget paging - but can't have 2 independent pagers on 1 page yet.
 * Fix: Unserialize bug - http://wordpress.org/support/topic/bug-that-wipes-all-settings-of-query-after-excluding-fields-from-display?replies=2
 * Fix: 3.7 problem - according to - http://wordpress.org/support/topic/update-has-broken-site#post-4868397
-* Fix: Row style settings form bug 
+* Fix: Row style settings form bug
 * More complete default query according to WP_Query defaults
 * Feature: PHP WP_Query in preview
 
 = 1.5rc12 =
- 
+
  * New page routing with hook parse_request
 
 = 1.5rc11 =
- 
+
  * Chasing WP 3.7 related bugs
 
 = 1.5rc10 =
 
  * UI fixes and improvements.
- 
+
 = 1.5rc9 =
 
  * Fix: Wordpress 3.7 update redirecting from custom pages
@@ -293,15 +297,15 @@ Select a category or multiple categories to override.   Save the query, then vis
 = 1.5rc8 =
 
  * Fix: Fixing sortable jquery ui issue.  QW UI working w/ WP 3.5
- 
+
 = 1.5rc7 =
 
  * Fix: No longer relying on external jquery sources, working to fix views ui
- 
+
 = 1.5rc6 =
 
  * Fix: WP update broke jquery and jquery ui. now relying on external sources
- 
+
 = 1.5rc5 =
 
  * Fix: bug, javascript sometimes enqueuing in wrong order (Google Libraries)
