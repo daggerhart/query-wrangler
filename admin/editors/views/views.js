@@ -213,6 +213,10 @@
             modal: true,
             title: dialog_title,
             resizable: false,
+			closeText: "",
+			classes: {
+			  "ui-dialog": "qw-dialog",
+			},
 
             open: function () {
               $( this ).dialog( "option", "position", "center" );
