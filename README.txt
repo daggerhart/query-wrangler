@@ -74,6 +74,10 @@ Select a category or multiple categories to override.   Save the query, then vis
 
 == Changelog ==
 
+= 1.5.50 =
+
+* Bug fix: Regression in 1.5.49. Redundant dispatch of qw_pre_render broke QW widgets.
+
 = 1.5.49 =
 
 * Feature: Setting to hide header or footer when no results are found.
@@ -380,4 +384,4 @@ Select a category or multiple categories to override.   Save the query, then vis
 
 == Upgrade Notice ==
 
-1.5.48 More fixes for queries that are offset and paginated.
+1.5.50 New reature to hide header and footer when result set empty.
