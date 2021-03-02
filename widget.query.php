@@ -65,9 +65,6 @@ class Query_Wrangler_Widget extends WP_Widget {
 			$options = qw_generate_query_options( $instance['qw-widget'] );
 			$widget_content = qw_execute_query( $instance['qw-widget'], $options_override );
 
-			// pre_render hook
-			$options = apply_filters( 'qw_pre_render', $options );
-
 			$show_title = ( isset( $instance['qw-show-widget-title'] ) && ! empty( $instance['qw-show-widget-title'] ) );
 			$title      = ( $show_title && $options['display']['title'] ) ? $args['before_title'] . $options['display']['title'] . $args['after_title'] : '';
 
