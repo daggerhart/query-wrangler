@@ -64,11 +64,11 @@ function qw_example_sort_options($sort_options)
  * But this is what it looks like if you were to do it yourself
  *
  *  @param  &$args - The WP_Query arguments we are building
- *  @param  $filter - This filter's settings and values
-                      Values stored in $filter['values']
+ *  @param  $sort - This sort's settings and values
+                    Values stored in $sort['values']
  */
 function qw_sort_example_query_args(&$args, $sort){
   $args[$sort['orderby_key']] = $sort['type'];
-  $args[$sort['order_key']] = $sort['order_value'];
+  $args[$sort['order_key']] = $sort['values']['order_value'];
 }
 ````
