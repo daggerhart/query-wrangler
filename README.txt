@@ -74,6 +74,11 @@ Select a category or multiple categories to override.   Save the query, then vis
 
 == Changelog ==
 
+= 1.5.51 =
+
+* Tested up to WordPress 5.8-RC4.
+* Minor style improvement on editor form.
+
 = 1.5.50 =
 
 * Bug fix: Regression in 1.5.49. Redundant dispatch of qw_pre_render broke QW widgets.
@@ -384,4 +389,4 @@ Select a category or multiple categories to override.   Save the query, then vis
 
 == Upgrade Notice ==
 
-1.5.50 New feature to hide header and footer when result set empty.
+1.5.51 Tested with upcoming 5.8 release
