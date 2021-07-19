@@ -3,7 +3,7 @@ Contributors: daggerhart
 Donate link: https://www.daggerhart.com/
 Tags: query, pages, widget, admin, widgets, administration, manage, views, loop
 Requires at least: 4
-Tested up to: 5.6.2
+Tested up to: 5.8
 Stable tag: trunk
 
 Query Wrangler provides an intuitive interface for creating complex WP queries as shortcodes and widgets. UI based on Drupal Views.
@@ -384,4 +384,4 @@ Select a category or multiple categories to override.   Save the query, then vis
 
 == Upgrade Notice ==
 
-1.5.50 New reature to hide header and footer when result set empty.
+1.5.50 New feature to hide header and footer when result set empty.
