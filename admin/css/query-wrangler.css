@@ -142,13 +142,22 @@ label.qw-field-checkbox input {
 	margin-left: 12px;
 }
 
-.qw-setting-header {
-	display: block;
-	padding: .4em .5em .4em 2em;
-}
-
 #qw-edit-query-form textarea {
 	font-family: monospace;
+}
+
+#row-style-settings h3.qw-setting-header {
+	padding-left: 0;
+}
+
+#row-style-settings .qw-setting-group {
+	padding-left: 1em;
+	padding-bottom: 1em;
+	border-bottom: 1px solid #ddd;
+	margin-bottom: .5em;
+}
+#row-style-settings .qw-query-content:last-of-type .qw-setting-group {
+	border: none;
 }
 
 a.toplevel_page_query-wrangler {
