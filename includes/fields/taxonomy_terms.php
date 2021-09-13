@@ -35,12 +35,14 @@ function qw_field_taxonomy_terms_output( $post, $field ) {
 
 	$terms = get_the_terms( $post->ID, $field['taxonomy_name'] );
 
-	foreach( $terms as $term ){
-		if ( isset( $field['link_to_term'] ) ) {
-			$output[] = '<a href="' . get_term_link( $term->term_id ) . '">' . $term->name . '</a>';
-		}
-		else {
-			$output[] = $term->name;
+	if ( $terms ) {
+		foreach( $terms as $term ){
+			if ( isset( $field['link_to_term'] ) ) {
+				$output[] = '<a href="' . get_term_link( $term->term_id ) . '">' . $term->name . '</a>';
+			}
+			else {
+				$output[] = $term->name;
+			}
 		}
 	}
 
