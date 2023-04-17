@@ -155,9 +155,16 @@ function qw_update_query( $post ) {
 			$query_id ) );
 	} // update for widgets
 	else {
-		$wpdb->query( $wpdb->prepare( "UPDATE {$table_name} SET data = %s WHERE id = %d LIMIT 1", 
-			$new_data, 
+		$wpdb->query( $wpdb->prepare( "UPDATE {$table_name} SET data = %s WHERE id = %d LIMIT 1",
+			$new_data,
 			$query_id ) );
+	}
+
+	// Refresh meta_keys_cache.
+	$settings = QW_Settings::get_instance();
+	if ($settings->get('meta_key_cache_life') !== 'none') {
+		delete_transient('query_wrangler_meta_keys_cache');
+		qw_get_meta_keys();
 	}
 }
 
@@ -407,7 +414,7 @@ function qw_meta_key_autocomplete() {
 
 		$results = $wpdb->get_col( $wpdb->prepare( "SELECT DISTINCT(`meta_key`) FROM {$wpdb->postmeta} WHERE `meta_key` LIKE '%s' LIMIT 15",
 			'%' . $meta_key . '%' ) );
-		
+
 		//foreach ($query)
 		wp_send_json( array(
 			'success' => TRUE,

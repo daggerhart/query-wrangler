@@ -49,7 +49,7 @@ class QW_Settings {
 	 * @param $key
 	 * @param bool|FALSE $default
 	 *
-	 * @return bool
+	 * @return mixed
 	 */
 	function get( $key, $default = false ){
 		if ( isset( $this->values[ $key ] ) ){
