@@ -469,13 +469,21 @@ function qw_make_form_prefix( $type, $name ) {
  * @return array All meta keys in WP
  */
 function qw_get_meta_keys() {
-	global $wpdb;
+	$settings = QW_Settings::get_instance();
+	$cache_life = $settings->get('meta_key_cache_life');
 
-	$keys = $wpdb->get_col( "
-			SELECT meta_key
+	$keys = get_transient('query_wrangler_meta_keys_cache');
+	if (!$keys || $cache_life === 'none') {
+		global $wpdb;
+
+		$keys = $wpdb->get_col( "
+			SELECT DISTINCT(meta_key)
 			FROM $wpdb->postmeta
-			GROUP BY meta_key
 			ORDER BY meta_key" );
+
+		set_transient('query_wrangler_meta_keys_cache', $keys, (int) $cache_life);
+	}
+
 
 	return $keys;
 }

@@ -11,6 +11,7 @@ class QW_Settings {
 		'show_silent_meta'         => 0,
 		'meta_value_field_handler' => 0,
 		'shortcode_compat'         => 0,
+		'meta_key_cache_life'      => 0, // Forever.
 	);
 
 	public $values = array();

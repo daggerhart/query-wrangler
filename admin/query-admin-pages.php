@@ -222,6 +222,7 @@ function qw_save_settings( $post ) {
 	$show_silent_meta = ( isset( $post['qw-show-silent-meta'] ) ) ? $post['qw-show-silent-meta'] : '';
 	$meta_value_field_handler = ( isset( $post['qw-meta-value-field-handler'] ) ) ? $post['qw-meta-value-field-handler'] : '';
 	$shortcode_compat = isset( $post['qw-shortcode-compat'] ) ? $post['qw-shortcode-compat'] : '';
+	$meta_key_cache_life = $post['qw-meta-keys-cache-life'] ?? 'forever';
 
 	$settings = QW_Settings::get_instance();
 	$settings->set( 'edit_theme', $post['qw-theme'] );
@@ -230,6 +231,7 @@ function qw_save_settings( $post ) {
 	$settings->set( 'show_silent_meta', $show_silent_meta );
 	$settings->set( 'meta_value_field_handler', $meta_value_field_handler );
 	$settings->set( 'shortcode_compat', $shortcode_compat );
+	$settings->set('meta_key_cache_life', $meta_key_cache_life);
 	$settings->save();
 }
 
