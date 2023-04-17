@@ -1,3 +1,16 @@
+<?php
+/**
+ * @var string $edit_theme
+ * @var bool $widget_theme_compat
+ * @var bool $live_preview
+ * @var bool $show_silent_meta
+ * @var bool $shortcode_compat
+ * @var string $meta_value_field_handler
+ * @var string $meta_key_cache_life
+ * @var array[] $edit_themes
+ * @var array $meta_value_field_options
+ */
+?>
 <form id="qw-edit-settings"
       action="<?php print admin_url( 'admin.php?page=query-wrangler&action=save_settings&noheader=true' ); ?>"
       method='post'>
@@ -12,11 +25,10 @@
 					theme.</p>
 				<select name="qw-theme">
 					<?php
-					foreach ( $edit_themes as $key => $edit_theme ) { ?>
+					foreach ( $edit_themes as $key => $theme ) { ?>
 						<option
-							value="<?php print $key; ?>" <?php selected( $key,
-							$theme ); ?>>
-							<?php print $edit_theme['title']; ?>
+							value="<?php print $key; ?>" <?php selected( $key, $edit_theme ); ?>>
+							<?php print $theme['title']; ?>
 						</option>
 					<?php
 					}
@@ -78,12 +90,10 @@
 				<select name="qw-meta-value-field-handler">
 					<?php
 					foreach ( $meta_value_field_options as $value => $text ) { ?>
-						<option
-							value="<?php print $value; ?>" <?php selected( $value,
-							$meta_value_field_handler ); ?>>
+						<option value="<?php print $value; ?>" <?php selected( $value, $meta_value_field_handler ); ?>>
 							<?php print $text; ?>
 						</option>
-					<?php
+						<?php
 					}
 					?>
 				</select>
@@ -94,6 +104,37 @@
 					<li><b>New</b> - a generic "Custom field" is available in
 						the UI, and you must provide it the meta key.
 					</li>
+				</ul>
+			</td>
+		</tr>
+		<tr>
+			<th>
+				<label>Meta Keys Cache Life</label>
+			</th>
+			<td>
+				<p class="description">
+					Discovering meta keys can be very expensive and time-consuming query for large sites.
+					It's recommended to enable <em>some</em> amount of caching on this.
+				</p>
+				<?php
+				$meta_key_cache_options = [
+					'none' => '- ' . __('No Caching') . ' -',
+					3600 => __('1 Hour'),
+					DAY_IN_SECONDS => __('1 Day'),
+					WEEK_IN_SECONDS => __('1 Week'),
+					0 => __('Forever'),
+				];
+				?>
+				<select name="qw-meta-keys-cache-life">
+					<?php foreach ( $meta_key_cache_options as $value => $label ) { ?>
+						<option value="<?= esc_attr($value) ?>" <?php selected($value, $meta_key_cache_life) ?>>
+							<?= esc_html( $label ) ?>
+						</option>
+					<?php } ?>
+				</select>
+				<ul>
+					<li><b>No Caching</b> - Never cache meta keys. This could cause performance issues.</li>
+					<li><b>Forever</b> - Cache meta keys until a Query Wrangler Query is edited and saved.</li>
 				</ul>
 			</td>
 		</tr>
