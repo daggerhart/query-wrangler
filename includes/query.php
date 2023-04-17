@@ -313,7 +313,7 @@ function qw_get_page_number( $qw_query = NULL ) {
 		$page = 1;
 	}
 
-	return $page;
+	return (int) $page;
 }
 
 /*

@@ -145,33 +145,35 @@ class Query_Wrangler_List_Table extends WP_List_Table {
 	 *     only)
 	 **************************************************************************/
 	function column_name( $item ) {
+		$edit_url = esc_url( strtr( '?page=%page&edit=%id', [
+			'%page' => $_REQUEST['page'],
+			'%id' => $item['ID'],
+		] ) );
+		$export_url = esc_url( strtr( '?page=%page&export=%id', [
+			'%page' => $_REQUEST['page'],
+			'%id' => $item['ID'],
+		] ) );
+		$delete_url = esc_url( strtr( '?page=%page&noheader=true&action=delete&edit=%id', [
+			'%page' => $_REQUEST['page'],
+			'%id' => $item['ID'],
+		] ) );
 
 		//Build row actions
 		$actions = array(
-			'edit'   => sprintf( '<a href="?page=%s&edit=%s">Edit</a>',
-				$_REQUEST['page'],
-				$item['ID'] ),
-			'export' => sprintf( '<a href="?page=%s&export=%s">Export</a>',
-				$_REQUEST['page'],
-				$item['ID'] ),
-			'delete' => sprintf( '<a class="qw-delete-query" href="?page=%s&noheader=true&action=delete&edit=%s">Delete</a>',
-				$_REQUEST['page'],
-				$item['ID'] ),
+			'edit'   => '<a href="' . $edit_url. '">Edit</a>',
+			'export' => '<a href="' . $export_url . '">Export</a>',
+			'delete' => '<a class="qw-delete-query" href="' . $delete_url . '">Delete</a>',
 		);
 		// pages
 		if ( $item['type'] == 'page' ) {
-			$actions['view'] = '<a href="' . get_bloginfo( 'wpurl' ) . '/' . $item['path'] . '">View</a>';
+			$view_url =  esc_url(get_bloginfo( 'wpurl' ) . '/' . $item['path']);
+			$actions['view'] = '<a href="' . $view_url . '">View</a>';
 		}
 
 		//Return the title contents
-		return sprintf( '%1$s <span style="color:silver">(ID: %2$s)</span> %3$s',
-			/*$1%s*/
-			'<a href="?page=query-wrangler&edit=' . $item['ID'] . '">' . $item['name'] . '</a>',
-			/*$2%s*/
-			$item['ID'],
-			/*$3%s*/
-			$this->row_actions( $actions )
-		);
+		return '<a href="' . $edit_url . '">' . $item['name'] . '</a>
+			<span style="color:silver">(ID: ' . $item['ID'] . ')</span> ' .
+			$this->row_actions( $actions );
 	}
 
 	/** ************************************************************************
@@ -188,14 +190,7 @@ class Query_Wrangler_List_Table extends WP_List_Table {
 	 *     only)
 	 **************************************************************************/
 	function column_cb( $item ) {
-		return sprintf(
-			'<input type="checkbox" name="%1$s[]" value="%2$s" />',
-			/*$1%s*/
-			$this->_args['singular'],
-			//Let's simply repurpose the table's singular label ("movie")
-			/*$2%s*/
-			$item['ID']                //The value of the checkbox should be the record's id
-		);
+		return '<input type="checkbox" name="' . esc_attr( $this->_args['singular'] . '[]' ) . '" value="' . esc_attr( $item['ID'] ) . '" />';
 	}
 
 
@@ -293,7 +288,9 @@ class Query_Wrangler_List_Table extends WP_List_Table {
 		if ( 'delete' === $this->current_action() ) {
 			if ( is_array( $_REQUEST['query'] ) ) {
 				foreach ( $_REQUEST['query'] as $query_id ) {
-					qw_delete_query( $query_id );
+					if ( is_numeric( $query_id ) ) {
+						qw_delete_query( $query_id );
+					}
 				}
 			}
 			//wp_die('Items deleted (or they would be if we had items to delete)!');
@@ -374,15 +371,6 @@ class Query_Wrangler_List_Table extends WP_List_Table {
 		 * to a custom query. The returned data will be pre-sorted, and this array
 		 * sorting technique would be unnecessary.
 		 */
-		/*/ NOT IN USE
-		function usort_reorder($a,$b){
-			$orderby = (!empty($_REQUEST['orderby'])) ? $_REQUEST['orderby'] : 'name'; //If no sort, default to title
-			$order = (!empty($_REQUEST['order'])) ? $_REQUEST['order'] : 'asc'; //If no order, default to asc
-			$result = strcmp($a[$orderby], $b[$orderby]); //Determine sort order
-			return ($order==='asc') ? $result : -$result; //Send final sort direction to usort
-		}
-		//usort($data, 'usort_reorder');
-		// */
 
 		/***********************************************************************
 		 * ---------------------------------------------------------------------
@@ -494,11 +482,11 @@ function qw_list_queries_form() {
 
 			<div id="icon-tools" class="icon32"><br/></div>
 			<h2>Query Wrangler <a class="add-new-h2"
-			                      href="admin.php?page=qw-create">Add New</a>
+			                      href="<?= esc_url('admin.php?page=qw-create' ) ?>">Add New</a>
 			</h2>
 
 			<form id="search-queries-filter" method="get">
-				<input type="hidden" name="page" value="<?php echo esc_attr($_REQUEST['page']); ?>"/>
+				<input type="hidden" name="page" value="<?= esc_attr($_REQUEST['page']) ?>"/>
 				<?php $ListTable->search_box( 'Search', 'post' ); ?>
 			</form>
 
@@ -506,7 +494,7 @@ function qw_list_queries_form() {
 			<form id="queries-filter" method="get">
 				<!-- For plugins, we also need to ensure that the form posts back to our current page -->
 				<input type="hidden" name="page"
-				       value="<?php echo $_REQUEST['page'] ?>"/>
+				       value="<?php echo esc_attr($_REQUEST['page']) ?>"/>
 				<input type="hidden" name="noheader" value="true"/>
 				<!-- Now we can render the completed list table -->
 				<?php $ListTable->display() ?>
