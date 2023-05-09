@@ -100,22 +100,45 @@ function qw_override_post_type_archive_form( $override ) {
  * Determine if this override should be executed
  * return a QW_Query object if so, otherwise return false;
  *
+ * @param \WP_Query $wp_query
+ *
  * @return bool|QW_Query
  */
 function qw_override_post_type_archive_get_query( $wp_query ) {
 	if ( $wp_query->is_post_type_archive() ) {
-		$post_type = get_query_var( 'post_type' );
+		$post_types = get_query_var( 'post_type' );
+		// Always deal with it as an array.
+		$post_types = is_array( $post_types ) ? $post_types : [ $post_types ];
 		$post_type_archives = get_option( '_qw_override_post_type_archives', array() );
 
-		if ( isset( $post_type_archives[ $post_type ] ) && $qw_query = qw_get_query( (int) $post_type_archives[ $post_type ] ) ) {
+		// Multiple post types can be overridden by a single query.
+		$valid_post_types = [];
+		$found_query = null;
+		foreach ( $post_types as $post_type) {
+			// Ensure the given post type is a QW override.
+			if ( !isset( $post_type_archives[ $post_type ] ) ) {
+				continue;
+			}
 
+			// If we haven't determined the query yet, set the first one.
+			if ( !$found_query ) {
+				$found_query = qw_get_query( (int) $post_type_archives[ $post_type ] );
+			}
+
+			// If we have a query, ensure that
+			if ( $found_query && $found_query->id == $post_type_archives[ $post_type ]  ) {
+				$valid_post_types[] = $post_type;
+			}
+		}
+
+		if ( $found_query ) {
 			// add the appropriate filter to the query
-			$qw_query->add_handler_item( 'filter',
+			$found_query->add_handler_item( 'filter',
 				'post_type',
-				array( $post_type )
+				$valid_post_types
 			);
 
-			return $qw_query;
+			return $found_query;
 		}
 	}
 
