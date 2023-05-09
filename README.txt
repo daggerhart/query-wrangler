@@ -74,6 +74,10 @@ Select a category or multiple categories to override.   Save the query, then vis
 
 == Changelog ==
 
+= 1.5.53 =
+
+* Bug fix on post type archive override page when dealing with multiple post types.
+
 = 1.5.52 =
 
 * New setting to allow caching of meta keys.
@@ -393,4 +397,4 @@ Select a category or multiple categories to override.   Save the query, then vis
 
 == Upgrade Notice ==
 
-1.5.52 Major bug fix and new setting for caching meta_keys.
+1.5.53 Bug fix on post type archive override page when dealing with multiple post types.
