@@ -171,13 +171,11 @@ function qw_filter_post_types_exposed_form_checkboxes( $filter, &$values ) {
 		<?php
 		// List all categories as checkboxes
 		foreach ( $post_types as $type ) {
-			if ( is_array( $filter['values']['post_types'] ) ) {
-				// see if our submitted value is
-				if ( in_array( $type, $filter['values']['post_types'] ) ) {
-					$type_checked = 'checked="checked"';
-				} else {
-					$type_checked = '';
-				}
+			// see if our submitted value is
+			if ( is_array( $filter['values']['post_types'] ) && in_array( $type, $filter['values']['post_types'] ) ) {
+				$type_checked = 'checked="checked"';
+			} else {
+				$type_checked = '';
 			}
 			?>
 			<label class="query-checkbox">
