@@ -3,6 +3,10 @@
  * Handle the display of pages and actions
  */
 function qw_page_handler() {
+	if ( !current_user_can('manage_options') ) {
+		die('nope');
+	}
+
 	$redirect = FALSE;
 	// handle actions
 	if ( isset( $_GET['action'] ) ) {
