@@ -78,6 +78,10 @@ Select a category or multiple categories to override.   Save the query, then vis
 
 == Changelog ==
 
+= 1.5.55 =
+
+* Extra security on admin routes using nonces.
+
 = 1.5.54 =
 
 * Security fixes update.
