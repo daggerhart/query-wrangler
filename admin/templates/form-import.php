@@ -1,5 +1,8 @@
 <form method="POST"
       action="admin.php?page=query-wrangler&action=import&noheader=true">
+
+	<?php wp_nonce_field( 'qw-import' ); ?>
+
 	<div class="qw-setting">
 		<label class="qw-label">Query Name:</label>
 		<input type="text" id="import-name" name="import-name" value=""/>

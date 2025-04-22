@@ -7,6 +7,9 @@
 <div id="qw-create">
 	<form action='admin.php?page=query-wrangler&action=create&noheader=true'
 	      method='post'>
+
+		<?php wp_nonce_field( 'qw-create' ); ?>
+
 		<div class="qw-setting">
 			<label class="qw-label">Query Name:</label>
 			<input class="qw-create-input" type="text" name="qw-name" value=""/>
