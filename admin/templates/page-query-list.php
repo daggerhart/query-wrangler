@@ -149,14 +149,14 @@ class Query_Wrangler_List_Table extends WP_List_Table {
 			'%page' => $_REQUEST['page'],
 			'%id' => $item['ID'],
 		] ) );
-		$export_url = esc_url( strtr( '?page=%page&export=%id', [
+		$export_url = esc_url( wp_nonce_url( strtr( '?page=%page&export=%id', [
 			'%page' => $_REQUEST['page'],
 			'%id' => $item['ID'],
-		] ) );
-		$delete_url = esc_url( strtr( '?page=%page&noheader=true&action=delete&edit=%id', [
+		] ), 'qw-export_' . $item['ID'] ) );
+		$delete_url = esc_url( wp_nonce_url( strtr( '?page=%page&noheader=true&action=delete&edit=%id', [
 			'%page' => $_REQUEST['page'],
 			'%id' => $item['ID'],
-		] ) );
+		] ), 'qw-delete_' . $item['ID'] ) );
 
 		//Build row actions
 		$actions = array(

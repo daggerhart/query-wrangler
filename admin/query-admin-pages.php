@@ -13,30 +13,36 @@ function qw_page_handler() {
 		$redirect = TRUE;
 		switch ( $_GET['action'] ) {
 			case 'update':
-				qw_update_query( $_POST );
+				$query_id = $_GET['edit'];
+				check_admin_referer( 'qw-edit_' . $query_id );
+				qw_update_query( $query_id );
 				// redirect to the edit page
-				qw_admin_redirect( $_GET['edit'] );
+				qw_admin_redirect( $query_id );
 				break;
 
 			case 'delete':
+				check_admin_referer( 'qw-delete_' . $_GET['edit'] );
 				qw_delete_query( $_GET['edit'] );
 				// redirect to the list page
 				qw_admin_redirect();
 				break;
 
 			case 'create':
+				check_admin_referer( 'qw-create' );
 				$new_query_id = qw_insert_new_query( $_POST );
 				// forward to the edit page
 				qw_admin_redirect( $new_query_id );
 				break;
 
 			case 'import':
+				check_admin_referer( 'qw-import' );
 				$new_query_id = qw_query_import( $_POST );
 				// forward to edit page
 				qw_admin_redirect( $new_query_id );
 				break;
 
 			case 'save_settings':
+				check_admin_referer( 'qw-settings' );
 				qw_save_settings( $_POST );
 				// forward to edit page
 				qw_admin_redirect( NULL, 'qw-settings' );
@@ -53,6 +59,7 @@ function qw_page_handler() {
 		qw_edit_query_form();
 	} // export a query
 	else if ( isset( $_GET['export'] ) && is_numeric( $_GET['export'] ) ) {
+		check_admin_referer( 'qw-export_' . $_GET['export'] );
 		qw_export_page();
 	} // else we need a list of queries
 	else {

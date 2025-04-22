@@ -3,6 +3,9 @@
       method='post'
       data-query-id="<?php print $query_id; ?>"
       data-ajax-url="<?php print admin_url( 'admin-ajax.php' ); ?>">
+
+	<?php wp_nonce_field( 'qw-edit_'. $query_id ); ?>
+
 	<div id="qw-query-action-buttons">
 		<div id="query-actions">
 			<a href="<?php print admin_url( "admin.php?page=query-wrangler&export=$query_id" ); ?>">Export</a>

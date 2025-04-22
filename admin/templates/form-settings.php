@@ -14,6 +14,9 @@
 <form id="qw-edit-settings"
       action="<?php print admin_url( 'admin.php?page=query-wrangler&action=save_settings&noheader=true' ); ?>"
       method='post'>
+
+	<?php wp_nonce_field( 'qw-settings' ); ?>
+
 	<?php submit_button( 'Save Settings' ); ?>
 	<table class="form-table">
 		<tr>
