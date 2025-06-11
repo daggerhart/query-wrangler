@@ -78,6 +78,10 @@ Select a category or multiple categories to override.   Save the query, then vis
 
 == Changelog ==
 
+= 1.5.57 =
+
+* Fix regression issue causing Queries to not be saved.
+
 = 1.5.56 =
 
 * Version bump for readme update.
@@ -413,4 +417,4 @@ Select a category or multiple categories to override.   Save the query, then vis
 
 == Upgrade Notice ==
 
-1.5.53 Bug fix on post type archive override page when dealing with multiple post types.
+1.5.57 Multiple bug fixes.
