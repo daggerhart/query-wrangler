@@ -15,7 +15,7 @@ function qw_page_handler() {
 			case 'update':
 				$query_id = $_GET['edit'];
 				check_admin_referer( 'qw-edit_' . $query_id );
-				qw_update_query( $query_id );
+				qw_update_query( $_POST );
 				// redirect to the edit page
 				qw_admin_redirect( $query_id );
 				break;
