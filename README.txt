@@ -1,10 +1,12 @@
 === Query Wrangler ===
 Contributors: daggerhart
 Donate link: https://www.daggerhart.com/
-Tags: query, pages, widget, admin, widgets, administration, manage, views, loop
-Requires at least: 4
+Tags: query, pages, widget, views, loops
+Requires at least: 5.0
 Tested up to: 6.8
 Stable tag: trunk
+License: GPLv2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 Query Wrangler provides an intuitive interface for creating complex WP queries as shortcodes and widgets. UI based on Drupal Views.
 
