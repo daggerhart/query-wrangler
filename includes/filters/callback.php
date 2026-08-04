@@ -36,7 +36,7 @@ function qw_filter_callback_form( $filter ) {
 		       type='text'
 		       size="46"
 		       name="<?php print $filter['form_prefix']; ?>[callback]"
-		       value='<?php print $filter['values']['callback']; ?>'/>
+		       value='<?php print esc_attr( $filter['values']['callback'] ); ?>'/>
 	</p>
 	<p class="description">
 		The callback function will be provided the $args and $filter variables,
@@ -44,6 +44,7 @@ function qw_filter_callback_form( $filter ) {
 		<br/>Eg, <code>function my_filter_callback($args, $filter){ return
 			$args; }</code>
 	</p>
+	<?php qw_callback_status_notice( $filter['values']['callback'] ); ?>
 <?php
 }
 
@@ -54,7 +55,9 @@ function qw_filter_callback_form( $filter ) {
  * @param $filter
  */
 function qw_filter_callback_execute( &$args, $filter ) {
-	if ( isset( $filter['values']['callback'] ) && function_exists( $filter['values']['callback'] ) ) {
+	if ( isset( $filter['values']['callback'] ) &&
+	     qw_callback_is_allowed( $filter['values']['callback'], 'callback filter' )
+	) {
 		$args = $filter['values']['callback']( $args, $filter );
 	}
 }

@@ -26,7 +26,9 @@ function qw_execute_the_callback( $post, $field, $tokens ) {
 	$echoed   = FALSE;
 
 	ob_start();
-	if ( isset( $field['custom_output_callback'] ) && function_exists( $field['custom_output_callback'] ) ) {
+	if ( isset( $field['custom_output_callback'] ) &&
+	     qw_callback_is_allowed( $field['custom_output_callback'], 'callback field' )
+	) {
 		if ( isset( $field['include_output_arguments'] ) ) {
 			$returned = $field['custom_output_callback']( $post,
 				$field,
@@ -86,13 +88,15 @@ function qw_callback_field_form( $field ) {
 			<label class="qw-label">Callback:</label>
 			<input class='qw-js-title' type="text"
 			       name="<?php print $field['form_prefix']; ?>[custom_output_callback]"
-			       value="<?php print $custom_output_callback; ?>"/>
+			       value="<?php print esc_attr( $custom_output_callback ); ?>"/>
 		</p>
 
 		<p class="description">
 			Provide an existing function name. This function will be executed
 			during the loop of this query.
 		</p>
+
+		<?php qw_callback_status_notice( $custom_output_callback ); ?>
 	</div>
 	<div>
 		<label class='qw-field-checkbox'>

@@ -58,6 +58,8 @@ function qw_init_frontend() {
 	}
 	// Wordpress hooks
 	include_once QW_PLUGIN_DIR . '/includes/hooks.php';
+	// controls for executing administrator-provided callbacks
+	include_once QW_PLUGIN_DIR . '/includes/callbacks.php';
 	include_once QW_PLUGIN_DIR . '/includes/exposed.php';
 	include_once QW_PLUGIN_DIR . '/includes/handlers.php';
 	include_once QW_PLUGIN_DIR . '/includes/class-qw-shortcodes.php';

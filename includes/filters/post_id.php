@@ -31,12 +31,13 @@ function qw_filter_post_id_form( $filter ) {
 	?>
     <p>
       <label>Provide post_ids as a comma separated list:</label>
-      <div><input class="qw-js-title" type='text' size="46" name="<?php print $filter['form_prefix']; ?>[post_ids]" value='<?php print $filter['values']['post_ids']; ?>' /></div>
+      <div><input class="qw-js-title" type='text' size="46" name="<?php print $filter['form_prefix']; ?>[post_ids]" value='<?php print esc_attr( $filter['values']['post_ids'] ); ?>' /></div>
     </p>
     <p>
       <label>Or, provide a callback function name that returns an array of post_ids:</label>
-      <div><input class="qw-js-title" type="text" size="46" name="<?php print $filter['form_prefix']; ?>[post_ids_callback]" value="<?php print $filter['values']['post_ids_callback']; ?>" /></div>
+      <div><input class="qw-js-title" type="text" size="46" name="<?php print $filter['form_prefix']; ?>[post_ids_callback]" value="<?php print esc_attr( $filter['values']['post_ids_callback'] ); ?>" /></div>
       <p class="description">Note: you cannot expose a filter if using a callback.</p>
+      <?php qw_callback_status_notice( $filter['values']['post_ids_callback'] ); ?>
     </p>
     <p>
       <label>How to treat these post IDs.</label>
@@ -53,7 +54,9 @@ function qw_filter_post_id_form( $filter ) {
 }
 
 function qw_generate_query_args_post_id( &$args, $filter ) {
-	if ( isset( $filter['values']['post_ids_callback'] ) && function_exists( $filter['values']['post_ids_callback'] ) ) {
+	if ( isset( $filter['values']['post_ids_callback'] ) &&
+	     qw_callback_is_allowed( $filter['values']['post_ids_callback'], 'post_ids callback' )
+	) {
 		$pids = $filter['values']['post_ids_callback']( $args );
 	} else {
 	    $values = qw_contextual_tokens_replace( $filter['values']['post_ids'] );

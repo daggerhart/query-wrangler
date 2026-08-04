@@ -7,6 +7,7 @@
  * @var bool $shortcode_compat
  * @var string $meta_value_field_handler
  * @var string $meta_key_cache_life
+ * @var array $allowed_callbacks
  * @var array[] $edit_themes
  * @var array $meta_value_field_options
  */
@@ -158,6 +159,44 @@
 					<br>
 					<b>Compatibility Enabled</b>- <code>[qw_query slug="my-test"]</code>
 				</p>
+			</td>
+		</tr>
+
+		<tr>
+			<th>
+				<label for="qw-allowed-callbacks">Allowed Callbacks</label>
+			</th>
+			<td>
+				<p class="description">
+					The <em>Callback</em> field, the <em>Callback</em> filter and
+					the <em>Post IDs</em> filter can execute a PHP function while
+					a query runs. Only functions named here will be executed.
+					One function name per line.
+				</p>
+				<textarea id="qw-allowed-callbacks"
+				          name="qw-allowed-callbacks"
+				          rows="6"
+				          cols="50"
+				          class="code"><?php print esc_textarea( implode( "\n", (array) $allowed_callbacks ) ); ?></textarea>
+				<p class="description">
+					<strong>Treat this list as executable code.</strong> Anything
+					you add here can be run whenever a query renders, so only add
+					functions you wrote or trust for this purpose. Developers can
+					approve callbacks from code with the
+					<code>qw_allowed_callbacks</code> filter instead.
+				</p>
+				<?php
+				$unapproved = array_diff( qw_stored_callbacks(), qw_allowed_callbacks() );
+				if ( $unapproved ) {
+					?>
+					<p class="description" style="color: #a02222;">
+						These callbacks are saved in your queries but are not
+						approved, so they are not being executed:
+						<code><?php print esc_html( implode( ', ', $unapproved ) ); ?></code>
+					</p>
+					<?php
+				}
+				?>
 			</td>
 		</tr>
 	</table>

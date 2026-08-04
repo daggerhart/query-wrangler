@@ -2,7 +2,8 @@
       action="<?php print admin_url( "admin.php?page=query-wrangler&action=update&edit=$query_id&noheader=true" ); ?>"
       method='post'
       data-query-id="<?php print $query_id; ?>"
-      data-ajax-url="<?php print admin_url( 'admin-ajax.php' ); ?>">
+      data-ajax-url="<?php print admin_url( 'admin-ajax.php' ); ?>"
+      data-ajax-nonce="<?php print esc_attr( wp_create_nonce( QW_AJAX_NONCE_ACTION ) ); ?>">
 
 	<?php wp_nonce_field( 'qw-edit_'. $query_id ); ?>
 

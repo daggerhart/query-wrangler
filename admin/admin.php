@@ -91,6 +91,9 @@ function qw_insert_new_query( $post ) {
 
 	$wpdb->insert( $table_name, $values );
 
+	// The set of callbacks saved in query data may have changed.
+	qw_flush_stored_callbacks();
+
 	return $wpdb->insert_id;
 }
 
@@ -160,6 +163,9 @@ function qw_update_query( $post ) {
 			$query_id ) );
 	}
 
+	// The set of callbacks saved in query data may have changed.
+	qw_flush_stored_callbacks();
+
 	// Refresh meta_keys_cache.
 	$settings = QW_Settings::get_instance();
 	if ($settings->get('meta_key_cache_life') !== 'none') {
@@ -177,6 +183,9 @@ function qw_delete_query( $query_id ) {
 	global $wpdb;
 	$table = $wpdb->prefix . "query_wrangler";
 	$wpdb->delete( $table, array( 'id' => $query_id ) );
+
+	// The set of callbacks saved in query data may have changed.
+	qw_flush_stored_callbacks();
 
 	do_action( 'qw_delete_query', $query_id );
 
@@ -226,6 +235,10 @@ function qw_query_import( $post ) {
 	}
 	$query['data'] = qw_serialize( $query['data'] );
 	$wpdb->insert( $table, $query );
+
+	// An imported query may name callbacks. They become executable only after
+	// an administrator adds them to the Allowed Callbacks setting.
+	qw_flush_stored_callbacks();
 
 	return $wpdb->insert_id;
 }
@@ -378,6 +391,11 @@ function qw_edit_json( $query_id = NULL ) {
  * Checking current version of plugin to handle upgrades
  */
 function qw_check_version() {
+	// One-time approval of callbacks that predate the allow list. Runs
+	// independently of the version-to-version upgrade functions below so that
+	// it happens no matter which version a site is coming from.
+	qw_seed_allowed_callbacks();
+
 	if ( $last_version = get_option( 'qw_plugin_version' ) ) {
 		// compare versions
 		if ( $last_version < QW_VERSION ) {
@@ -408,6 +426,8 @@ add_action( 'wp_ajax_qw_meta_key_autocomplete', 'qw_meta_key_autocomplete' );
  * Ajax callback for meta_key autocomplete
  */
 function qw_meta_key_autocomplete() {
+	qw_verify_ajax_request();
+
 	if ( isset( $_POST['qw_meta_key_autocomplete'] ) ) {
 		$meta_key = sanitize_text_field( $_POST['qw_meta_key_autocomplete'] );
 		global $wpdb;

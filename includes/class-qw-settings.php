@@ -12,6 +12,7 @@ class QW_Settings {
 		'meta_value_field_handler' => 0,
 		'shortcode_compat'         => 0,
 		'meta_key_cache_life'      => 0, // Forever.
+		'allowed_callbacks'        => array(), // Functions handlers may execute.
 	);
 
 	public $values = array();

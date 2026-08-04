@@ -86,9 +86,14 @@ var QueryWrangler = {};
          * @param callback
          */
         post: function ( post_data_form, callback ) {
+          var $form = $( 'form#qw-edit-query-form' );
+
+          // every QW ajax endpoint verifies this nonce
+          post_data_form.qw_nonce = $form.data( 'ajax-nonce' );
+
           // ajax call to get form
           jQuery.ajax( {
-            url: $( 'form#qw-edit-query-form' ).data( 'ajax-url' ),
+            url: $form.data( 'ajax-url' ),
             type: 'POST',
             async: false,
             data: post_data_form,
