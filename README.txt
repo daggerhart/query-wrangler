@@ -80,6 +80,17 @@ Select a category or multiple categories to override.   Save the query, then vis
 
 == Changelog ==
 
+= 1.5.58 =
+
+**Security release. Please update.**
+
+* Fixed an unauthenticated-adjacent privilege escalation: the `qw_form_ajax` endpoint had no capability check and no nonce, so any logged-in user (including a Subscriber) could reach the query preview and cause arbitrary PHP functions to be executed. The endpoint now requires the `edit_others_posts` capability and a valid nonce.
+* Callbacks are no longer executed just because the function exists. The Callback field, the Callback filter and the Post IDs filter now only execute functions that appear in the new **Allowed Callbacks** setting *and* were saved to a query by an administrator. A denylist blocks dangerous functions outright.
+* Added the **Allowed Callbacks** setting, plus a `qw_allowed_callbacks` filter for approving callbacks from code.
+* Existing callbacks already saved in your queries are approved automatically when you update, so working sites keep working. Callbacks added *after* updating must be approved on the settings screen. Note that a brand new callback will not run in the live preview until the query has been saved.
+* Added capability and nonce checks to the `qw_data_ajax` and `qw_meta_key_autocomplete` endpoints.
+* Escaped callback and post ID values in the handler settings forms.
+
 = 1.5.57 =
 
 * Fix regression issue causing Queries to not be saved.
