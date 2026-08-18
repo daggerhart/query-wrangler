@@ -1,4 +1,6 @@
-# Query Wrangler
+# Query Wrangler - CLOSED
+
+**This plugin is no longer developed or supported. Please migration to another solution.**
 
 Query Wrangler is a WordPress plugin that provides an intuitive interface for creating complex WP queries as shortcodes and widgets. UI based on Drupal Views.
 
